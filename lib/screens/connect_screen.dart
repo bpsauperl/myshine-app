@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../api/api_client.dart';
 import '../state/session.dart';
-import '../theme.dart';
 import '../util/connect_code.dart';
 import '../widgets/common.dart';
 
@@ -53,99 +53,160 @@ class _ConnectScreenState extends State<ConnectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.shine;
+    final p = context.kit;
     final complete =
         ConnectCode.normalize(_controller.text).length == ConnectCode.length;
     return Scaffold(
-      backgroundColor: palette.card,
-      appBar: AppBar(backgroundColor: palette.card),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Connect with your clinic',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Your clinic gives you a code with 8 characters. '
-                    'Type it here to see your plan, your aligners and messages.',
-                    style: TextStyle(
-                      fontSize: 17,
-                      height: 1.4,
-                      color: palette.muted,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  TextField(
-                    key: const Key('connect-code'),
-                    controller: _controller,
-                    autofocus: true,
-                    enabled: !_busy,
-                    textAlign: TextAlign.center,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    textCapitalization: TextCapitalization.characters,
-                    keyboardType: TextInputType.visiblePassword,
-                    inputFormatters: [ConnectCodeInputFormatter()],
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 4,
-                      fontFeatures: [FontFeature.tabularFigures()],
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'ABCD-2345',
-                      hintStyle: TextStyle(
-                        color: palette.muted.withValues(alpha: 0.5),
-                      ),
-                      errorText: _error,
-                      errorMaxLines: 3,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 20),
-                    ),
-                    onChanged: (_) => setState(() => _error = null),
-                    onSubmitted: (_) => _connect(),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton(
-                    key: const Key('connect-button'),
-                    onPressed: _busy || !complete ? null : _connect,
-                    child: _busy
-                        ? SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.4,
-                              color: palette.card,
-                            ),
-                          )
-                        : const Text('Connect'),
-                  ),
-                  const SizedBox(height: 24),
-                  ShineCard(
-                    color: palette.accentSoft,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(
+              KitSize.gutter + 4,
+              8,
+              KitSize.gutter + 4,
+              24,
+            ),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 480,
+                  minHeight: constraints.maxHeight - 32,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Icon(Icons.info_outline, color: palette.accentText),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'The code works once and for 14 days. If it doesn\'t work, '
-                            'ask your clinic for a new one.',
-                            style: TextStyle(height: 1.4, color: palette.ink),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: KitRoundButton(
+                            icon: Icons.arrow_back_rounded,
+                            label: 'Back',
+                            onPressed: () => Navigator.of(context).maybePop(),
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        const KitHeadline(
+                          title: 'Your clinic',
+                          muted: 'has a key for you.',
+                          size: 44,
+                          body: 'Type the 8-character code from your clinic. Your plan, aligners and messages open right away.',
+                        ),
+                        const SizedBox(height: 28),
+                        KitTile(
+                          radius: 26,
+                          padding: const EdgeInsets.fromLTRB(22, 20, 22, 18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  const Wordmark(size: 16),
+                                  Text(
+                                    ' pass',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: p.ink,
+                                      letterSpacing: -0.4,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Icon(Icons.key_rounded, color: p.accentText),
+                                ],
+                              ),
+                              const SizedBox(height: 14),
+                              TextField(
+                                key: const Key('connect-code'),
+                                controller: _controller,
+                                autofocus: true,
+                                enabled: !_busy,
+                                autocorrect: false,
+                                enableSuggestions: false,
+                                textCapitalization:
+                                    TextCapitalization.characters,
+                                keyboardType: TextInputType.visiblePassword,
+                                inputFormatters: [ConnectCodeInputFormatter()],
+                                style: KitType.display(
+                                  34,
+                                  color: p.ink,
+                                ).copyWith(letterSpacing: 3),
+                                decoration: InputDecoration(
+                                  filled: false,
+                                  hintText: 'ABCD-2345',
+                                  hintStyle: KitType.display(
+                                    34,
+                                    color: p.hairline,
+                                  ).copyWith(letterSpacing: 3),
+                                  errorText: _error,
+                                  errorMaxLines: 3,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: p.hairline),
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: p.hairline),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: p.accent,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                onChanged: (_) => setState(() => _error = null),
+                                onSubmitted: (_) => _connect(),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Works once',
+                                    style: KitType.label(color: p.secondary)
+                                        .copyWith(fontSize: 12),
+                                  ),
+                                  Text(
+                                    'Valid 14 days',
+                                    style: KitType.label(color: p.secondary)
+                                        .copyWith(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 28),
+                      child: Column(
+                        children: [
+                          KitButton(
+                            key: const Key('connect-button'),
+                            label: 'Connect',
+                            trailingIcon: Icons.arrow_forward_rounded,
+                            busy: _busy,
+                            onPressed: complete ? _connect : null,
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'Private between you and your clinic. No password. '
+                            'No code? Ask your clinic for one.',
+                            textAlign: TextAlign.center,
+                            style: KitType.label(color: p.secondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

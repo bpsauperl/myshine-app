@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
 import '../../api/models.dart';
@@ -139,7 +140,6 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.shine;
     final messages = _messages;
     return SafeArea(
       bottom: false,
@@ -205,9 +205,9 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                         ),
                 ),
               ),
+              // Sits above the floating tab bar.
               Container(
-                color: palette.card,
-                padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+                padding: const EdgeInsets.fromLTRB(16, 8, 12, 96),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -219,24 +219,49 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                         maxLines: 5,
                         maxLength: 4000,
                         textCapitalization: TextCapitalization.sentences,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Message your clinic',
                           counterText: '',
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 13,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide(
+                              color: context.kit.hairline,
+                              width: 0.5,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide(
+                              color: context.kit.hairline,
+                              width: 0.5,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide(
+                              color: context.kit.accent,
+                              width: 1.5,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 8),
                     IconButton.filled(
                       key: const Key('message-send'),
                       onPressed: _sending ? null : _send,
+                      tooltip: 'Send',
                       style: IconButton.styleFrom(
-                        backgroundColor: ShineColors.teal,
-                        foregroundColor: ShineColors.ink,
+                        backgroundColor: context.kit.accentText,
+                        foregroundColor: context.kit.isDark
+                            ? Colors.black
+                            : Colors.white,
+                        minimumSize: const Size(46, 46),
                       ),
                       icon: const Icon(Icons.arrow_upward_rounded),
                     ),

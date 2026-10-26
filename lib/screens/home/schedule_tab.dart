@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/models.dart';
 import '../../state/me_controller.dart';
@@ -35,10 +36,12 @@ class ScheduleTab extends StatelessWidget {
       children: [
         PageTitle(
           'Schedule',
-          subtitle: therapy.endsOn == null
+          subtitle: therapy.series == null
               ? '${therapy.total} aligners'
-              : '${therapy.total} aligners · until ${longDate(therapy.endsOn!)}',
+              : 'Series ${therapy.series} · ${therapy.total} aligners',
         ),
+        _Figures(therapy: therapy),
+        const SizedBox(height: 12),
         ShineCard(
           padding: const EdgeInsets.symmetric(vertical: 6),
           child: Column(
@@ -72,6 +75,60 @@ class ScheduleTab extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Started, how far, and the last aligner, side by side.
+class _Figures extends StatelessWidget {
+  const _Figures({required this.therapy});
+
+  final Therapy therapy;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.kit;
+    final done = therapy.rows
+        .where((row) => row.state == AlignerState.done)
+        .length;
+    final percent = therapy.total == 0
+        ? 0
+        : (done / therapy.total * 100).round();
+    Widget figure(String label, String value, {bool accent = false}) =>
+        Expanded(
+          child: Semantics(
+            label: '$label: $value',
+            excludeSemantics: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: KitType.label(color: p.secondary)),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: KitType.number(
+                    size: 22,
+                    color: accent ? p.accentText : p.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+    return KitTile(
+      child: Row(
+        children: [
+          figure(
+            'Started',
+            therapy.started == null ? '—' : shortDate(therapy.started!),
+          ),
+          figure('Done', '$percent %', accent: true),
+          figure(
+            'Last aligner',
+            therapy.endsOn == null ? '—' : shortDate(therapy.endsOn!),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../../config.dart';
 import '../../theme.dart';
@@ -59,7 +60,7 @@ class PreviewScreen extends StatelessWidget {
                   const SizedBox(height: 28),
                   Text(
                     'Like what you see?',
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: KitType.title(color: context.kit.ink),
                   ),
                   const SizedBox(height: 6),
                   Text(

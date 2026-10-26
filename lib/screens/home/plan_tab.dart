@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../../state/me_controller.dart';
-import '../../theme.dart';
 import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
 import 'home_shell.dart';
 
+/// The plan in 3D, once the clinic shares it.
 class PlanTab extends StatelessWidget {
   const PlanTab({super.key, required this.me});
 
@@ -14,63 +15,41 @@ class PlanTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final plan = me.data!.plan;
-    final palette = context.shine;
+    final p = context.kit;
     return TabPage(
       onRefresh: me.refresh,
       children: [
         const PageTitle('Your plan'),
+        const KitArchHero(height: 220, semanticLabel: 'Your treatment plan'),
+        const SizedBox(height: 8),
         if (plan.shared)
-          ShineCard(
+          KitTile(
             key: const Key('plan-card'),
-            onTap: () => openInBrowserView(context, plan.url!),
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.all(20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 180,
-                  color: palette.accentSoft,
-                  child: Icon(
-                    Icons.view_in_ar_rounded,
-                    size: 84,
-                    color: palette.accentText,
-                  ),
+                Text(
+                  plan.series == null
+                      ? 'In 3D'
+                      : 'Series ${plan.series} · in 3D',
+                  style: KitType.eyebrow(color: p.accentText),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Your treatment plan in 3D',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'See how your teeth move, step by step, from today to your new smile.',
-                        style: TextStyle(color: palette.muted, height: 1.4),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            'Open your plan',
-                            style: TextStyle(
-                              color: palette.accentText,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.arrow_forward_rounded,
-                            color: palette.accentText,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 6),
+                Text(
+                  'Every step to your new smile.',
+                  style: KitType.title(color: p.ink).copyWith(fontSize: 26),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'See how your teeth move, aligner by aligner, from today to the end.',
+                  style: KitType.body(color: p.secondary),
+                ),
+                const SizedBox(height: 18),
+                KitButton(
+                  label: 'Open your plan',
+                  trailingIcon: Icons.arrow_forward_rounded,
+                  onPressed: () => openInBrowserView(context, plan.url!),
                 ),
               ],
             ),

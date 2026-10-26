@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
 import '../../state/me_controller.dart';
 import '../../state/session.dart';
 import '../../widgets/common.dart';
-import 'documents_tab.dart';
 import 'messages_tab.dart';
 import 'plan_tab.dart';
 import 'profile_tab.dart';
 import 'schedule_tab.dart';
 import 'today_tab.dart';
 
-/// The connected app: six tabs over one `/me` load.
+/// The connected app: five tabs over one `/me` load, under the floating tab bar.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key, required this.api, this.onUnauthorized});
 
@@ -85,63 +85,60 @@ class _HomeShellState extends State<HomeShell> {
         final unread = data.unreadMessages;
         final pending = data.consents.where((c) => !c.isSigned).length;
         final tabs = <Widget>[
-          TodayTab(me: _me),
+          TodayTab(me: _me, onOpenTab: _select),
           PlanTab(me: _me),
           ScheduleTab(me: _me),
           MessagesTab(api: widget.api, active: _index == 3),
-          DocumentsTab(me: _me),
           ProfileTab(me: _me),
         ];
         return Scaffold(
-          body: IndexedStack(
-            index: _index,
+          body: Stack(
             children: [
-              for (var i = 0; i < tabs.length; i++)
-                TickerMode(enabled: i == _index, child: tabs[i]),
-            ],
-          ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: _index,
-            onDestinationSelected: _select,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            destinations: [
-              const NavigationDestination(
-                icon: Icon(Icons.wb_sunny_outlined),
-                selectedIcon: Icon(Icons.wb_sunny_rounded),
-                label: 'Today',
+              IndexedStack(
+                index: _index,
+                children: [
+                  for (var i = 0; i < tabs.length; i++)
+                    TickerMode(enabled: i == _index, child: tabs[i]),
+                ],
               ),
-              const NavigationDestination(
-                icon: Icon(Icons.view_in_ar_outlined),
-                selectedIcon: Icon(Icons.view_in_ar_rounded),
-                label: 'Plan',
-              ),
-              const NavigationDestination(
-                icon: Icon(Icons.calendar_month_outlined),
-                selectedIcon: Icon(Icons.calendar_month_rounded),
-                label: 'Schedule',
-              ),
-              NavigationDestination(
-                icon: Badge(
-                  isLabelVisible: unread > 0,
-                  label: Text('$unread'),
-                  child: const Icon(Icons.chat_bubble_outline_rounded),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: SafeArea(
+                  top: false,
+                  minimum: const EdgeInsets.only(bottom: 16),
+                  child: Center(
+                    child: KitTabBar(
+                      index: _index,
+                      onSelect: _select,
+                      tabs: [
+                        const KitTab(
+                          icon: Icons.wb_sunny_outlined,
+                          label: 'Today',
+                        ),
+                        const KitTab(
+                          icon: Icons.view_in_ar_outlined,
+                          label: 'Plan',
+                        ),
+                        const KitTab(
+                          icon: Icons.calendar_month_outlined,
+                          label: 'Schedule',
+                        ),
+                        KitTab(
+                          icon: Icons.chat_bubble_outline_rounded,
+                          label: unread > 0 ? 'Messages ($unread)' : 'Messages',
+                          dot: unread > 0,
+                        ),
+                        KitTab(
+                          icon: Icons.person_outline_rounded,
+                          label: 'Profile',
+                          dot: pending > 0,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                selectedIcon: const Icon(Icons.chat_bubble_rounded),
-                label: 'Messages',
-              ),
-              NavigationDestination(
-                icon: Badge(
-                  isLabelVisible: pending > 0,
-                  label: Text('$pending'),
-                  child: const Icon(Icons.description_outlined),
-                ),
-                selectedIcon: const Icon(Icons.description_rounded),
-                label: 'Documents',
-              ),
-              const NavigationDestination(
-                icon: Icon(Icons.person_outline_rounded),
-                selectedIcon: Icon(Icons.person_rounded),
-                label: 'Profile',
               ),
             ],
           ),
@@ -166,7 +163,12 @@ class TabPage extends StatelessWidget {
         onRefresh: onRefresh,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+          padding: const EdgeInsets.fromLTRB(
+            KitSize.gutter,
+            12,
+            KitSize.gutter,
+            120,
+          ),
           children: [
             Center(
               child: ConstrainedBox(

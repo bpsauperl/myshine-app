@@ -104,12 +104,14 @@ extension ShineContext on BuildContext {
 }
 
 /// Card corner radius used everywhere.
-const double kCardRadius = 22;
+const double kCardRadius = KitSize.tileRadius;
 
 /// The app theme comes from the shared Shine kit (Direction C), in Shine
 /// teal, with this app's own palette alongside for the screens that read it.
 ThemeData buildShineTheme(Brightness brightness) {
   final kit = kitTheme(KitAccent.myShine, brightness);
-  final palette = brightness == Brightness.dark ? ShinePalette.dark : ShinePalette.light;
+  final palette = brightness == Brightness.dark
+      ? ShinePalette.dark
+      : ShinePalette.light;
   return kit.copyWith(extensions: [...kit.extensions.values, palette]);
 }

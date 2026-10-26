@@ -1,91 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../state/session.dart';
-import '../theme.dart';
 import '../widgets/common.dart';
 import 'connect_screen.dart';
 import 'server_settings_sheet.dart';
 import 'simulation/selfie_screen.dart';
 
-/// The friendly entry point before the patient connects with their clinic.
+/// The start, before the patient connects with their clinic: the aligner in
+/// soft light, one headline, and two ways in.
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.shine;
+    final p = context.kit;
     return Scaffold(
-      backgroundColor: palette.card,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight - 40,
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 480),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        key: const Key('welcome-logo'),
-                        onLongPress: () => showServerSettings(
-                          context,
-                          SessionScope.of(context),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Wordmark(size: 26),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      const _SmileMark(),
-                      const SizedBox(height: 36),
-                      Text(
-                        'Your Shine smile starts here.',
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        'See a preview of your new smile in a minute, or connect '
-                        'with your clinic to follow your treatment day by day.',
-                        style: TextStyle(
-                          fontSize: 17,
-                          height: 1.4,
-                          color: palette.muted,
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      FilledButton(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const SelfieScreen(),
+            padding: const EdgeInsets.fromLTRB(
+              KitSize.gutter + 4,
+              12,
+              KitSize.gutter + 4,
+              24,
+            ),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 480,
+                  minHeight: constraints.maxHeight - 36,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          key: const Key('welcome-logo'),
+                          onLongPress: () => showServerSettings(
+                            context,
+                            SessionScope.of(context),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Wordmark(size: 22),
                           ),
                         ),
-                        child: const Text('See your new smile'),
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const ConnectScreen(),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: ShapeDecoration(
+                            color: p.tile,
+                            shape: StadiumBorder(
+                              side: BorderSide(color: p.hairline, width: 0.5),
+                            ),
+                          ),
+                          child: Text(
+                            'by SmileLabs',
+                            style: KitType.label(color: p.secondary).copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                        child: const Text('I have a code from my clinic'),
-                      ),
-                      const SizedBox(height: 16),
-                      Center(
-                        child: Text(
-                          'Shine clear aligners by SmileLabs',
-                          style: TextStyle(fontSize: 13, color: palette.muted),
+                      ],
+                    ),
+                    const KitArchHero(height: 280),
+                    const KitHeadline(
+                      eyebrow: 'Shine clear aligners',
+                      title: 'Your smile,',
+                      muted: 'revealed.',
+                      size: 56,
+                      body: 'See your new smile in a minute. Then follow every aligner, day by day, with your clinic.',
+                    ),
+                    const SizedBox(height: 28),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: KitButton(
+                            key: const Key('welcome-simulate'),
+                            label: 'See your new smile',
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const SelfieScreen(),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: KitButton.secondary(
+                            key: const Key('welcome-code'),
+                            label: 'Clinic code',
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const ConnectScreen(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -94,56 +116,4 @@ class WelcomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-/// A calm teal circle with a smile curve: the welcome illustration.
-class _SmileMark extends StatelessWidget {
-  const _SmileMark();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.shine;
-    return Container(
-      width: 112,
-      height: 112,
-      decoration: BoxDecoration(
-        color: palette.accentSoft,
-        shape: BoxShape.circle,
-      ),
-      child: CustomPaint(painter: _SmilePainter(palette.accentText)),
-    );
-  }
-}
-
-class _SmilePainter extends CustomPainter {
-  _SmilePainter(this.color);
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.06
-      ..strokeCap = StrokeCap.round;
-    final path = Path()
-      ..moveTo(size.width * 0.28, size.height * 0.5)
-      ..quadraticBezierTo(
-        size.width * 0.5,
-        size.height * 0.78,
-        size.width * 0.72,
-        size.height * 0.5,
-      );
-    canvas.drawPath(path, paint);
-    final sparkle = Paint()..color = ShineColors.teal;
-    canvas.drawCircle(
-      Offset(size.width * 0.7, size.height * 0.3),
-      size.width * 0.045,
-      sparkle,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_SmilePainter oldDelegate) => oldDelegate.color != color;
 }

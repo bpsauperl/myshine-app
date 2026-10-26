@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
 import '../../api/models.dart';
@@ -123,18 +124,19 @@ class _CheckInCardState extends State<CheckInCard> {
         ? 'How is your aligner?'
         : 'How is aligner ${widget.aligner}?';
     return ShineCard(
+      color: context.kit.inset,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Check in',
-            style: TextStyle(
-              color: palette.accentText,
-              fontWeight: FontWeight.w600,
-            ),
+            'Your check-in',
+            style: KitType.eyebrow(color: palette.accentText),
           ),
-          const SizedBox(height: 4),
-          Text(title, style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 6),
+          Text(
+            title,
+            style: KitType.title(color: palette.ink).copyWith(fontSize: 26),
+          ),
           const SizedBox(height: 16),
           _Label('Fit'),
           Wrap(
@@ -147,6 +149,12 @@ class _CheckInCardState extends State<CheckInCard> {
                   label: Text(entry.value),
                   selected: _fit == entry.key,
                   showCheckmark: false,
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: _fit == entry.key
+                        ? (context.kit.isDark ? Colors.black : Colors.white)
+                        : palette.ink,
+                  ),
                   onSelected: _sending
                       ? null
                       : (_) => setState(() {
@@ -172,10 +180,7 @@ class _CheckInCardState extends State<CheckInCard> {
                   '$_hours h',
                   key: const Key('hours-value'),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: KitType.number(size: 30, color: palette.ink),
                 ),
               ),
               _StepButton(
@@ -198,6 +203,12 @@ class _CheckInCardState extends State<CheckInCard> {
                   label: Text(entry.value),
                   selected: _comfort == entry.key,
                   showCheckmark: false,
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: _comfort == entry.key
+                        ? (context.kit.isDark ? Colors.black : Colors.white)
+                        : palette.ink,
+                  ),
                   onSelected: _sending
                       ? null
                       : (selected) => setState(
@@ -272,7 +283,7 @@ class _StepButton extends StatelessWidget {
       onPressed: onPressed,
       icon: Icon(icon),
       style: IconButton.styleFrom(
-        backgroundColor: context.shine.background,
+        backgroundColor: context.kit.tile,
         foregroundColor: context.shine.ink,
         minimumSize: const Size(48, 48),
       ),

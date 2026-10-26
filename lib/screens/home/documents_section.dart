@@ -6,10 +6,10 @@ import '../../theme.dart';
 import '../../util/dates.dart';
 import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
-import 'home_shell.dart';
 
-class DocumentsTab extends StatelessWidget {
-  const DocumentsTab({super.key, required this.me});
+/// Consents to sign, shown on Profile.
+class DocumentsSection extends StatelessWidget {
+  const DocumentsSection({super.key, required this.me});
 
   final MeController me;
 
@@ -23,14 +23,10 @@ class DocumentsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final consents = me.data!.consents;
     final palette = context.shine;
-    return TabPage(
-      onRefresh: me.refresh,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const PageTitle(
-          'Documents',
-          subtitle:
-              'Consents from your clinic. Your clinic keeps the signed copy.',
-        ),
+        const SectionLabel('Documents'),
         if (consents.isEmpty)
           const CalmMessage(
             icon: Icons.description_outlined,
@@ -54,13 +50,13 @@ class DocumentsTab extends StatelessWidget {
               ],
             ),
           ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
             'After you sign, your clinic keeps the signed copy with your records. '
             'Ask them if you would like a copy for yourself.',
-            style: TextStyle(color: palette.muted, height: 1.4),
+            style: TextStyle(color: palette.muted, height: 1.4, fontSize: 13),
           ),
         ),
       ],

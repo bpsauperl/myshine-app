@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:shine_kit/shine_kit.dart';
+
 import '../theme.dart';
 
 /// "myShine", with "my" in Shine teal.
@@ -57,7 +59,7 @@ class ShineCard extends StatelessWidget {
     final content = Padding(padding: padding, child: child);
     return Material(
       color: color ?? context.shine.card,
-      borderRadius: BorderRadius.circular(kCardRadius),
+      borderRadius: BorderRadius.circular(KitSize.tileRadius),
       clipBehavior: Clip.antiAlias,
       child: onTap == null ? content : InkWell(onTap: onTap, child: content),
     );
@@ -73,16 +75,8 @@ class SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-      child: Text(
-        text.toUpperCase(),
-        style: TextStyle(
-          fontSize: 12,
-          letterSpacing: 0.6,
-          fontWeight: FontWeight.w600,
-          color: context.shine.muted,
-        ),
-      ),
+      padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
+      child: Text(text, style: KitType.eyebrow(color: context.shine.muted)),
     );
   }
 }
@@ -97,13 +91,19 @@ class PageTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 8, 4, 20),
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: Theme.of(context).textTheme.headlineMedium),
+          Semantics(
+            header: true,
+            child: Text(
+              title,
+              style: KitType.display(40, color: context.shine.ink),
+            ),
+          ),
           if (subtitle != null) ...[
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             Text(
               subtitle!,
               style: TextStyle(
@@ -143,15 +143,7 @@ class CalmMessage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
       child: Column(
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: palette.accentSoft,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: palette.accentText, size: 28),
-          ),
+          KitIconBadge(icon: icon, size: 56),
           const SizedBox(height: 16),
           Text(
             title,

@@ -29,9 +29,10 @@ void main() {
     );
 
     expect(find.text('Hello, Ana'), findsOneWidget);
-    expect(find.text('Aligner 4 of 22'), findsOneWidget);
-    expect(find.text('Day 3 of 7'), findsOneWidget);
-    expect(find.text('Next aligner on Thursday'), findsOneWidget);
+    expect(find.text('Aligner 04/22', findRichText: true), findsOneWidget);
+    expect(find.textContaining('day 3 of 7'), findsOneWidget);
+    expect(find.text('Thursday', findRichText: true), findsOneWidget);
+    expect(find.text('4 days left', findRichText: true), findsOneWidget);
     expect(find.textContaining('22 hours a day'), findsOneWidget);
     expect(find.text('Check in'), findsOneWidget);
   });
@@ -43,7 +44,7 @@ void main() {
     await tester.pumpWidget(
       _wrap(TodayTab(me: me, now: DateTime(2026, 10, 28))),
     );
-    expect(find.text('Next aligner tomorrow'), findsOneWidget);
+    expect(find.text('Tomorrow', findRichText: true), findsOneWidget);
   });
 
   testWidgets('says treatment has not started when therapy is null', (
@@ -56,7 +57,8 @@ void main() {
     expect(find.text('Check in'), findsNothing);
   });
 
-  testWidgets('the tabs load /me and show the unread badge', (tester) async {
+  testWidgets('the tabs load /me and mark unread messages', (tester) async {
+    final handle = tester.ensureSemantics();
     final api = FakeApiClient();
     await tester.pumpWidget(
       MaterialApp(
@@ -68,7 +70,8 @@ void main() {
 
     expect(api.meCalls, 1);
     expect(find.text('Hello, Ana'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
+    expect(find.bySemanticsLabel('Messages (2), new'), findsOneWidget);
+    handle.dispose();
   });
 
   testWidgets('an expired token goes back to the start', (tester) async {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 import '../../state/me_controller.dart';
 import '../../state/session.dart';
 import '../../theme.dart';
 import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
+import 'documents_section.dart';
 import 'home_shell.dart';
 
 class ProfileTab extends StatelessWidget {
@@ -44,6 +46,9 @@ class ProfileTab extends StatelessWidget {
     final patient = me.data!.patient;
     final clinic = patient.clinic;
     final palette = context.shine;
+    final p = context.kit;
+    final phone = clinic.phone;
+    final email = clinic.email;
     return TabPage(
       onRefresh: me.refresh,
       children: [
@@ -51,80 +56,66 @@ class ProfileTab extends StatelessWidget {
           patient.firstName.isEmpty ? 'Profile' : patient.firstName,
           subtitle: patient.statusLabel,
         ),
-        const SectionLabel('Your clinic'),
-        ShineCard(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Column(
-            children: [
-              ListTile(
-                leading: Icon(
-                  Icons.local_hospital_outlined,
-                  color: palette.accentText,
-                ),
-                title: Text(
-                  clinic.name,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                subtitle: clinic.city == null ? null : Text(clinic.city!),
+        KitListGroup(
+          title: 'Your clinic',
+          children: [
+            KitListRow(
+              icon: Icons.local_hospital_outlined,
+              title: clinic.name,
+              detail: clinic.city,
+              highlight: true,
+            ),
+            if (patient.doctorName != null)
+              KitListRow(
+                icon: Icons.person_outline_rounded,
+                title: patient.doctorName!,
+                detail: 'Your dentist',
               ),
-              if (patient.doctorName != null) ...[
-                const Divider(indent: 56),
-                ListTile(
-                  leading: Icon(
-                    Icons.person_outline_rounded,
-                    color: palette.accentText,
-                  ),
-                  title: Text(patient.doctorName!),
-                  subtitle: const Text('Your dentist'),
-                ),
-              ],
-              if (clinic.phone != null && clinic.phone!.isNotEmpty) ...[
-                const Divider(indent: 56),
-                ListTile(
-                  leading: Icon(Icons.call_outlined, color: palette.accentText),
-                  title: Text(clinic.phone!),
-                  subtitle: const Text('Call'),
-                  onTap: () => openContact(
-                    context,
-                    Uri(
-                      scheme: 'tel',
-                      path: clinic.phone!.replaceAll(RegExp(r'[^0-9+]'), ''),
-                    ),
+            if (phone != null && phone.isNotEmpty)
+              KitListRow(
+                icon: Icons.call_outlined,
+                title: phone,
+                detail: 'Call',
+                onTap: () => openContact(
+                  context,
+                  Uri(
+                    scheme: 'tel',
+                    path: phone.replaceAll(RegExp(r'[^0-9+]'), ''),
                   ),
                 ),
-              ],
-              if (clinic.email != null && clinic.email!.isNotEmpty) ...[
-                const Divider(indent: 56),
-                ListTile(
-                  leading: Icon(
-                    Icons.mail_outline_rounded,
-                    color: palette.accentText,
-                  ),
-                  title: Text(clinic.email!),
-                  subtitle: const Text('Email'),
-                  onTap: () => openContact(
-                    context,
-                    Uri(scheme: 'mailto', path: clinic.email!),
-                  ),
+              ),
+            if (email != null && email.isNotEmpty)
+              KitListRow(
+                icon: Icons.mail_outline_rounded,
+                title: email,
+                detail: 'Email',
+                onTap: () =>
+                    openContact(context, Uri(scheme: 'mailto', path: email)),
+              ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        DocumentsSection(me: me),
+        const SizedBox(height: 24),
+        KitTile(
+          key: const Key('disconnect'),
+          onTap: () => _disconnect(context),
+          child: Row(
+            children: [
+              Icon(Icons.logout_rounded, color: p.danger),
+              const SizedBox(width: 14),
+              Text(
+                'Disconnect',
+                style: TextStyle(
+                  color: p.danger,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
                 ),
-              ],
+              ),
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        ShineCard(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: ListTile(
-            key: const Key('disconnect'),
-            leading: const Icon(Icons.logout_rounded, color: Colors.redAccent),
-            title: const Text(
-              'Disconnect',
-              style: TextStyle(color: Colors.redAccent),
-            ),
-            onTap: () => _disconnect(context),
-          ),
-        ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 28),
         const Center(child: Wordmark(size: 18)),
         const SizedBox(height: 4),
         Center(
