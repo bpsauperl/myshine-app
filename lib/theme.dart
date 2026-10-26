@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shine_kit/shine_kit.dart';
 
 /// The patient-facing Shine palette: white and light grey, near-black ink and
 /// one accent, Shine teal.
@@ -105,126 +106,10 @@ extension ShineContext on BuildContext {
 /// Card corner radius used everywhere.
 const double kCardRadius = 22;
 
+/// The app theme comes from the shared Shine kit (Direction C), in Shine
+/// teal, with this app's own palette alongside for the screens that read it.
 ThemeData buildShineTheme(Brightness brightness) {
-  final palette = brightness == Brightness.dark
-      ? ShinePalette.dark
-      : ShinePalette.light;
-  final scheme =
-      ColorScheme.fromSeed(
-        seedColor: ShineColors.teal,
-        brightness: brightness,
-      ).copyWith(
-        primary: palette.accentText,
-        onPrimary: brightness == Brightness.dark
-            ? ShineColors.ink
-            : Colors.white,
-        secondary: ShineColors.teal,
-        surface: palette.card,
-        onSurface: palette.ink,
-      );
-
-  final base = ThemeData(
-    useMaterial3: true,
-    brightness: brightness,
-    colorScheme: scheme,
-    scaffoldBackgroundColor: palette.background,
-    extensions: [palette],
-  );
-
-  final text = base.textTheme.apply(
-    bodyColor: palette.ink,
-    displayColor: palette.ink,
-  );
-
-  return base.copyWith(
-    textTheme: text.copyWith(
-      displaySmall: text.displaySmall?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -1.2,
-        height: 1.08,
-      ),
-      headlineMedium: text.headlineMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.8,
-      ),
-      titleLarge: text.titleLarge?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.4,
-      ),
-      titleMedium: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-    ),
-    appBarTheme: AppBarTheme(
-      backgroundColor: palette.background,
-      foregroundColor: palette.ink,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      centerTitle: false,
-      titleTextStyle: text.titleLarge?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.4,
-      ),
-    ),
-    cardTheme: CardThemeData(
-      color: palette.card,
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(kCardRadius),
-      ),
-    ),
-    filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(
-        backgroundColor: palette.ink,
-        foregroundColor: palette.card,
-        minimumSize: const Size.fromHeight(54),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-      ),
-    ),
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: palette.ink,
-        minimumSize: const Size.fromHeight(54),
-        side: BorderSide(color: palette.hairline),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-      ),
-    ),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: palette.accentText),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: palette.background,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: ShineColors.teal, width: 2),
-      ),
-    ),
-    chipTheme: base.chipTheme.copyWith(
-      backgroundColor: palette.background,
-      selectedColor: palette.accentSoft,
-      side: BorderSide.none,
-      shape: const StadiumBorder(),
-      labelStyle: TextStyle(color: palette.ink, fontWeight: FontWeight.w500),
-    ),
-    navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: palette.card,
-      indicatorColor: palette.accentSoft,
-      elevation: 0,
-      height: 68,
-      labelTextStyle: WidgetStatePropertyAll(
-        TextStyle(
-          fontSize: 11,
-          color: palette.ink,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    ),
-    dividerTheme: DividerThemeData(color: palette.hairline, space: 1),
-  );
+  final kit = kitTheme(KitAccent.myShine, brightness);
+  final palette = brightness == Brightness.dark ? ShinePalette.dark : ShinePalette.light;
+  return kit.copyWith(extensions: [...kit.extensions.values, palette]);
 }
