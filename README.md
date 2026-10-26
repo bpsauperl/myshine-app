@@ -20,7 +20,7 @@ Store details:
 ## API
 
 The app follows the drShine app API **contract v1, section B** (`/api/myshine/v1`) to the letter.
-- Contract: `app-api-contract.md`, section B (myShine app). It lives with the drShine backend; the working copy for this build was `/private/tmp/claude-501/-Users-bpsauperl-code-drshine/fe004631-72c1-4c3b-be70-eb69b86ab21b/scratchpad/app-api-contract.md`.
+- Contract: `app-api-contract.md`, section B (myShine app). A copy is in `docs/app-api-contract.md`.
 - Backend: `~/code/drshine`, in `app/Http/Controllers/Api/MyShineController.php` and `routes/api.php`.
 
 How the app talks to it:
