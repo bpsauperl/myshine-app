@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
+import '../../reminders/reminders.dart';
 import '../../state/me_controller.dart';
 import '../../state/session.dart';
 import '../../theme.dart';
@@ -10,9 +11,14 @@ import 'documents_section.dart';
 import 'home_shell.dart';
 
 class ProfileTab extends StatelessWidget {
-  const ProfileTab({super.key, required this.me});
+  const ProfileTab({
+    super.key,
+    required this.me,
+    this.reminders = const NoReminders(),
+  });
 
   final MeController me;
+  final Reminders reminders;
 
   Future<void> _disconnect(BuildContext context) async {
     final session = SessionScope.of(context);
@@ -95,6 +101,13 @@ class ProfileTab extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
+        KitListGroup(
+          title: 'This phone',
+          children: [
+            _RemindersRow(reminders: reminders, onEnabled: me.refresh),
+          ],
+        ),
+        const SizedBox(height: 14),
         DocumentsSection(me: me),
         const SizedBox(height: 24),
         KitTile(
@@ -125,6 +138,55 @@ class ProfileTab extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Aligner reminders on or off, for this phone.
+class _RemindersRow extends StatefulWidget {
+  const _RemindersRow({required this.reminders, required this.onEnabled});
+
+  final Reminders reminders;
+
+  /// Reloads the schedule, which sets the reminders again.
+  final Future<void> Function() onEnabled;
+
+  @override
+  State<_RemindersRow> createState() => _RemindersRowState();
+}
+
+class _RemindersRowState extends State<_RemindersRow> {
+  bool? _enabled;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.reminders.isEnabled().then((value) {
+      if (mounted) {
+        setState(() => _enabled = value);
+      }
+    });
+  }
+
+  Future<void> _toggle() async {
+    final next = !(_enabled ?? true);
+    setState(() => _enabled = next);
+    await widget.reminders.setEnabled(next);
+    if (next) {
+      await widget.onEnabled();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = _enabled;
+    return KitListRow(
+      key: const Key('reminders'),
+      icon: Icons.notifications_none_rounded,
+      title: 'Aligner reminders',
+      detail: 'On the day you change',
+      state: enabled == null ? null : (enabled ? 'On' : 'Off'),
+      onTap: enabled == null ? null : _toggle,
     );
   }
 }

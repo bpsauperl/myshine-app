@@ -7,6 +7,7 @@ import '../api/api_client.dart';
 import '../api/http_api_client.dart';
 import '../api/models.dart';
 import '../config.dart';
+import '../reminders/reminders.dart';
 
 /// Where the token and the server address are kept.
 abstract class SessionStorage {
@@ -101,6 +102,7 @@ class Session extends ChangeNotifier {
     required this.storage,
     this.clientFactory = defaultApiClientFactory,
     this.serverSettingEnabled = AppConfig.serverSettingEnabled,
+    this.reminders = const NoReminders(),
   });
 
   final SessionStorage storage;
@@ -108,6 +110,9 @@ class Session extends ChangeNotifier {
 
   /// Whether a server saved with [setBaseUrl] is used (development builds).
   final bool serverSettingEnabled;
+
+  /// The aligner reminders on this phone; cleared on disconnecting.
+  final Reminders reminders;
 
   bool _ready = false;
   String _baseUrl = AppConfig.defaultBaseUrl;
@@ -170,6 +175,7 @@ class Session extends ChangeNotifier {
   }
 
   Future<void> _forget() async {
+    await reminders.cancelAll();
     await storage.clearToken();
     _token = null;
     _client = null;

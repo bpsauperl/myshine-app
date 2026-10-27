@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/api/models.dart';
+import 'package:myshine/reminders/reminder_plan.dart';
+import 'package:myshine/reminders/reminders.dart';
 import 'package:myshine/screens/home/photo_camera_screen.dart';
 
 /// Example data only: a made-up patient and clinic.
@@ -276,5 +278,31 @@ class FakeCamera {
       bytes: kTinyPng,
       filename: 'photo-${prompts.length}.png',
     );
+  }
+}
+
+/// Remembers what would be on the phone.
+class FakeReminders implements Reminders {
+  bool enabled = true;
+  List<PlannedReminder> scheduled = const [];
+  int cancelled = 0;
+  int replaced = 0;
+
+  @override
+  Future<bool> isEnabled() async => enabled;
+
+  @override
+  Future<void> setEnabled(bool value) async => enabled = value;
+
+  @override
+  Future<void> replace(List<PlannedReminder> plan) async {
+    replaced++;
+    scheduled = enabled ? plan : const [];
+  }
+
+  @override
+  Future<void> cancelAll() async {
+    cancelled++;
+    scheduled = const [];
   }
 }

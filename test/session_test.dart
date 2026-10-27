@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/api/models.dart';
 import 'package:myshine/config.dart';
+import 'package:myshine/reminders/reminders.dart';
 import 'package:myshine/state/session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -61,28 +62,33 @@ Future<Session> _connected(
   ApiClient api, {
   bool serverSettingEnabled = true,
   String? savedServer,
+  Reminders reminders = const NoReminders(),
 }) async {
   final session = Session(
     storage: MemorySessionStorage(token: 'test-token', baseUrl: savedServer),
     clientFactory: (_, _) => api,
     serverSettingEnabled: serverSettingEnabled,
+    reminders: reminders,
   );
   await session.load();
   return session;
 }
 
 void main() {
-  test('a 401 on any screen forgets the token', () async {
+  test('a 401 on any screen forgets the token and the reminders', () async {
+    final reminders = FakeReminders();
     final session = await _connected(
       _FailingMessagesApi(
         const ApiException('Please connect again.', statusCode: 401),
       ),
+      reminders: reminders,
     );
 
     await expectLater(session.client.messages(), throwsA(isA<ApiException>()));
 
     expect(session.isConnected, isFalse);
     expect(await session.storage.readToken(), isNull);
+    expect(reminders.cancelled, 1);
   });
 
   test('other errors keep the patient connected', () async {

@@ -80,15 +80,21 @@ void main() {
   testWidgets('the tabs load /me and mark unread messages', (tester) async {
     final handle = tester.ensureSemantics();
     final api = FakeApiClient();
+    final reminders = FakeReminders();
     await tester.pumpWidget(
       MaterialApp(
         theme: buildShineTheme(Brightness.light),
-        home: HomeShell(api: api, onUnauthorized: () async {}),
+        home: HomeShell(
+          api: api,
+          onUnauthorized: () async {},
+          reminders: reminders,
+        ),
       ),
     );
     await tester.pumpAndSettle();
 
     expect(api.meCalls, 1);
+    expect(reminders.replaced, 1);
     expect(find.text('Hello, Ana'), findsOneWidget);
     expect(find.bySemanticsLabel('Messages (2), new'), findsOneWidget);
     handle.dispose();

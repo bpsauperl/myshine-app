@@ -7,7 +7,10 @@ import 'package:myshine/theme.dart';
 
 import 'fakes.dart';
 
-Future<(Session, FakeApiClient)> _show(WidgetTester tester) async {
+Future<(Session, FakeApiClient)> _show(
+  WidgetTester tester, {
+  FakeReminders? reminders,
+}) async {
   tester.view.physicalSize = const Size(1170, 2532);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
@@ -15,6 +18,7 @@ Future<(Session, FakeApiClient)> _show(WidgetTester tester) async {
   final session = Session(
     storage: MemorySessionStorage(token: 'test-token'),
     clientFactory: (_, _) => api,
+    reminders: reminders ?? FakeReminders(),
   );
   await session.load();
   final me = MeController(api: api);
@@ -24,7 +28,9 @@ Future<(Session, FakeApiClient)> _show(WidgetTester tester) async {
       session: session,
       child: MaterialApp(
         theme: buildShineTheme(Brightness.light),
-        home: Scaffold(body: ProfileTab(me: me)),
+        home: Scaffold(
+          body: ProfileTab(me: me, reminders: session.reminders),
+        ),
       ),
     ),
   );
@@ -61,5 +67,24 @@ void main() {
 
     expect(session.isConnected, isFalse);
     expect(api.loggedOut, isTrue);
+  });
+
+  testWidgets('aligner reminders can be turned off and on again', (
+    tester,
+  ) async {
+    final reminders = FakeReminders();
+    final (_, api) = await _show(tester, reminders: reminders);
+    await tester.pump();
+    final calls = api.meCalls;
+
+    await tester.tap(find.byKey(const Key('reminders')));
+    await tester.pump();
+    expect(reminders.enabled, isFalse);
+    expect(find.text('Off'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('reminders')));
+    await tester.pump();
+    expect(reminders.enabled, isTrue);
+    expect(api.meCalls, calls + 1);
   });
 }

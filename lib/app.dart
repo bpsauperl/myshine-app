@@ -40,7 +40,11 @@ class _Root extends StatelessWidget {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: session.isConnected
-          ? HomeShell(key: ValueKey(session.baseUrl), api: session.client)
+          ? HomeShell(
+              key: ValueKey(session.baseUrl),
+              api: session.client,
+              reminders: session.reminders,
+            )
           : const WelcomeScreen(),
     );
   }

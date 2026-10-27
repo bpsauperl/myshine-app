@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
+import '../../reminders/reminder_plan.dart';
+import '../../reminders/reminders.dart';
 import '../../state/me_controller.dart';
 import '../../state/session.dart';
 import '../../widgets/common.dart';
@@ -13,9 +15,17 @@ import 'today_tab.dart';
 
 /// The connected app: five tabs over one `/me` load, under the floating tab bar.
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key, required this.api, this.onUnauthorized});
+  const HomeShell({
+    super.key,
+    required this.api,
+    this.onUnauthorized,
+    this.reminders = const NoReminders(),
+  });
 
   final ApiClient api;
+
+  /// Set again from the schedule after every load of `/me`.
+  final Reminders reminders;
 
   /// Defaults to forgetting the session's token.
   final Future<void> Function()? onUnauthorized;
@@ -34,6 +44,13 @@ class _HomeShellState extends State<HomeShell> {
         await SessionScope.of(context).handleUnauthorized();
       }
     },
+    onLoaded: (data) => widget.reminders.replace(
+      planReminders(
+        data.therapy,
+        const EnglishReminderTexts(),
+        now: DateTime.now(),
+      ),
+    ),
   );
   int _index = 0;
 
@@ -89,7 +106,7 @@ class _HomeShellState extends State<HomeShell> {
           PlanTab(me: _me),
           ScheduleTab(me: _me),
           MessagesTab(api: widget.api, active: _index == 3),
-          ProfileTab(me: _me),
+          ProfileTab(me: _me, reminders: widget.reminders),
         ];
         return Scaffold(
           body: Stack(

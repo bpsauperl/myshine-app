@@ -5,9 +5,12 @@ import '../api/models.dart';
 
 /// Loads `GET /me` and keeps it for all tabs.
 class MeController extends ChangeNotifier {
-  MeController({required this.api, this.onUnauthorized});
+  MeController({required this.api, this.onUnauthorized, this.onLoaded});
 
   final ApiClient api;
+
+  /// Called after each successful load (reminders follow the schedule).
+  final void Function(MeData data)? onLoaded;
 
   /// Called when the server says the token no longer works.
   final Future<void> Function()? onUnauthorized;
@@ -26,6 +29,7 @@ class MeController extends ChangeNotifier {
     try {
       _data = await api.me();
       _error = null;
+      onLoaded?.call(_data!);
     } on ApiException catch (e) {
       _error = e;
       if (e.isUnauthorized) {
