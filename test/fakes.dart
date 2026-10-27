@@ -1,11 +1,23 @@
 import 'dart:typed_data';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/api/models.dart';
+import 'package:myshine/l10n/l10n.dart';
 import 'package:myshine/reminders/reminder_plan.dart';
 import 'package:myshine/reminders/reminders.dart';
 import 'package:myshine/screens/home/photo_camera_screen.dart';
+import 'package:myshine/theme.dart';
+
+/// A test app with the app's theme and languages: English unless [locale]
+/// asks for another.
+Widget localized(Widget home, {Locale? locale}) => MaterialApp(
+  theme: buildShineTheme(Brightness.light),
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  locale: locale,
+  home: home,
+);
 
 /// Example data only: a made-up patient and clinic.
 Map<String, dynamic> meJson({

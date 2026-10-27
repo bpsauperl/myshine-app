@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
+import '../../l10n/l10n.dart';
 import '../../reminders/reminder_plan.dart';
 import '../../reminders/reminders.dart';
 import '../../state/me_controller.dart';
@@ -44,13 +45,18 @@ class _HomeShellState extends State<HomeShell> {
         await SessionScope.of(context).handleUnauthorized();
       }
     },
-    onLoaded: (data) => widget.reminders.replace(
-      planReminders(
-        data.therapy,
-        const EnglishReminderTexts(),
-        now: DateTime.now(),
-      ),
-    ),
+    onLoaded: (data) {
+      if (!mounted) {
+        return;
+      }
+      widget.reminders.replace(
+        planReminders(
+          data.therapy,
+          LocalizedReminderTexts(AppLocalizations.of(context)),
+          now: DateTime.now(),
+        ),
+      );
+    },
   );
   int _index = 0;
 
@@ -78,6 +84,7 @@ class _HomeShellState extends State<HomeShell> {
     return ListenableBuilder(
       listenable: _me,
       builder: (context, _) {
+        final l10n = context.l10n;
         final data = _me.data;
         if (data == null) {
           return Scaffold(
@@ -89,9 +96,9 @@ class _HomeShellState extends State<HomeShell> {
                         padding: const EdgeInsets.all(20),
                         child: CalmMessage(
                           icon: Icons.wifi_off_rounded,
-                          title: 'We couldn\'t load myShine',
-                          body: _me.error!.message,
-                          actionLabel: 'Try again',
+                          title: l10n.homeLoadError,
+                          body: l10n.apiError(_me.error!),
+                          actionLabel: l10n.commonTryAgain,
                           onAction: _me.refresh,
                         ),
                       ),
@@ -130,26 +137,28 @@ class _HomeShellState extends State<HomeShell> {
                       index: _index,
                       onSelect: _select,
                       tabs: [
-                        const KitTab(
+                        KitTab(
                           icon: Icons.wb_sunny_outlined,
-                          label: 'Today',
+                          label: l10n.tabToday,
                         ),
-                        const KitTab(
+                        KitTab(
                           icon: Icons.view_in_ar_outlined,
-                          label: 'Plan',
+                          label: l10n.tabPlan,
                         ),
-                        const KitTab(
+                        KitTab(
                           icon: Icons.calendar_month_outlined,
-                          label: 'Schedule',
+                          label: l10n.tabSchedule,
                         ),
                         KitTab(
                           icon: Icons.chat_bubble_outline_rounded,
-                          label: unread > 0 ? 'Messages ($unread)' : 'Messages',
+                          label: unread > 0
+                              ? l10n.tabMessagesUnread(unread)
+                              : l10n.tabMessages,
                           dot: unread > 0,
                         ),
                         KitTab(
                           icon: Icons.person_outline_rounded,
-                          label: 'Profile',
+                          label: l10n.tabProfile,
                           dot: pending > 0,
                         ),
                       ],

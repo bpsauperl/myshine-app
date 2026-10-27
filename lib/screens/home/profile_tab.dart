@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
+import '../../l10n/l10n.dart';
 import '../../reminders/reminders.dart';
 import '../../state/me_controller.dart';
 import '../../state/session.dart';
@@ -22,22 +23,20 @@ class ProfileTab extends StatelessWidget {
 
   Future<void> _disconnect(BuildContext context) async {
     final session = SessionScope.of(context);
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Disconnect myShine?'),
-        content: const Text(
-          'Your plan, schedule and messages will no longer show on this phone. '
-          'To connect again, ask your clinic for a new code.',
-        ),
+        title: Text(l10n.profileDisconnectTitle),
+        content: Text(l10n.profileDisconnectBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Disconnect'),
+            child: Text(l10n.profileDisconnect),
           ),
         ],
       ),
@@ -53,21 +52,22 @@ class ProfileTab extends StatelessWidget {
     final clinic = patient.clinic;
     final palette = context.shine;
     final p = context.kit;
+    final l10n = context.l10n;
     final phone = clinic.phone;
     final email = clinic.email;
     return TabPage(
       onRefresh: me.refresh,
       children: [
         PageTitle(
-          patient.firstName.isEmpty ? 'Profile' : patient.firstName,
+          patient.firstName.isEmpty ? l10n.profileTitle : patient.firstName,
           subtitle: patient.statusLabel,
         ),
         KitListGroup(
-          title: 'Your clinic',
+          title: l10n.profileYourClinic,
           children: [
             KitListRow(
               icon: Icons.local_hospital_outlined,
-              title: clinic.name,
+              title: clinic.name.isEmpty ? l10n.profileYourClinic : clinic.name,
               detail: clinic.city,
               highlight: true,
             ),
@@ -75,13 +75,13 @@ class ProfileTab extends StatelessWidget {
               KitListRow(
                 icon: Icons.person_outline_rounded,
                 title: patient.doctorName!,
-                detail: 'Your dentist',
+                detail: l10n.profileYourDentist,
               ),
             if (phone != null && phone.isNotEmpty)
               KitListRow(
                 icon: Icons.call_outlined,
                 title: phone,
-                detail: 'Call',
+                detail: l10n.profileCall,
                 onTap: () => openContact(
                   context,
                   Uri(
@@ -94,7 +94,7 @@ class ProfileTab extends StatelessWidget {
               KitListRow(
                 icon: Icons.mail_outline_rounded,
                 title: email,
-                detail: 'Email',
+                detail: l10n.profileEmail,
                 onTap: () =>
                     openContact(context, Uri(scheme: 'mailto', path: email)),
               ),
@@ -102,7 +102,7 @@ class ProfileTab extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         KitListGroup(
-          title: 'This phone',
+          title: l10n.profileThisPhone,
           children: [
             _RemindersRow(reminders: reminders, onEnabled: me.refresh),
           ],
@@ -118,7 +118,7 @@ class ProfileTab extends StatelessWidget {
               Icon(Icons.logout_rounded, color: p.danger),
               const SizedBox(width: 14),
               Text(
-                'Disconnect',
+                l10n.profileDisconnect,
                 style: TextStyle(
                   color: p.danger,
                   fontWeight: FontWeight.w600,
@@ -133,7 +133,7 @@ class ProfileTab extends StatelessWidget {
         const SizedBox(height: 4),
         Center(
           child: Text(
-            'Shine clear aligners by SmileLabs',
+            l10n.profileFooter,
             style: TextStyle(color: palette.muted, fontSize: 12),
           ),
         ),
@@ -180,12 +180,15 @@ class _RemindersRowState extends State<_RemindersRow> {
   @override
   Widget build(BuildContext context) {
     final enabled = _enabled;
+    final l10n = context.l10n;
     return KitListRow(
       key: const Key('reminders'),
       icon: Icons.notifications_none_rounded,
-      title: 'Aligner reminders',
-      detail: 'On the day you change',
-      state: enabled == null ? null : (enabled ? 'On' : 'Off'),
+      title: l10n.profileReminders,
+      detail: l10n.profileRemindersDetail,
+      state: enabled == null
+          ? null
+          : (enabled ? l10n.profileOn : l10n.profileOff),
       onTap: enabled == null ? null : _toggle,
     );
   }

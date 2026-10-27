@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme.dart';
 import '../../util/captured_file.dart';
 import 'preview_screen.dart';
@@ -121,9 +122,9 @@ class _SelfieScreenState extends State<SelfieScreen>
       );
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('That didn\'t work. Please try again.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.commonDidNotWork)));
       }
     } finally {
       if (mounted) {
@@ -144,12 +145,13 @@ class _SelfieScreenState extends State<SelfieScreen>
   @override
   Widget build(BuildContext context) {
     final ready = _status == _CameraStatus.ready && _controller != null;
+    final l10n = context.l10n;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Smile photo'),
+        title: Text(l10n.selfieTitle),
       ),
       body: SafeArea(
         child: Column(
@@ -182,9 +184,7 @@ class _SelfieScreenState extends State<SelfieScreen>
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
               child: Text(
-                ready
-                    ? 'Fit your face in the oval and smile, so your teeth sit in the box.'
-                    : 'The photo stays on your phone. Nothing is uploaded.',
+                ready ? l10n.selfieGuide : l10n.selfiePrivate,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white70,
@@ -205,7 +205,7 @@ class _SelfieScreenState extends State<SelfieScreen>
                         foregroundColor: ShineColors.ink,
                       ),
                       onPressed: _showSample,
-                      child: const Text('See a sample preview'),
+                      child: Text(l10n.selfieSample),
                     ),
             ),
           ],
@@ -239,8 +239,8 @@ class _SelfieScreenState extends State<SelfieScreen>
             ),
             child: Text(
               denied
-                  ? 'Allow camera access for myShine in Settings to take your photo.'
-                  : 'Camera unavailable here',
+                  ? context.l10n.selfieDenied
+                  : context.l10n.cameraUnavailable,
               key: const Key('camera-unavailable'),
               textAlign: TextAlign.center,
               style: const TextStyle(
@@ -290,7 +290,7 @@ class _ShutterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Take photo',
+      label: context.l10n.cameraTakePhoto,
       child: GestureDetector(
         onTap: busy ? null : onPressed,
         child: Container(

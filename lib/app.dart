@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'l10n/l10n.dart';
 import 'screens/home/home_shell.dart';
 import 'screens/welcome_screen.dart';
 import 'state/session.dart';
@@ -21,6 +22,9 @@ class MyShineApp extends StatelessWidget {
         theme: buildShineTheme(Brightness.light),
         darkTheme: buildShineTheme(Brightness.dark),
         themeMode: ThemeMode.system,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localeListResolutionCallback: resolveAppLocale,
         home: const _Root(),
       ),
     );

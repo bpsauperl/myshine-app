@@ -2,19 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myshine/screens/home/schedule_tab.dart';
 import 'package:myshine/state/me_controller.dart';
-import 'package:myshine/theme.dart';
 
 import 'fakes.dart';
 
 Future<void> _show(WidgetTester tester, Map<String, dynamic> json) async {
   final me = MeController(api: FakeApiClient(me: json));
   await me.refresh();
-  await tester.pumpWidget(
-    MaterialApp(
-      theme: buildShineTheme(Brightness.light),
-      home: Scaffold(body: ScheduleTab(me: me)),
-    ),
-  );
+  await tester.pumpWidget(localized(Scaffold(body: ScheduleTab(me: me))));
 }
 
 void main() {

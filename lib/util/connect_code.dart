@@ -1,4 +1,8 @@
+import 'dart:ui' show Locale;
+
 import 'package:flutter/services.dart';
+
+import '../l10n/app_localizations.dart';
 
 /// The connect code a clinic gives the patient: 8 characters, shown as
 /// `ABCD-2345`. Codes never use 0, O, 1, I or L, so they are easy to read aloud.
@@ -24,18 +28,19 @@ class ConnectCode {
   }
 
   /// Null when [input] is a complete, well-formed code; otherwise what's wrong,
-  /// in plain words.
-  static String? validate(String input) {
+  /// in plain words ([l10n]'s language, English by default).
+  static String? validate(String input, [AppLocalizations? l10n]) {
+    final words = l10n ?? lookupAppLocalizations(const Locale('en'));
     final code = normalize(input);
     if (code.isEmpty) {
-      return 'Type the code from your clinic.';
+      return words.connectCodeEmpty;
     }
     final confusing = RegExp('[01OIL]').firstMatch(code);
     if (confusing != null) {
-      return 'Codes don\'t use 0, O, 1, I or L. Check the letter "${confusing.group(0)}".';
+      return words.connectCodeConfusing(confusing.group(0)!);
     }
     if (code.length < length) {
-      return 'The code has $length characters.';
+      return words.connectCodeLength(length);
     }
     return null;
   }

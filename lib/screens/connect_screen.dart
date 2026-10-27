@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
 import '../api/api_client.dart';
+import '../l10n/l10n.dart';
 import '../state/session.dart';
 import '../util/connect_code.dart';
 import '../widgets/common.dart';
@@ -26,7 +27,8 @@ class _ConnectScreenState extends State<ConnectScreen> {
   }
 
   Future<void> _connect() async {
-    final problem = ConnectCode.validate(_controller.text);
+    final l10n = context.l10n;
+    final problem = ConnectCode.validate(_controller.text, l10n);
     if (problem != null) {
       setState(() => _error = problem);
       return;
@@ -42,7 +44,9 @@ class _ConnectScreenState extends State<ConnectScreen> {
       navigator.popUntil((route) => route.isFirst);
     } on ApiException catch (e) {
       setState(
-        () => _error = e.statusCode == 422 ? e.messageFor('code') : e.message,
+        () => _error = e.statusCode == 422
+            ? e.messageFor('code')
+            : l10n.apiError(e),
       );
     } finally {
       if (mounted) {
@@ -54,6 +58,7 @@ class _ConnectScreenState extends State<ConnectScreen> {
   @override
   Widget build(BuildContext context) {
     final p = context.kit;
+    final l10n = context.l10n;
     final complete =
         ConnectCode.normalize(_controller.text).length == ConnectCode.length;
     return Scaffold(
@@ -84,16 +89,16 @@ class _ConnectScreenState extends State<ConnectScreen> {
                           alignment: Alignment.centerLeft,
                           child: KitRoundButton(
                             icon: Icons.arrow_back_rounded,
-                            label: 'Back',
+                            label: l10n.commonBack,
                             onPressed: () => Navigator.of(context).maybePop(),
                           ),
                         ),
                         const SizedBox(height: 28),
-                        const KitHeadline(
-                          title: 'Your clinic',
-                          muted: 'has a key for you.',
+                        KitHeadline(
+                          title: l10n.connectTitle,
+                          muted: l10n.connectTitleMuted,
                           size: 44,
-                          body: 'Type the 8-character code from your clinic. Your plan, aligners and messages open right away.',
+                          body: l10n.connectBody,
                         ),
                         const SizedBox(height: 28),
                         KitTile(
@@ -106,7 +111,7 @@ class _ConnectScreenState extends State<ConnectScreen> {
                                 children: [
                                   const Wordmark(size: 16),
                                   Text(
-                                    ' pass',
+                                    ' ${l10n.connectPass}',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
@@ -168,12 +173,12 @@ class _ConnectScreenState extends State<ConnectScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Works once',
+                                    l10n.connectWorksOnce,
                                     style: KitType.label(color: p.secondary)
                                         .copyWith(fontSize: 12),
                                   ),
                                   Text(
-                                    'Valid 14 days',
+                                    l10n.connectValidDays(14),
                                     style: KitType.label(color: p.secondary)
                                         .copyWith(fontSize: 12),
                                   ),
@@ -190,15 +195,14 @@ class _ConnectScreenState extends State<ConnectScreen> {
                         children: [
                           KitButton(
                             key: const Key('connect-button'),
-                            label: 'Connect',
+                            label: l10n.connectButton,
                             trailingIcon: Icons.arrow_forward_rounded,
                             busy: _busy,
                             onPressed: complete ? _connect : null,
                           ),
                           const SizedBox(height: 14),
                           Text(
-                            'Private between you and your clinic. No password. '
-                            'No code? Ask your clinic for one.',
+                            l10n.connectFooter,
                             textAlign: TextAlign.center,
                             style: KitType.label(color: p.secondary),
                           ),

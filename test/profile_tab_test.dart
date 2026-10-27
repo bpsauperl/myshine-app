@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:myshine/screens/home/profile_tab.dart';
 import 'package:myshine/state/me_controller.dart';
 import 'package:myshine/state/session.dart';
-import 'package:myshine/theme.dart';
 
 import 'fakes.dart';
 
@@ -26,9 +25,8 @@ Future<(Session, FakeApiClient)> _show(
   await tester.pumpWidget(
     SessionScope(
       session: session,
-      child: MaterialApp(
-        theme: buildShineTheme(Brightness.light),
-        home: Scaffold(
+      child: localized(
+        Scaffold(
           body: ProfileTab(me: me, reminders: session.reminders),
         ),
       ),

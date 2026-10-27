@@ -1,4 +1,5 @@
 import '../api/models.dart';
+import '../l10n/app_localizations.dart';
 import '../util/dates.dart';
 
 /// One reminder the phone shows at [at] (local time).
@@ -90,6 +91,29 @@ List<PlannedReminder> planReminders(
 DateTime _at(DateTime day, int hour) =>
     DateTime(day.year, day.month, day.day, hour);
 
+/// The reminders in the app's language.
+class LocalizedReminderTexts implements ReminderTexts {
+  const LocalizedReminderTexts(this.l10n);
+
+  final AppLocalizations l10n;
+
+  @override
+  String changeTitle(int aligner) => l10n.reminderChangeTitle(aligner);
+
+  @override
+  String changeBody(int aligner) => l10n.reminderChangeBody(aligner);
+
+  @override
+  String checkInBody(int aligner) => l10n.reminderCheckInBody(aligner);
+
+  @override
+  String lateTitle(int aligner) => l10n.reminderLateTitle(aligner);
+
+  @override
+  String lateBody(int aligner) => l10n.reminderLateBody;
+}
+
+/// English reminders without a `BuildContext` (tests).
 class EnglishReminderTexts implements ReminderTexts {
   const EnglishReminderTexts();
 

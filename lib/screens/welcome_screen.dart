@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
 import '../config.dart';
+import '../l10n/l10n.dart';
 import '../state/session.dart';
 import '../widgets/common.dart';
 import 'connect_screen.dart';
@@ -16,6 +17,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.kit;
+    final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -65,7 +67,7 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'by SmileLabs',
+                            l10n.welcomeBySmileLabs,
                             style: KitType.label(color: p.secondary).copyWith(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -74,37 +76,35 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const KitArchHero(height: 280),
-                    const KitHeadline(
-                      eyebrow: 'Shine clear aligners',
-                      title: 'Your smile,',
-                      muted: 'revealed.',
+                    KitArchHero(height: 280, semanticLabel: l10n.archHeroLabel),
+                    KitHeadline(
+                      eyebrow: l10n.welcomeEyebrow,
+                      title: l10n.welcomeTitle,
+                      muted: l10n.welcomeTitleMuted,
                       size: 56,
-                      body: 'See your new smile in a minute. Then follow every aligner, day by day, with your clinic.',
+                      body: l10n.welcomeBody,
                     ),
                     const SizedBox(height: 28),
-                    Row(
+                    // Stacked, so every language fits on the buttons.
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: KitButton(
-                            key: const Key('welcome-simulate'),
-                            label: 'See your new smile',
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const SelfieScreen(),
-                              ),
+                        KitButton(
+                          key: const Key('welcome-simulate'),
+                          label: l10n.welcomeSimulate,
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const SelfieScreen(),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: KitButton.secondary(
-                            key: const Key('welcome-code'),
-                            label: 'Clinic code',
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const ConnectScreen(),
-                              ),
+                        const SizedBox(height: 10),
+                        KitButton.secondary(
+                          key: const Key('welcome-code'),
+                          label: l10n.welcomeClinicCode,
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const ConnectScreen(),
                             ),
                           ),
                         ),

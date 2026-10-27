@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../api/models.dart';
+import '../../l10n/l10n.dart';
 import '../../theme.dart';
 import '../../util/captured_file.dart';
 
@@ -168,9 +169,9 @@ class _PhotoCameraScreenState extends State<PhotoCameraScreen>
       Navigator.of(context).pop(PhotoUpload(bytes: bytes, filename: name));
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('That didn\'t work. Please try again.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.commonDidNotWork)));
       }
     } finally {
       if (mounted) {
@@ -191,7 +192,7 @@ class _PhotoCameraScreenState extends State<PhotoCameraScreen>
         actions: [
           if (ready && _cameras.length > 1)
             IconButton(
-              tooltip: 'Switch camera',
+              tooltip: context.l10n.cameraSwitch,
               onPressed: _capturing ? null : _switchCamera,
               icon: const Icon(Icons.cameraswitch_rounded),
             ),
@@ -256,8 +257,8 @@ class _PhotoCameraScreenState extends State<PhotoCameraScreen>
           padding: const EdgeInsets.all(24),
           child: Text(
             _status == _CameraStatus.denied
-                ? 'Allow camera access for myShine in Settings to add a photo.'
-                : 'Camera unavailable here',
+                ? context.l10n.cameraDenied
+                : context.l10n.cameraUnavailable,
             key: const Key('camera-unavailable'),
             textAlign: TextAlign.center,
             style: const TextStyle(
@@ -306,7 +307,7 @@ class _ShutterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Take photo',
+      label: context.l10n.cameraTakePhoto,
       child: GestureDetector(
         onTap: busy ? null : onPressed,
         child: Container(

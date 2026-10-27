@@ -3,14 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/api/models.dart';
 import 'package:myshine/screens/home/check_in_card.dart';
-import 'package:myshine/theme.dart';
 
 import 'fakes.dart';
 
-Widget _wrap(Widget child) => MaterialApp(
-  theme: buildShineTheme(Brightness.light),
-  home: Scaffold(body: SingleChildScrollView(child: child)),
-);
+Widget _wrap(Widget child) =>
+    localized(Scaffold(body: SingleChildScrollView(child: child)));
 
 /// Aligner 5 is due on 29 Oct (example data).
 CheckInState _state({int lateDays = 0}) => CheckInState(

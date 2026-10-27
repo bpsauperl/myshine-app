@@ -46,12 +46,13 @@ class Clinic {
   const Clinic({required this.name, this.phone, this.email, this.city});
 
   factory Clinic.fromJson(Map<String, dynamic> json) => Clinic(
-    name: _string(json['name']) ?? 'Your clinic',
+    name: _string(json['name']) ?? '',
     phone: _string(json['phone']),
     email: _string(json['email']),
     city: _string(json['city']),
   );
 
+  /// Empty when the server doesn't say; the app then shows "Your clinic".
   final String name;
   final String? phone;
   final String? email;
@@ -420,39 +421,19 @@ class CheckInDraft {
 }
 
 /// The five intraoral views a check-in can carry, in the order shown.
+/// Their names and hints are in the app's words (`intraoralLabel`,
+/// `intraoralHint` in `l10n/l10n.dart`).
 enum IntraoralView {
-  front(
-    'front',
-    'Front',
-    'Bite together and smile wide, so all front teeth show.',
-  ),
-  right(
-    'right',
-    'Right',
-    'Bite together, pull your right cheek back and turn a little.',
-  ),
-  left(
-    'left',
-    'Left',
-    'Bite together, pull your left cheek back and turn a little.',
-  ),
-  upper(
-    'upper',
-    'Upper',
-    'Tilt your head back and open wide to show your upper teeth.',
-  ),
-  lower(
-    'lower',
-    'Lower',
-    'Tilt your head down and open wide to show your lower teeth.',
-  );
+  front('front'),
+  right('right'),
+  left('left'),
+  upper('upper'),
+  lower('lower');
 
-  const IntraoralView(this.key, this.label, this.hint);
+  const IntraoralView(this.key);
 
   /// The API's word, as in `photos[front]`.
   final String key;
-  final String label;
-  final String hint;
 }
 
 /// A photo taken in the app, ready to upload with a check-in or message.

@@ -3,6 +3,7 @@ import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
 import '../../api/models.dart';
+import '../../l10n/l10n.dart';
 import '../../theme.dart';
 import '../../util/dates.dart';
 import '../../widgets/common.dart';
@@ -10,20 +11,20 @@ import '../../widgets/photo_thumb.dart';
 import 'photo_camera_screen.dart';
 
 /// The fit choices, in the API's words and the patient's.
-const Map<String, String> kFitOptions = {
-  'seated': 'Fits well',
-  'loose': 'Not fully seated',
-  'tight': 'Very tight',
-  'damaged': 'Damaged or lost',
+Map<String, String> fitOptions(AppLocalizations l10n) => {
+  'seated': l10n.checkInFitSeated,
+  'loose': l10n.checkInFitLoose,
+  'tight': l10n.checkInFitTight,
+  'damaged': l10n.checkInFitDamaged,
 };
 
 /// Fits where a photo helps the clinic most.
 const Set<String> kFitsAskingForPhotos = {'loose', 'tight', 'damaged'};
 
-const Map<String, String> kComfortOptions = {
-  'none': 'None',
-  'mild': 'Mild',
-  'strong': 'Strong',
+Map<String, String> comfortOptions(AppLocalizations l10n) => {
+  'none': l10n.checkInComfortNone,
+  'mild': l10n.checkInComfortMild,
+  'strong': l10n.checkInComfortStrong,
 };
 
 /// The aligner change: when check-in is on, the patient confirms they put in
@@ -96,14 +97,13 @@ class _CheckInCardState extends State<CheckInCard> {
 
   Future<void> _send() async {
     final fit = _fit;
+    final l10n = context.l10n;
     if (!_switched) {
-      setState(
-        () => _error = 'Confirm that you have put in aligner $_aligner.',
-      );
+      setState(() => _error = l10n.checkInConfirmError(_aligner));
       return;
     }
     if (fit == null) {
-      setState(() => _error = 'Choose how aligner $_aligner fits.');
+      setState(() => _error = l10n.checkInChooseFitError(_aligner));
       return;
     }
     setState(() {
@@ -130,7 +130,7 @@ class _CheckInCardState extends State<CheckInCard> {
       });
       widget.onSent?.call(checkIn);
     } on ApiException catch (e) {
-      setState(() => _error = e.message);
+      setState(() => _error = l10n.apiError(e));
     } finally {
       if (mounted) {
         setState(() => _sending = false);
@@ -139,9 +139,13 @@ class _CheckInCardState extends State<CheckInCard> {
   }
 
   Future<void> _takePhoto(IntraoralView view) async {
+    final l10n = context.l10n;
     final photo = await widget._takePhoto(
       context,
-      PhotoPrompt(title: '${view.label} photo', hint: view.hint),
+      PhotoPrompt(
+        title: l10n.checkInPhotoTitle(l10n.intraoralLabel(view)),
+        hint: l10n.intraoralHint(view),
+      ),
     );
     if (photo == null || !mounted) {
       return;
@@ -164,6 +168,7 @@ class _CheckInCardState extends State<CheckInCard> {
 
   Widget _upcoming(BuildContext context) {
     final kit = context.kit;
+    final l10n = context.l10n;
     final dueOn = widget.checkIn.dueOn;
     final waiting = _sentAligner != null && _sentAligner! >= _aligner;
     final thanks = _sentAligner;
@@ -181,7 +186,7 @@ class _CheckInCardState extends State<CheckInCard> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Aligner $thanks it is. Thank you!',
+                    l10n.checkInThanks(thanks),
                     style: KitType.body(color: kit.ink)
                         .copyWith(fontWeight: FontWeight.w600),
                   ),
@@ -192,19 +197,22 @@ class _CheckInCardState extends State<CheckInCard> {
           ],
           if (!waiting) ...[
             Text(
-              'Your check-in',
+              l10n.checkInEyebrow,
               style: KitType.eyebrow(color: kit.accentText),
             ),
             const SizedBox(height: 4),
             Text(
               dueOn == null
-                  ? 'Next: aligner $_aligner'
-                  : 'Aligner $_aligner ${relativeDay(dueOn, now: widget.now)}',
+                  ? l10n.checkInNext(_aligner)
+                  : l10n.checkInAlignerWhen(
+                      _aligner,
+                      relativeDay(l10n, dueOn, now: widget.now),
+                    ),
               style: KitType.title(color: kit.ink).copyWith(fontSize: 22),
             ),
             const SizedBox(height: 6),
             Text(
-              'When you put it in, check in here. Your schedule follows the day you change.',
+              l10n.checkInUpcomingBody,
               style: KitType.body(color: kit.secondary),
             ),
             Align(
@@ -215,12 +223,12 @@ class _CheckInCardState extends State<CheckInCard> {
                   _early = true;
                   _sentAligner = null;
                 }),
-                child: Text('I\'ve switched to aligner $_aligner already'),
+                child: Text(l10n.checkInEarly(_aligner)),
               ),
             ),
           ] else
             Text(
-              'Your clinic sees your check-in.',
+              l10n.checkInClinicSees,
               style: KitType.body(color: kit.secondary),
             ),
         ],
@@ -231,13 +239,16 @@ class _CheckInCardState extends State<CheckInCard> {
   Widget _form(BuildContext context) {
     final palette = context.shine;
     final kit = context.kit;
+    final l10n = context.l10n;
     final late = widget.checkIn.lateDays;
     final dueOn = widget.checkIn.dueOn;
-    final status = late > 0
-        ? 'Due ${late == 1 ? 'yesterday' : '$late days ago'}. Check in when you\'ve changed.'
+    final status = late == 1
+        ? l10n.checkInDueYesterday
+        : late > 1
+        ? l10n.checkInDueDaysAgo(late)
         : dueOn == null
         ? null
-        : 'Due ${relativeDay(dueOn, now: widget.now)}.';
+        : l10n.checkInDue(relativeDay(l10n, dueOn, now: widget.now));
     return ShineCard(
       key: const Key('check-in-form'),
       color: kit.inset,
@@ -245,12 +256,12 @@ class _CheckInCardState extends State<CheckInCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Your check-in',
+            l10n.checkInEyebrow,
             style: KitType.eyebrow(color: palette.accentText),
           ),
           const SizedBox(height: 6),
           Text(
-            'Switch to aligner $_aligner',
+            l10n.checkInSwitchTitle(_aligner),
             style: KitType.title(color: palette.ink).copyWith(fontSize: 26),
           ),
           if (status != null) ...[
@@ -275,7 +286,7 @@ class _CheckInCardState extends State<CheckInCard> {
                       _error = null;
                     }),
               title: Text(
-                'I\'ve put in aligner $_aligner',
+                l10n.checkInSwitchedLabel(_aligner),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: palette.ink,
@@ -287,12 +298,12 @@ class _CheckInCardState extends State<CheckInCard> {
             ),
           ),
           const SizedBox(height: 20),
-          _Label('How does aligner $_aligner fit?'),
+          _Label(l10n.checkInFitQuestion(_aligner)),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final entry in kFitOptions.entries)
+              for (final entry in fitOptions(l10n).entries)
                 ChoiceChip(
                   key: Key('fit-${entry.key}'),
                   label: Text(entry.value),
@@ -314,11 +325,11 @@ class _CheckInCardState extends State<CheckInCard> {
             ],
           ),
           const SizedBox(height: 20),
-          _Label('Discomfort'),
+          _Label(l10n.checkInDiscomfort),
           Wrap(
             spacing: 8,
             children: [
-              for (final entry in kComfortOptions.entries)
+              for (final entry in comfortOptions(l10n).entries)
                 ChoiceChip(
                   key: Key('comfort-${entry.key}'),
                   label: Text(entry.value),
@@ -348,7 +359,7 @@ class _CheckInCardState extends State<CheckInCard> {
             onRemove: (view) => setState(() => _photos.remove(view)),
           ),
           const SizedBox(height: 20),
-          _Label('Note for your clinic'),
+          _Label(l10n.checkInNoteLabel),
           TextField(
             key: const Key('check-in-notes'),
             controller: _notes,
@@ -357,8 +368,8 @@ class _CheckInCardState extends State<CheckInCard> {
             maxLines: 5,
             maxLength: 2000,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              hintText: 'Anything you\'d like them to know (optional)',
+            decoration: InputDecoration(
+              hintText: l10n.checkInNoteHint,
               counterText: '',
             ),
           ),
@@ -373,7 +384,9 @@ class _CheckInCardState extends State<CheckInCard> {
           FilledButton(
             key: const Key('check-in-send'),
             onPressed: _sending ? null : _send,
-            child: Text(_sending ? 'Sending…' : 'Check in aligner $_aligner'),
+            child: Text(
+              _sending ? l10n.checkInSending : l10n.checkInSend(_aligner),
+            ),
           ),
         ],
       ),
@@ -426,14 +439,13 @@ class _PhotosSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final kit = context.kit;
-    final hint = asking
-        ? 'Photos of your teeth with the aligner in help your clinic see what\'s wrong.'
-        : 'Optional. Photos of your teeth with the aligner in. Only your clinic sees them.';
+    final l10n = context.l10n;
+    final hint = asking ? l10n.checkInPhotosAsking : l10n.checkInPhotosOptional;
     return Column(
       key: const Key('check-in-photos'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Label('Photos'),
+        _Label(l10n.checkInPhotos),
         if (!cameraSupported)
           Container(
             key: const Key('photos-unavailable'),
@@ -449,7 +461,7 @@ class _PhotosSection extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'You can add photos of your teeth in the myShine app on your phone.',
+                    l10n.checkInPhotosWebOnly,
                     style: KitType.label(color: kit.secondary),
                   ),
                 ),
@@ -473,13 +485,13 @@ class _PhotosSection extends StatelessWidget {
                 photos[view] == null
                     ? _TakePhotoTile(
                         key: Key('photo-take-${view.key}'),
-                        label: view.label,
+                        label: l10n.intraoralLabel(view),
                         onPressed: enabled ? () => onTake(view) : null,
                       )
                     : PhotoThumb(
                         key: Key('photo-${view.key}'),
                         bytes: photos[view]!.bytes,
-                        label: view.label,
+                        label: l10n.intraoralLabel(view),
                         onRemove: enabled ? () => onRemove(view) : null,
                       ),
             ],
@@ -501,7 +513,7 @@ class _TakePhotoTile extends StatelessWidget {
     final kit = context.kit;
     return Semantics(
       button: true,
-      label: 'Take the $label photo',
+      label: context.l10n.checkInTakePhoto(label),
       excludeSemantics: true,
       child: Material(
         color: kit.tile,

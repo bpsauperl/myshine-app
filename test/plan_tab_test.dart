@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myshine/screens/home/plan_tab.dart';
 import 'package:myshine/state/me_controller.dart';
-import 'package:myshine/theme.dart';
 
 import 'fakes.dart';
 
@@ -11,12 +10,7 @@ Future<void> _show(WidgetTester tester, {required bool shared}) async {
     api: FakeApiClient(me: meJson(planShared: shared)),
   );
   await me.refresh();
-  await tester.pumpWidget(
-    MaterialApp(
-      theme: buildShineTheme(Brightness.light),
-      home: Scaffold(body: PlanTab(me: me)),
-    ),
-  );
+  await tester.pumpWidget(localized(Scaffold(body: PlanTab(me: me))));
 }
 
 void main() {

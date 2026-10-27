@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
+import '../../l10n/l10n.dart';
 import '../../state/me_controller.dart';
 import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
@@ -16,11 +17,12 @@ class PlanTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final plan = me.data!.plan;
     final p = context.kit;
+    final l10n = context.l10n;
     return TabPage(
       onRefresh: me.refresh,
       children: [
-        const PageTitle('Your plan'),
-        const KitArchHero(height: 220, semanticLabel: 'Your treatment plan'),
+        PageTitle(l10n.planTitle),
+        KitArchHero(height: 220, semanticLabel: l10n.planHeroLabel),
         const SizedBox(height: 8),
         if (plan.shared)
           KitTile(
@@ -31,23 +33,23 @@ class PlanTab extends StatelessWidget {
               children: [
                 Text(
                   plan.series == null
-                      ? 'In 3D'
-                      : 'Series ${plan.series} · in 3D',
+                      ? l10n.planIn3d
+                      : l10n.planSeriesIn3d(plan.series!),
                   style: KitType.eyebrow(color: p.accentText),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Every step to your new smile.',
+                  l10n.planCardTitle,
                   style: KitType.title(color: p.ink).copyWith(fontSize: 26),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'See how your teeth move, aligner by aligner, from today to the end.',
+                  l10n.planCardBody,
                   style: KitType.body(color: p.secondary),
                 ),
                 const SizedBox(height: 18),
                 KitButton(
-                  label: 'Open your plan',
+                  label: l10n.planOpen,
                   trailingIcon: Icons.arrow_forward_rounded,
                   onPressed: () => openInBrowserView(context, plan.url!),
                 ),
@@ -55,11 +57,11 @@ class PlanTab extends StatelessWidget {
             ),
           )
         else
-          const CalmMessage(
-            key: Key('plan-not-shared'),
+          CalmMessage(
+            key: const Key('plan-not-shared'),
             icon: Icons.view_in_ar_outlined,
-            title: 'Your clinic will share your plan here.',
-            body: 'When your dentist has prepared your plan, you can see it in 3D right here.',
+            title: l10n.planNotSharedTitle,
+            body: l10n.planNotSharedBody,
           ),
       ],
     );

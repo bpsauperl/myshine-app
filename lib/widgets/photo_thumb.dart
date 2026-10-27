@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
+import '../l10n/l10n.dart';
+
 const double kPhotoThumbSize = 84;
 
 /// A square photo not yet sent, with an optional caption and a remove button.
@@ -63,7 +65,9 @@ class PhotoThumb extends StatelessWidget {
             right: 4,
             child: Semantics(
               button: true,
-              label: label == null ? 'Remove photo' : 'Remove the $label photo',
+              label: label == null
+                  ? context.l10n.photoRemove
+                  : context.l10n.photoRemoveNamed(label!),
               child: GestureDetector(
                 onTap: onRemove,
                 child: Container(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/models.dart';
+import '../../l10n/l10n.dart';
 import '../../state/me_controller.dart';
 import '../../theme.dart';
 import '../../util/dates.dart';
@@ -22,28 +23,29 @@ class ScheduleTab extends StatelessWidget {
           checkIn.aligner!: checkIn,
     };
     final palette = context.shine;
+    final l10n = context.l10n;
     if (therapy == null || therapy.rows.isEmpty) {
       return TabPage(
         onRefresh: me.refresh,
-        children: const [
-          PageTitle('Schedule'),
+        children: [
+          PageTitle(l10n.tabSchedule),
           CalmMessage(
             icon: Icons.calendar_month_outlined,
-            title: 'No schedule yet',
-            body:
-                'Your aligner schedule shows here once your treatment starts.',
+            title: l10n.scheduleEmptyTitle,
+            body: l10n.scheduleEmptyBody,
           ),
         ],
       );
     }
+    final aligners = l10n.scheduleAligners(therapy.total);
     return TabPage(
       onRefresh: me.refresh,
       children: [
         PageTitle(
-          'Schedule',
+          l10n.tabSchedule,
           subtitle: therapy.series == null
-              ? '${therapy.total} aligners'
-              : 'Series ${therapy.series} · ${therapy.total} aligners',
+              ? aligners
+              : l10n.scheduleSeries(therapy.series!, aligners),
         ),
         _Figures(therapy: therapy),
         const SizedBox(height: 12),
@@ -71,7 +73,7 @@ class ScheduleTab extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Your last aligner ends on ${longDate(therapy.endsOn!)}.',
+                    l10n.scheduleLastEnds(longDate(l10n, therapy.endsOn!)),
                     style: TextStyle(
                       color: palette.ink,
                       fontWeight: FontWeight.w600,
@@ -96,6 +98,7 @@ class _Figures extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.kit;
+    final l10n = context.l10n;
     final done = therapy.rows
         .where((row) => row.state == AlignerState.done)
         .length;
@@ -127,13 +130,13 @@ class _Figures extends StatelessWidget {
       child: Row(
         children: [
           figure(
-            'Started',
-            therapy.started == null ? '—' : shortDate(therapy.started!),
+            l10n.scheduleStarted,
+            therapy.started == null ? '—' : shortDate(l10n, therapy.started!),
           ),
-          figure('Done', '$percent %', accent: true),
+          figure(l10n.scheduleDone, '$percent %', accent: true),
           figure(
-            'Last aligner',
-            therapy.endsOn == null ? '—' : shortDate(therapy.endsOn!),
+            l10n.commonLastAligner,
+            therapy.endsOn == null ? '—' : shortDate(l10n, therapy.endsOn!),
           ),
         ],
       ),
@@ -152,13 +155,14 @@ class _AlignerRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.shine;
+    final l10n = context.l10n;
     final isNow = row.state == AlignerState.now;
     final isDone = row.state == AlignerState.done;
     final from = row.from;
     final to = row.to;
     final dates = from != null && to != null
-        ? '${shortDate(from)} – ${shortDate(to)}'
-        : '${row.days} days';
+        ? '${shortDate(l10n, from)} – ${shortDate(l10n, to)}'
+        : l10n.scheduleDays(row.days);
     return Opacity(
       opacity: isDone ? 0.45 : 1,
       child: Container(
@@ -197,7 +201,7 @@ class _AlignerRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Aligner ${row.aligner}',
+                    l10n.commonAlignerNumber('${row.aligner}'),
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
@@ -210,7 +214,7 @@ class _AlignerRow extends StatelessWidget {
             ),
             if (isNow)
               Text(
-                'Today',
+                l10n.scheduleNow,
                 style: TextStyle(
                   color: palette.accentText,
                   fontWeight: FontWeight.w700,
@@ -232,14 +236,13 @@ class _CheckedIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.kit;
+    final l10n = context.l10n;
     final at = checkIn.at;
     final late = checkIn.lateDays;
-    final when = at == null ? 'Checked in' : 'Checked in ${shortDate(at)}';
-    final timing = late == 0
-        ? 'on time'
-        : late == 1
-        ? '1 day late'
-        : '$late days late';
+    final when = at == null
+        ? l10n.scheduleCheckedIn
+        : l10n.scheduleCheckedInOn(shortDate(l10n, at));
+    final timing = late == 0 ? l10n.scheduleOnTime : l10n.commonDaysLate(late);
     return Padding(
       key: Key('checked-in-${checkIn.aligner}'),
       padding: const EdgeInsets.only(top: 2),

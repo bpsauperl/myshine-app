@@ -81,10 +81,12 @@ class HttpApiClient implements ApiClient {
     } on TimeoutException {
       throw const ApiException(
         'The connection is slow. Please try again in a moment.',
+        failure: ApiFailure.slow,
       );
     } catch (_) {
       throw const ApiException(
         'We couldn\'t reach myShine. Check your internet connection.',
+        failure: ApiFailure.offline,
       );
     }
 
@@ -119,14 +121,28 @@ class HttpApiClient implements ApiClient {
     final serverMessage = json['message'] is String
         ? json['message'] as String
         : null;
-    final message = switch (status) {
-      401 => 'Please connect with your clinic again.',
-      403 => 'This isn\'t available for your account.',
-      429 => 'Too many tries. Please wait a few minutes and try again.',
-      >= 500 => 'Something went wrong on our side. Please try again later.',
+    final failure = switch (status) {
+      401 => ApiFailure.unauthorized,
+      403 => ApiFailure.forbidden,
+      429 => ApiFailure.tooManyTries,
+      >= 500 => ApiFailure.server,
+      _ => serverMessage == null ? ApiFailure.unknown : null,
+    };
+    final message = switch (failure) {
+      ApiFailure.unauthorized => 'Please connect with your clinic again.',
+      ApiFailure.forbidden => 'This isn\'t available for your account.',
+      ApiFailure.tooManyTries =>
+        'Too many tries. Please wait a few minutes and try again.',
+      ApiFailure.server =>
+        'Something went wrong on our side. Please try again later.',
       _ => serverMessage ?? 'Something went wrong. Please try again.',
     };
-    return ApiException(message, statusCode: status, errors: errors);
+    return ApiException(
+      message,
+      statusCode: status,
+      errors: errors,
+      failure: failure,
+    );
   }
 
   @override
@@ -141,7 +157,10 @@ class HttpApiClient implements ApiClient {
     );
     final newToken = json['token'];
     if (newToken is! String || newToken.isEmpty) {
-      throw const ApiException('Something went wrong. Please try again.');
+      throw const ApiException(
+        'Something went wrong. Please try again.',
+        failure: ApiFailure.unknown,
+      );
     }
     token = newToken;
     return ConnectResult(

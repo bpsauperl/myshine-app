@@ -6,6 +6,7 @@ import 'package:shine_kit/shine_kit.dart';
 import '../../api/api_client.dart';
 import '../../api/models.dart';
 import '../../config.dart';
+import '../../l10n/l10n.dart';
 import '../../theme.dart';
 import '../../util/dates.dart';
 import '../../widgets/common.dart';
@@ -120,7 +121,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
       }
     } on ApiException catch (e) {
       if (mounted) {
-        setState(() => _error = e.message);
+        setState(() => _error = context.l10n.apiError(e));
       }
     }
   }
@@ -157,7 +158,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
     } on ApiException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+            .showSnackBar(SnackBar(content: Text(context.l10n.apiError(e))));
       }
     } finally {
       if (mounted) {
@@ -167,12 +168,10 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
   }
 
   Future<void> _attachPhoto() async {
+    final l10n = context.l10n;
     final photo = await widget._takePhoto(
       context,
-      const PhotoPrompt(
-        title: 'Photo for your clinic',
-        hint: 'Take a clear photo in good light. It\'s sent with your message.',
-      ),
+      PhotoPrompt(title: l10n.messagesPhotoTitle, hint: l10n.messagesPhotoHint),
     );
     if (photo == null || !mounted || _attachments.length >= maxMessagePhotos) {
       return;
@@ -183,6 +182,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final messages = _messages;
+    final l10n = context.l10n;
     final canAttach =
         widget._cameraSupported && _attachments.length < maxMessagePhotos;
     return SafeArea(
@@ -192,13 +192,13 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
           constraints: const BoxConstraints(maxWidth: 640),
           child: Column(
             children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 12, 20, 0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: PageTitle(
-                    'Messages',
-                    subtitle: 'Write to your clinic. They usually answer within a working day.',
+                    l10n.messagesTitle,
+                    subtitle: l10n.messagesSubtitle,
                   ),
                 ),
               ),
@@ -213,9 +213,9 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                             if (_error != null)
                               CalmMessage(
                                 icon: Icons.wifi_off_rounded,
-                                title: 'Messages didn\'t load',
+                                title: l10n.messagesLoadError,
                                 body: _error,
-                                actionLabel: 'Try again',
+                                actionLabel: l10n.commonTryAgain,
                                 onAction: _load,
                               )
                             else
@@ -231,11 +231,11 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                       ? ListView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.all(16),
-                          children: const [
+                          children: [
                             CalmMessage(
                               icon: Icons.chat_bubble_outline_rounded,
-                              title: 'No messages yet',
-                              body: 'Questions about your aligners? Write to your clinic here.',
+                              title: l10n.messagesEmptyTitle,
+                              body: l10n.messagesEmptyBody,
                             ),
                           ],
                         )
@@ -282,7 +282,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                       IconButton(
                         key: const Key('message-attach'),
                         onPressed: _sending || !canAttach ? null : _attachPhoto,
-                        tooltip: 'Add a photo',
+                        tooltip: l10n.messagesAddPhoto,
                         color: context.kit.accentText,
                         style: IconButton.styleFrom(
                           minimumSize: const Size(46, 46),
@@ -300,7 +300,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                         maxLength: 4000,
                         textCapitalization: TextCapitalization.sentences,
                         decoration: InputDecoration(
-                          hintText: 'Message your clinic',
+                          hintText: l10n.messagesInputHint,
                           counterText: '',
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(
@@ -335,7 +335,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                     IconButton.filled(
                       key: const Key('message-send'),
                       onPressed: _sending ? null : _send,
-                      tooltip: 'Send',
+                      tooltip: l10n.messagesSend,
                       style: IconButton.styleFrom(
                         backgroundColor: context.kit.accentText,
                         foregroundColor: context.kit.isDark
@@ -365,11 +365,12 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.shine;
+    final l10n = context.l10n;
     final mine = message.author == MessageAuthor.patient;
     final at = message.at;
     final meta = [
       if (!mine && message.name != null) message.name!,
-      if (at != null) '${shortDate(at)}, ${clockTime(at)}',
+      if (at != null) '${shortDate(l10n, at)}, ${clockTime(at)}',
     ].join(' · ');
     return Align(
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
@@ -447,7 +448,7 @@ class _MessagePhotoTile extends StatelessWidget {
     final kit = context.kit;
     return Semantics(
       button: true,
-      label: 'Open photo',
+      label: context.l10n.messagesOpenPhoto,
       child: GestureDetector(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => _PhotoViewer(url: photo.url)),
@@ -485,15 +486,15 @@ class _PhotoViewer extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Photo'),
+        title: Text(context.l10n.messagesPhoto),
       ),
       body: InteractiveViewer(
         child: Center(
           child: Image.network(
             url,
-            errorBuilder: (_, _, _) => const Text(
-              'This photo didn\'t load. Please try again later.',
-              style: TextStyle(color: Colors.white70),
+            errorBuilder: (_, _, _) => Text(
+              context.l10n.messagesPhotoFailed,
+              style: const TextStyle(color: Colors.white70),
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../api/models.dart';
+import '../../l10n/l10n.dart';
 import '../../state/me_controller.dart';
 import '../../theme.dart';
 import '../../util/dates.dart';
@@ -23,15 +24,16 @@ class DocumentsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final consents = me.data!.consents;
     final palette = context.shine;
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Documents'),
+        SectionLabel(l10n.documentsTitle),
         if (consents.isEmpty)
-          const CalmMessage(
+          CalmMessage(
             icon: Icons.description_outlined,
-            title: 'Nothing to sign',
-            body: 'When your clinic asks you to sign something, it shows here.',
+            title: l10n.documentsEmptyTitle,
+            body: l10n.documentsEmptyBody,
           )
         else
           ShineCard(
@@ -54,8 +56,7 @@ class DocumentsSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'After you sign, your clinic keeps the signed copy with your records. '
-            'Ask them if you would like a copy for yourself.',
+            l10n.documentsFootnote,
             style: TextStyle(color: palette.muted, height: 1.4, fontSize: 13),
           ),
         ),
@@ -73,17 +74,18 @@ class _ConsentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.shine;
+    final l10n = context.l10n;
     final signed = consent.isSigned;
     final title = consent.devices == null || consent.devices!.isEmpty
-        ? 'Treatment consent'
-        : 'Consent: ${consent.devices}';
+        ? l10n.documentsConsent
+        : l10n.documentsConsentFor(consent.devices!);
     final subtitle = signed
         ? (consent.signedAt == null
-              ? 'Signed'
-              : 'Signed on ${longDate(consent.signedAt!)}')
+              ? l10n.documentsSigned
+              : l10n.documentsSignedOn(longDate(l10n, consent.signedAt!)))
         : onSign == null
-        ? 'Your clinic will ask you to sign it there'
-        : 'Waiting for your signature';
+        ? l10n.documentsSignThere
+        : l10n.documentsWaiting;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -114,7 +116,7 @@ class _ConsentRow extends StatelessWidget {
             FilledButton(
               style: FilledButton.styleFrom(minimumSize: const Size(72, 40)),
               onPressed: onSign,
-              child: const Text('Sign'),
+              child: Text(l10n.documentsSign),
             ),
         ],
       ),

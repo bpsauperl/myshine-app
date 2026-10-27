@@ -26,11 +26,31 @@ abstract class ApiClient {
   });
 }
 
+/// Why a call failed, when the app (not the server) words it: the screens
+/// show it in the patient's language.
+enum ApiFailure {
+  slow,
+  offline,
+  unauthorized,
+  forbidden,
+  tooManyTries,
+  server,
+  unknown,
+}
+
 /// A failed call: [statusCode] is null when the server couldn't be reached.
 class ApiException implements Exception {
-  const ApiException(this.message, {this.statusCode, this.errors = const {}});
+  const ApiException(
+    this.message, {
+    this.statusCode,
+    this.errors = const {},
+    this.failure,
+  });
 
+  /// In English, for logs; screens show [failure] in the patient's language,
+  /// or this message when the server wrote it ([failure] is null).
   final String message;
+  final ApiFailure? failure;
   final int? statusCode;
   final Map<String, List<String>> errors;
 

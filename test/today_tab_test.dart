@@ -4,7 +4,6 @@ import 'package:myshine/api/api_client.dart';
 import 'package:myshine/screens/home/home_shell.dart';
 import 'package:myshine/screens/home/today_tab.dart';
 import 'package:myshine/state/me_controller.dart';
-import 'package:myshine/theme.dart';
 
 import 'fakes.dart';
 
@@ -14,10 +13,7 @@ Future<MeController> _loaded(FakeApiClient api) async {
   return me;
 }
 
-Widget _wrap(Widget child) => MaterialApp(
-  theme: buildShineTheme(Brightness.light),
-  home: Scaffold(body: child),
-);
+Widget _wrap(Widget child) => localized(Scaffold(body: child));
 
 void main() {
   testWidgets('shows today\'s aligner, the day and the next change', (
@@ -82,13 +78,8 @@ void main() {
     final api = FakeApiClient();
     final reminders = FakeReminders();
     await tester.pumpWidget(
-      MaterialApp(
-        theme: buildShineTheme(Brightness.light),
-        home: HomeShell(
-          api: api,
-          onUnauthorized: () async {},
-          reminders: reminders,
-        ),
+      localized(
+        HomeShell(api: api, onUnauthorized: () async {}, reminders: reminders),
       ),
     );
     await tester.pumpAndSettle();
@@ -106,9 +97,8 @@ void main() {
       meError: const ApiException('Please connect again.', statusCode: 401),
     );
     await tester.pumpWidget(
-      MaterialApp(
-        theme: buildShineTheme(Brightness.light),
-        home: HomeShell(api: api, onUnauthorized: () async => signedOut = true),
+      localized(
+        HomeShell(api: api, onUnauthorized: () async => signedOut = true),
       ),
     );
     await tester.pumpAndSettle();

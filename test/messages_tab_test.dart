@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myshine/screens/home/messages_tab.dart';
-import 'package:myshine/theme.dart';
 
 import 'fakes.dart';
 
-Widget _wrap(Widget child) => MaterialApp(
-  theme: buildShineTheme(Brightness.light),
-  home: Scaffold(body: child),
-);
+Widget _wrap(Widget child) => localized(Scaffold(body: child));
 
 void main() {
   testWidgets('attaches photos, removes one and sends the rest without text', (

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
 import '../../config.dart';
+import '../../l10n/l10n.dart';
 import '../../theme.dart';
 import '../../widgets/browser.dart';
 import '../connect_screen.dart';
@@ -30,11 +31,12 @@ class PreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.shine;
+    final l10n = context.l10n;
     return Scaffold(
       backgroundColor: palette.card,
       appBar: AppBar(
         backgroundColor: palette.card,
-        title: const Text('Your preview'),
+        title: Text(l10n.previewTitle),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -49,7 +51,7 @@ class PreviewScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Text(
-                        'Camera unavailable here, so this is a sample illustration.',
+                        l10n.previewSampleNote,
                         style: TextStyle(color: palette.muted),
                         textAlign: TextAlign.center,
                       ),
@@ -59,12 +61,12 @@ class PreviewScreen extends StatelessWidget {
                   ShineHonestLabel(color: palette.muted),
                   const SizedBox(height: 28),
                   Text(
-                    'Like what you see?',
+                    l10n.previewLikeTitle,
                     style: KitType.title(color: context.kit.ink),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'A Shine dentist checks your teeth and plans every step with you.',
+                    l10n.previewLikeBody,
                     style: TextStyle(
                       fontSize: 16,
                       height: 1.4,
@@ -75,12 +77,14 @@ class PreviewScreen extends StatelessWidget {
                   FilledButton(
                     onPressed: () =>
                         openInBrowserView(context, AppConfig.clinicFinderUrl),
-                    child: const Text('Find a Shine clinic'),
+                    child: Text(l10n.previewFindClinic),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text(isSample ? 'Back' : 'Take another photo'),
+                    child: Text(
+                      isSample ? l10n.commonBack : l10n.previewTakeAnother,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextButton(
@@ -89,7 +93,7 @@ class PreviewScreen extends StatelessWidget {
                         builder: (_) => const ConnectScreen(),
                       ),
                     ),
-                    child: const Text('I have a code from my clinic'),
+                    child: Text(l10n.previewHaveCode),
                   ),
                 ],
               ),
@@ -105,15 +109,12 @@ class PreviewScreen extends StatelessWidget {
 class ShineHonestLabel extends StatelessWidget {
   const ShineHonestLabel({super.key, this.color});
 
-  static const String text =
-      'An illustration, not a treatment plan. Your dentist shows your real plan in 3D.';
-
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
+      context.l10n.previewHonest,
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 14, height: 1.4, color: color),
     );
@@ -190,8 +191,16 @@ class _BeforeAfterPreviewState extends State<BeforeAfterPreview> {
                       ),
                     ),
                   ),
-                  const Positioned(left: 12, top: 12, child: _Tag('After')),
-                  const Positioned(right: 12, top: 12, child: _Tag('Before')),
+                  Positioned(
+                    left: 12,
+                    top: 12,
+                    child: _Tag(context.l10n.previewAfter),
+                  ),
+                  Positioned(
+                    right: 12,
+                    top: 12,
+                    child: _Tag(context.l10n.previewBefore),
+                  ),
                 ],
               ),
             );

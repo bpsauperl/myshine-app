@@ -3,6 +3,7 @@ import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/models.dart';
 import '../../config.dart';
+import '../../l10n/l10n.dart';
 import '../../state/me_controller.dart';
 import '../../util/dates.dart';
 import '../../widgets/common.dart';
@@ -45,6 +46,7 @@ class _TodayTabState extends State<TodayTab> {
     final therapy = data.therapy;
     final current = therapy?.current;
     final p = context.kit;
+    final l10n = context.l10n;
     final today = widget.now ?? DateTime.now();
     final name = data.patient.firstName;
 
@@ -73,12 +75,14 @@ class _TodayTabState extends State<TodayTab> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${weekdayName(today)}, ${shortDate(today, now: today)}',
+                            headerDate(l10n, today),
                             style: KitType.label(color: p.secondary),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            name.isEmpty ? 'Today' : 'Hello, $name',
+                            name.isEmpty
+                                ? l10n.tabToday
+                                : l10n.todayHello(name),
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
@@ -89,27 +93,26 @@ class _TodayTabState extends State<TodayTab> {
                       ),
                     ),
                     if (therapy == null)
-                      const _Waiting(
-                        key: Key('not-started'),
+                      _Waiting(
+                        key: const Key('not-started'),
                         icon: Icons.hourglass_empty_rounded,
-                        title: 'Treatment not started yet',
-                        body:
-                            'Your clinic will start your treatment and give you your first aligners. '
-                            'Your schedule will show here then.',
+                        title: l10n.todayNotStartedTitle,
+                        body: l10n.todayNotStartedBody,
                       )
                     else if (current == null)
                       _Waiting(
                         icon: Icons.celebration_rounded,
-                        title: 'All aligners done',
+                        title: l10n.todayAllDoneTitle,
                         body: therapy.endsOn == null
-                            ? 'Well done! Your clinic will tell you what comes next.'
-                            : 'Your last aligner ended on ${longDate(therapy.endsOn!)}. '
-                                  'Your clinic will tell you what comes next.',
+                            ? l10n.todayAllDoneBody
+                            : l10n.todayAllDoneBodyWithDate(
+                                longDate(l10n, therapy.endsOn!),
+                              ),
                       )
                     else ...[
-                      const KitArchHero(
+                      KitArchHero(
                         height: 220,
-                        semanticLabel: 'Your aligner',
+                        semanticLabel: l10n.todayAlignerLabel,
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -148,7 +151,7 @@ class _TodayTabState extends State<TodayTab> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'Wear your aligners about ${AppConfig.wearHoursGoal} hours a day. Take them out only to eat and brush.',
+                                    l10n.todayWearHint(AppConfig.wearHoursGoal),
                                     style: KitType.label(color: p.secondary),
                                   ),
                                 ),
@@ -202,19 +205,21 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.kit;
+    final l10n = context.l10n;
     final digits = therapy.total >= 100 ? 3 : 2;
     String pad(int value) => value.toString().padLeft(digits, '0');
-    final series = therapy.series == null ? '' : 'Series ${therapy.series} · ';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${series}day ${current.day} of ${current.days}',
+          therapy.series == null
+              ? l10n.todayDay(current.day, current.days)
+              : l10n.todaySeriesDay(therapy.series!, current.day, current.days),
           style: KitType.eyebrow(color: p.accentText),
         ),
         const SizedBox(height: 6),
         Semantics(
-          label: 'Aligner ${current.aligner} of ${therapy.total}',
+          label: l10n.todayAlignerOf(current.aligner, therapy.total),
           excludeSemantics: true,
           child: FittedBox(
             fit: BoxFit.scaleDown,
@@ -222,7 +227,9 @@ class _Hero extends StatelessWidget {
             child: Text.rich(
               TextSpan(
                 children: [
-                  TextSpan(text: 'Aligner ${pad(current.aligner)}'),
+                  TextSpan(
+                    text: l10n.commonAlignerNumber(pad(current.aligner)),
+                  ),
                   TextSpan(
                     text: '/${pad(therapy.total)}',
                     style: TextStyle(color: p.hairline),
@@ -239,7 +246,7 @@ class _Hero extends StatelessWidget {
             if (onSchedule != null)
               Expanded(
                 child: KitButton.secondary(
-                  label: 'Schedule',
+                  label: l10n.tabSchedule,
                   icon: Icons.calendar_month_outlined,
                   height: 48,
                   onPressed: onSchedule,
@@ -251,7 +258,7 @@ class _Hero extends StatelessWidget {
               Expanded(
                 child: KitButton(
                   key: const Key('hero-check-in'),
-                  label: 'Check in',
+                  label: l10n.todayCheckIn,
                   icon: Icons.check_rounded,
                   height: 48,
                   onPressed: onCheckIn,
@@ -278,6 +285,7 @@ class _Facts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final next = therapy.nextChange;
     final isLast = current.aligner >= therapy.total;
     final daysLeft = (current.days - current.day).clamp(0, 999);
@@ -290,38 +298,38 @@ class _Facts extends StatelessWidget {
         : (finished / therapy.total * 100).round();
     final late = therapy.checkIn.canCheckIn ? therapy.checkIn.lateDays : 0;
     final nextValue = late > 0
-        ? (late == 1 ? '1 day late' : '$late days late')
+        ? l10n.commonDaysLate(late)
         : isLast || next == null
-        ? 'Last one'
-        : _capitalise(relativeDay(next, now: now).replaceFirst('on ', ''));
+        ? l10n.todayLastOne
+        : _capitalise(dayName(l10n, next, now: now));
     final tiles = [
       KitStat(
         inset: true,
         icon: Icons.event_outlined,
-        label: 'Next aligner',
+        label: l10n.todayNextAligner,
         value: nextValue,
       ),
       KitStat(
         inset: true,
         icon: Icons.hourglass_bottom_rounded,
-        label: 'This aligner',
+        label: l10n.todayThisAligner,
         value: '$daysLeft',
-        unit: daysLeft == 1 ? 'day left' : 'days left',
+        unit: l10n.todayDaysLeft(daysLeft),
       ),
       KitStat(
         inset: true,
         icon: Icons.trending_up_rounded,
-        label: 'Treatment',
+        label: l10n.todayTreatment,
         value: '$done',
         unit: '%',
       ),
       KitStat(
         inset: true,
         icon: Icons.flag_outlined,
-        label: 'Last aligner',
+        label: l10n.commonLastAligner,
         value: therapy.endsOn == null
             ? '—'
-            : shortDate(therapy.endsOn!, now: now),
+            : shortDate(l10n, therapy.endsOn!, now: now),
       ),
     ];
     return LayoutBuilder(
@@ -360,7 +368,7 @@ class _Waiting extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const KitArchHero(height: 200),
+        KitArchHero(height: 200, semanticLabel: context.l10n.archHeroLabel),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: KitSize.gutter),
           child: CalmMessage(icon: icon, title: title, body: body),
