@@ -25,7 +25,7 @@ The app follows the drShine app API **contract v1, section B** (`/api/myshine/v1
 
 How the app talks to it:
 - **Code layout:** all HTTP is in `lib/api/`, behind the `ApiClient` interface. `HttpApiClient` is the real client; tests use a fake.
-- **Server address:** the default is `https://drshine-production-8tmpnh.laravel.cloud` (`lib/config.dart`). To change it, **long-press the myShine logo** on the welcome screen. This opens the hidden "Server" setting, which is meant for testing.
+- **Server address:** the default is `https://drshine-dev-h4s1yo.laravel.cloud` (`lib/config.dart`). To change it, **long-press the myShine logo** on the welcome screen. This opens the hidden "Server" setting, which is meant for testing.
 - **Storage:** the token is kept with `flutter_secure_storage` (Keychain on iOS, Keystore on Android). The server address is kept in `shared_preferences`.
 - **Expired sign-in:** a `401` takes the patient back to the welcome screen.
 - **Connect code:** shown as `ABCD-2345` and sent in that form; the server ignores the dash. Codes never use 0, O, 1, I or L, and the app says so if one is typed.

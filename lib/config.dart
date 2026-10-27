@@ -10,7 +10,7 @@ class AppConfig {
   /// also change it.
   static const String defaultBaseUrl = String.fromEnvironment(
     'MYSHINE_SERVER',
-    defaultValue: 'https://drshine-production-8tmpnh.laravel.cloud',
+    defaultValue: 'https://drshine-dev-h4s1yo.laravel.cloud',
   );
 
   /// Whether the hidden "Server" setting exists. Release builds always use
