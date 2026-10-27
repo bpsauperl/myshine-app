@@ -86,7 +86,7 @@ void main() {
     expect(find.byKey(const Key('check-in-thanks')), findsNothing);
   });
 
-  testWidgets('adds up to 3 photos, removes one and sends the rest', (
+  testWidgets('takes intraoral photos by view, removes one, sends the rest', (
     tester,
   ) async {
     final api = FakeApiClient();
@@ -106,50 +106,76 @@ void main() {
     await tester.tap(find.byKey(const Key('fit-loose')));
     await tester.pump();
     expect(
-      find.text('A photo of the aligner helps your clinic see what\'s wrong.'),
+      find.text(
+        'Photos of your teeth with the aligner in help your clinic see what\'s wrong.',
+      ),
       findsOneWidget,
     );
+    for (final view in IntraoralView.values) {
+      expect(find.byKey(Key('photo-take-${view.key}')), findsOneWidget);
+    }
 
-    for (var i = 0; i < 3; i++) {
-      await tester.ensureVisible(find.byKey(const Key('photo-add')));
-      await tester.tap(find.byKey(const Key('photo-add')));
+    for (final key in ['front', 'upper', 'lower']) {
+      await tester.ensureVisible(find.byKey(Key('photo-take-$key')));
+      await tester.tap(find.byKey(Key('photo-take-$key')));
       await tester.pumpAndSettle();
     }
-    expect(find.byKey(const Key('photo-2')), findsOneWidget);
-    expect(find.byKey(const Key('photo-add')), findsNothing);
+    expect(camera.prompts.first.title, 'Front photo');
+    expect(find.byKey(const Key('photo-front')), findsOneWidget);
+    expect(find.byKey(const Key('photo-take-front')), findsNothing);
 
     await tester.tap(
       find.descendant(
-        of: find.byKey(const Key('photo-0')),
+        of: find.byKey(const Key('photo-upper')),
         matching: find.byIcon(Icons.close_rounded),
       ),
     );
     await tester.pump();
-    expect(find.byKey(const Key('photo-2')), findsNothing);
-    expect(find.byKey(const Key('photo-add')), findsOneWidget);
+    expect(find.byKey(const Key('photo-take-upper')), findsOneWidget);
 
     await tester.ensureVisible(find.byKey(const Key('check-in-send')));
     await tester.tap(find.byKey(const Key('check-in-send')));
     await tester.pumpAndSettle();
 
-    final draft = api.sentCheckIns.single;
-    expect(draft.photos.map((p) => p.filename), ['photo-2.png', 'photo-3.png']);
+    final photos = api.sentCheckIns.single.photos;
+    expect(photos.keys, [IntraoralView.front, IntraoralView.lower]);
+    expect(photos[IntraoralView.lower]!.filename, 'photo-3.png');
     expect(sent?.photos, 2);
   });
 
+  testWidgets('photos are optional', (tester) async {
+    final api = FakeApiClient();
+    await tester.pumpWidget(
+      _wrap(
+        CheckInCard(
+          api: api,
+          cameraSupported: true,
+          takePhoto: FakeCamera().take,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('fit-seated')));
+    await tester.ensureVisible(find.byKey(const Key('check-in-send')));
+    await tester.tap(find.byKey(const Key('check-in-send')));
+    await tester.pumpAndSettle();
+
+    expect(api.sentCheckIns.single.photos, isEmpty);
+    expect(find.byKey(const Key('check-in-thanks')), findsOneWidget);
+  });
+
   testWidgets('on web a calm note replaces the camera', (tester) async {
-    final camera = FakeCamera();
     await tester.pumpWidget(
       _wrap(
         CheckInCard(
           api: FakeApiClient(),
           cameraSupported: false,
-          takePhoto: camera.take,
+          takePhoto: FakeCamera().take,
         ),
       ),
     );
 
     expect(find.byKey(const Key('photos-unavailable')), findsOneWidget);
-    expect(find.byKey(const Key('photo-add')), findsNothing);
+    expect(find.byKey(const Key('photo-take-front')), findsNothing);
   });
 }

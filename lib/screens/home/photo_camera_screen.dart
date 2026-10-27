@@ -4,24 +4,41 @@ import 'package:flutter/material.dart';
 import '../../api/models.dart';
 import '../../theme.dart';
 
-/// Takes one photo for a check-in and returns it as a [CheckInPhoto] (or null
-/// when the patient goes back). The photo is sent only with the check-in.
-class CheckInCameraScreen extends StatefulWidget {
-  const CheckInCameraScreen({super.key});
+/// What the camera screen asks for: a title and a line of guidance.
+class PhotoPrompt {
+  const PhotoPrompt({required this.title, required this.hint});
+
+  final String title;
+  final String hint;
+}
+
+/// Opens the camera for [prompt]; returns the photo, or null on back.
+typedef PhotoTaker = Future<PhotoUpload?> Function(
+  BuildContext context,
+  PhotoPrompt prompt,
+);
+
+/// Takes one photo for a check-in or a message and returns it as a
+/// [PhotoUpload] (or null when the patient goes back). Nothing is uploaded
+/// until the patient sends the check-in or message.
+class PhotoCameraScreen extends StatefulWidget {
+  const PhotoCameraScreen({super.key, required this.prompt});
+
+  final PhotoPrompt prompt;
 
   /// Opens the camera and waits for a photo.
-  static Future<CheckInPhoto?> take(BuildContext context) =>
-      Navigator.of(context).push<CheckInPhoto>(
-        MaterialPageRoute(builder: (_) => const CheckInCameraScreen()),
+  static Future<PhotoUpload?> take(BuildContext context, PhotoPrompt prompt) =>
+      Navigator.of(context).push<PhotoUpload>(
+        MaterialPageRoute(builder: (_) => PhotoCameraScreen(prompt: prompt)),
       );
 
   @override
-  State<CheckInCameraScreen> createState() => _CheckInCameraScreenState();
+  State<PhotoCameraScreen> createState() => _PhotoCameraScreenState();
 }
 
 enum _CameraStatus { starting, ready, unavailable, denied }
 
-class _CheckInCameraScreenState extends State<CheckInCameraScreen>
+class _PhotoCameraScreenState extends State<PhotoCameraScreen>
     with WidgetsBindingObserver {
   List<CameraDescription> _cameras = const [];
   CameraDescription? _camera;
@@ -137,7 +154,7 @@ class _CheckInCameraScreenState extends State<CheckInCameraScreen>
         return;
       }
       final name = file.name.contains('.') ? file.name : '${file.name}.jpg';
-      Navigator.of(context).pop(CheckInPhoto(bytes: bytes, filename: name));
+      Navigator.of(context).pop(PhotoUpload(bytes: bytes, filename: name));
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -159,7 +176,7 @@ class _CheckInCameraScreenState extends State<CheckInCameraScreen>
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Aligner photo'),
+        title: Text(widget.prompt.title),
         actions: [
           if (ready && _cameras.length > 1)
             IconButton(
@@ -188,12 +205,12 @@ class _CheckInCameraScreenState extends State<CheckInCameraScreen>
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(24, 16, 24, 8),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
               child: Text(
-                'Show the aligner where it doesn\'t fit, in good light. Only your clinic sees the photo.',
+                widget.prompt.hint,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 15,
                   height: 1.4,

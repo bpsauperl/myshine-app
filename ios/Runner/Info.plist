@@ -64,7 +64,7 @@
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>myShine uses the camera for your smile preview, which stays on your phone, and for photos you choose to send to your clinic with a check-in.</string>
+	<string>myShine uses the camera for your smile preview, which stays on your phone, and for photos you choose to send to your clinic with a check-in or a message.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>

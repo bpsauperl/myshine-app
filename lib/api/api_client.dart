@@ -1,5 +1,8 @@
 import 'models.dart';
 
+/// The most photos one message may carry.
+const int maxMessagePhotos = 3;
+
 /// The myShine API (contract v1, section B). The app only talks to the server
 /// through this interface, so tests can pass a fake.
 abstract class ApiClient {
@@ -15,7 +18,12 @@ abstract class ApiClient {
 
   Future<List<Message>> messages();
 
-  Future<Message> sendMessage(String body);
+  /// [body] may be empty when [photos] are attached (up to
+  /// [maxMessagePhotos]).
+  Future<Message> sendMessage(
+    String body, {
+    List<PhotoUpload> photos = const [],
+  });
 }
 
 /// A failed call: [statusCode] is null when the server couldn't be reached.

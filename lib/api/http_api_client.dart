@@ -22,7 +22,7 @@ class HttpApiClient implements ApiClient {
   final http.Client _http;
   final Duration timeout;
 
-  /// For requests carrying photos (up to 3 × 8 MB).
+  /// For requests carrying photos (up to 5 × 8 MB).
   final Duration uploadTimeout;
 
   /// The patient's token, set after connecting.
@@ -48,6 +48,13 @@ class HttpApiClient implements ApiClient {
     }
     return _dispatch(request, timeout);
   }
+
+  static http.MultipartFile _file(String field, PhotoUpload photo) =>
+      http.MultipartFile.fromBytes(
+        field,
+        photo.bytes,
+        filename: photo.filename,
+      );
 
   /// A multipart POST: [fields] as form fields, [files] under their names.
   Future<Map<String, dynamic>> _sendMultipart(
@@ -165,12 +172,8 @@ class HttpApiClient implements ApiClient {
               (key, value) => MapEntry(key, value.toString()),
             ),
             files: [
-              for (final photo in draft.photos)
-                http.MultipartFile.fromBytes(
-                  'photos[]',
-                  photo.bytes,
-                  filename: photo.filename,
-                ),
+              for (final entry in draft.photos.entries)
+                _file('photos[${entry.key.key}]', entry.value),
             ],
           );
     return CheckIn.fromJson(
@@ -194,8 +197,17 @@ class HttpApiClient implements ApiClient {
   }
 
   @override
-  Future<Message> sendMessage(String body) async {
-    final json = await _send('POST', '/messages', body: {'body': body});
+  Future<Message> sendMessage(
+    String body, {
+    List<PhotoUpload> photos = const [],
+  }) async {
+    final json = photos.isEmpty
+        ? await _send('POST', '/messages', body: {'body': body})
+        : await _sendMultipart(
+            '/messages',
+            fields: {if (body.isNotEmpty) 'body': body},
+            files: [for (final photo in photos) _file('photos[]', photo)],
+          );
     return Message.fromJson(
       json['message'] is Map
           ? Map<String, dynamic>.from(json['message'] as Map)

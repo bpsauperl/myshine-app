@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/api/models.dart';
+import 'package:myshine/screens/home/photo_camera_screen.dart';
 
 /// Example data only: a made-up patient and clinic.
 Map<String, dynamic> meJson({
@@ -108,6 +109,7 @@ class FakeApiClient implements ApiClient {
 
   final List<CheckInDraft> sentCheckIns = [];
   final List<String> sentMessages = [];
+  final List<List<PhotoUpload>> sentMessagePhotos = [];
   int meCalls = 0;
   bool loggedOut = false;
 
@@ -163,9 +165,21 @@ class FakeApiClient implements ApiClient {
   Future<List<Message>> messages() async => const [];
 
   @override
-  Future<Message> sendMessage(String body) async {
+  Future<Message> sendMessage(
+    String body, {
+    List<PhotoUpload> photos = const [],
+  }) async {
     sentMessages.add(body);
-    return Message(id: 1, author: MessageAuthor.patient, body: body);
+    sentMessagePhotos.add(photos);
+    return Message(
+      id: sentMessages.length,
+      author: MessageAuthor.patient,
+      body: body,
+      photos: [
+        for (var i = 0; i < photos.length; i++)
+          MessagePhoto(id: i + 1, url: 'https://example.test/photos/${i + 1}'),
+      ],
+    );
   }
 }
 
@@ -243,12 +257,16 @@ final Uint8List kTinyPng = Uint8List.fromList(const [
   0x82,
 ]);
 
-/// Stands in for the in-app camera: each call returns the next example photo.
+/// Stands in for the in-app camera: each call returns the next example photo
+/// and remembers what was asked for.
 class FakeCamera {
-  int taken = 0;
+  final List<PhotoPrompt> prompts = [];
 
-  Future<CheckInPhoto?> take(BuildContext _) async {
-    taken++;
-    return CheckInPhoto(bytes: kTinyPng, filename: 'photo-$taken.png');
+  Future<PhotoUpload?> take(BuildContext _, PhotoPrompt prompt) async {
+    prompts.add(prompt);
+    return PhotoUpload(
+      bytes: kTinyPng,
+      filename: 'photo-${prompts.length}.png',
+    );
   }
 }

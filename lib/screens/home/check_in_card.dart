@@ -7,7 +7,8 @@ import '../../api/models.dart';
 import '../../config.dart';
 import '../../theme.dart';
 import '../../widgets/common.dart';
-import 'check_in_camera_screen.dart';
+import '../../widgets/photo_thumb.dart';
+import 'photo_camera_screen.dart';
 
 /// The fit choices, in the API's words and the patient's.
 const Map<String, String> kFitOptions = {
@@ -26,8 +27,8 @@ const Map<String, String> kComfortOptions = {
   'strong': 'Strong',
 };
 
-/// "How is your aligner?" — posts to `/check-ins` (with up to 3 photos), then
-/// says thank you.
+/// "How is your aligner?" — posts to `/check-ins` (with up to five optional
+/// intraoral photos), then says thank you.
 class CheckInCard extends StatefulWidget {
   const CheckInCard({
     super.key,
@@ -35,7 +36,7 @@ class CheckInCard extends StatefulWidget {
     this.aligner,
     this.onSent,
     this.cameraSupported = !kIsWeb,
-    this.takePhoto = CheckInCameraScreen.take,
+    this.takePhoto = PhotoCameraScreen.take,
   });
 
   final ApiClient api;
@@ -46,7 +47,7 @@ class CheckInCard extends StatefulWidget {
   final bool cameraSupported;
 
   /// Opens the in-app camera; tests pass a fake.
-  final Future<CheckInPhoto?> Function(BuildContext context) takePhoto;
+  final PhotoTaker takePhoto;
 
   @override
   State<CheckInCard> createState() => _CheckInCardState();
@@ -57,7 +58,7 @@ class _CheckInCardState extends State<CheckInCard> {
   String? _fit;
   int _hours = AppConfig.wearHoursGoal;
   String? _comfort;
-  final List<CheckInPhoto> _photos = [];
+  final Map<IntraoralView, PhotoUpload> _photos = {};
   bool _sending = false;
   bool _sent = false;
   String? _error;
@@ -85,7 +86,7 @@ class _CheckInCardState extends State<CheckInCard> {
           wearHours: _hours,
           comfort: _comfort,
           notes: _notes.text,
-          photos: List.of(_photos),
+          photos: Map.of(_photos),
         ),
       );
       widget.onSent?.call(checkIn);
@@ -110,12 +111,15 @@ class _CheckInCardState extends State<CheckInCard> {
     });
   }
 
-  Future<void> _addPhoto() async {
-    final photo = await widget.takePhoto(context);
-    if (photo == null || !mounted || _photos.length >= CheckInDraft.maxPhotos) {
+  Future<void> _takePhoto(IntraoralView view) async {
+    final photo = await widget.takePhoto(
+      context,
+      PhotoPrompt(title: '${view.label} photo', hint: view.hint),
+    );
+    if (photo == null || !mounted) {
       return;
     }
-    setState(() => _photos.add(photo));
+    setState(() => _photos[view] = photo);
   }
 
   @override
@@ -253,8 +257,8 @@ class _CheckInCardState extends State<CheckInCard> {
             asking: kFitsAskingForPhotos.contains(_fit),
             cameraSupported: widget.cameraSupported,
             enabled: !_sending,
-            onAdd: _addPhoto,
-            onRemove: (index) => setState(() => _photos.removeAt(index)),
+            onTake: _takePhoto,
+            onRemove: (view) => setState(() => _photos.remove(view)),
           ),
           const SizedBox(height: 20),
           _Label('Notes for your clinic'),
@@ -310,33 +314,34 @@ class _Label extends StatelessWidget {
   }
 }
 
-/// "Add photos": up to 3 thumbnails, each with a remove button, and an add
-/// tile. On web a calm note instead, since the camera works only in the app.
+/// "Photos": the five intraoral views, each a tile to take or remove. All
+/// optional. On web a calm note instead, since the camera works only in the
+/// app.
 class _PhotosSection extends StatelessWidget {
   const _PhotosSection({
     required this.photos,
     required this.asking,
     required this.cameraSupported,
     required this.enabled,
-    required this.onAdd,
+    required this.onTake,
     required this.onRemove,
   });
 
-  final List<CheckInPhoto> photos;
+  final Map<IntraoralView, PhotoUpload> photos;
 
-  /// The fit is a problem: explain why a photo helps.
+  /// The fit is a problem: explain why photos help.
   final bool asking;
   final bool cameraSupported;
   final bool enabled;
-  final VoidCallback onAdd;
-  final ValueChanged<int> onRemove;
+  final ValueChanged<IntraoralView> onTake;
+  final ValueChanged<IntraoralView> onRemove;
 
   @override
   Widget build(BuildContext context) {
     final kit = context.kit;
     final hint = asking
-        ? 'A photo of the aligner helps your clinic see what\'s wrong.'
-        : 'Optional. Up to ${CheckInDraft.maxPhotos} photos, only your clinic sees them.';
+        ? 'Photos of your teeth with the aligner in help your clinic see what\'s wrong.'
+        : 'Optional. Photos of your teeth with the aligner in. Only your clinic sees them.';
     return Column(
       key: const Key('check-in-photos'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +362,7 @@ class _PhotosSection extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'You can add photos of your aligner in the myShine app on your phone.',
+                    'You can add photos of your teeth in the myShine app on your phone.',
                     style: KitType.label(color: kit.secondary),
                   ),
                 ),
@@ -377,17 +382,19 @@ class _PhotosSection extends StatelessWidget {
             spacing: KitSize.gap,
             runSpacing: KitSize.gap,
             children: [
-              for (var i = 0; i < photos.length; i++)
-                _PhotoThumb(
-                  key: Key('photo-$i'),
-                  photo: photos[i],
-                  onRemove: enabled ? () => onRemove(i) : null,
-                ),
-              if (photos.length < CheckInDraft.maxPhotos)
-                _AddPhotoTile(
-                  key: const Key('photo-add'),
-                  onPressed: enabled ? onAdd : null,
-                ),
+              for (final view in IntraoralView.values)
+                photos[view] == null
+                    ? _TakePhotoTile(
+                        key: Key('photo-take-${view.key}'),
+                        label: view.label,
+                        onPressed: enabled ? () => onTake(view) : null,
+                      )
+                    : PhotoThumb(
+                        key: Key('photo-${view.key}'),
+                        bytes: photos[view]!.bytes,
+                        label: view.label,
+                        onRemove: enabled ? () => onRemove(view) : null,
+                      ),
             ],
           ),
         ],
@@ -396,68 +403,10 @@ class _PhotosSection extends StatelessWidget {
   }
 }
 
-const double _kThumbSize = 84;
+class _TakePhotoTile extends StatelessWidget {
+  const _TakePhotoTile({super.key, required this.label, this.onPressed});
 
-class _PhotoThumb extends StatelessWidget {
-  const _PhotoThumb({super.key, required this.photo, this.onRemove});
-
-  final CheckInPhoto photo;
-  final VoidCallback? onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final kit = context.kit;
-    return SizedBox(
-      width: _kThumbSize,
-      height: _kThumbSize,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: Image.memory(
-              photo.bytes,
-              fit: BoxFit.cover,
-              gaplessPlayback: true,
-              errorBuilder: (_, _, _) => ColoredBox(
-                color: kit.tile,
-                child: Icon(Icons.image_outlined, color: kit.secondary),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 4,
-            right: 4,
-            child: Semantics(
-              button: true,
-              label: 'Remove photo',
-              child: GestureDetector(
-                onTap: onRemove,
-                child: Container(
-                  width: 26,
-                  height: 26,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.6),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.close_rounded,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AddPhotoTile extends StatelessWidget {
-  const _AddPhotoTile({super.key, this.onPressed});
-
+  final String label;
   final VoidCallback? onPressed;
 
   @override
@@ -465,7 +414,8 @@ class _AddPhotoTile extends StatelessWidget {
     final kit = context.kit;
     return Semantics(
       button: true,
-      label: 'Add a photo',
+      label: 'Take the $label photo',
+      excludeSemantics: true,
       child: Material(
         color: kit.tile,
         borderRadius: BorderRadius.circular(14),
@@ -473,14 +423,14 @@ class _AddPhotoTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           onTap: onPressed,
           child: SizedBox(
-            width: _kThumbSize,
-            height: _kThumbSize,
+            width: kPhotoThumbSize,
+            height: kPhotoThumbSize,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.add_a_photo_outlined, color: kit.accentText),
                 const SizedBox(height: 4),
-                Text('Add', style: KitType.label(color: kit.accentText)),
+                Text(label, style: KitType.label(color: kit.accentText)),
               ],
             ),
           ),

@@ -107,7 +107,10 @@ class _PreviewApi implements ApiClient {
   Future<List<Message>> messages() async => List.of(_messages);
 
   @override
-  Future<Message> sendMessage(String body) async {
+  Future<Message> sendMessage(
+    String body, {
+    List<PhotoUpload> photos = const [],
+  }) async {
     final message = Message(
       id: _messages.length + 1,
       author: MessageAuthor.patient,

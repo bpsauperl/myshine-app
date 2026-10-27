@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
@@ -9,15 +10,31 @@ import '../../config.dart';
 import '../../theme.dart';
 import '../../util/dates.dart';
 import '../../widgets/common.dart';
+import '../../widgets/photo_thumb.dart';
+import 'photo_camera_screen.dart';
 
-/// A chat with the clinic. Looks for new messages every 30 s while open.
+/// A chat with the clinic, with photos as attachments (up to
+/// [maxMessagePhotos] per message). Looks for new messages every 30 s while
+/// open.
 class MessagesTab extends StatefulWidget {
-  const MessagesTab({super.key, required this.api, required this.active});
+  const MessagesTab({
+    super.key,
+    required this.api,
+    required this.active,
+    this.cameraSupported = !kIsWeb,
+    this.takePhoto = PhotoCameraScreen.take,
+  });
 
   final ApiClient api;
 
   /// True while this tab is the one on screen.
   final bool active;
+
+  /// False on web: photos can only be attached in the phone app.
+  final bool cameraSupported;
+
+  /// Opens the in-app camera; tests pass a fake.
+  final PhotoTaker takePhoto;
 
   @override
   State<MessagesTab> createState() => _MessagesTabState();
@@ -27,6 +44,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
   final _input = TextEditingController();
   final _scroll = ScrollController();
   List<Message>? _messages;
+  final List<PhotoUpload> _attachments = [];
   String? _error;
   bool _sending = false;
   Timer? _poll;
@@ -117,14 +135,20 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
 
   Future<void> _send() async {
     final body = _input.text.trim();
-    if (body.isEmpty || _sending) {
+    if ((body.isEmpty && _attachments.isEmpty) || _sending) {
       return;
     }
     setState(() => _sending = true);
     try {
-      final message = await widget.api.sendMessage(body);
+      final message = await widget.api.sendMessage(
+        body,
+        photos: List.of(_attachments),
+      );
       _input.clear();
-      setState(() => _messages = [...?_messages, message]);
+      setState(() {
+        _attachments.clear();
+        _messages = [...?_messages, message];
+      });
       _scrollToEnd();
     } on ApiException catch (e) {
       if (mounted) {
@@ -138,9 +162,25 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _attachPhoto() async {
+    final photo = await widget.takePhoto(
+      context,
+      const PhotoPrompt(
+        title: 'Photo for your clinic',
+        hint: 'Take a clear photo in good light. It\'s sent with your message.',
+      ),
+    );
+    if (photo == null || !mounted || _attachments.length >= maxMessagePhotos) {
+      return;
+    }
+    setState(() => _attachments.add(photo));
+  }
+
   @override
   Widget build(BuildContext context) {
     final messages = _messages;
+    final canAttach =
+        widget.cameraSupported && _attachments.length < maxMessagePhotos;
     return SafeArea(
       bottom: false,
       child: Center(
@@ -205,12 +245,48 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                         ),
                 ),
               ),
+              if (_attachments.isNotEmpty)
+                Padding(
+                  key: const Key('message-attachments'),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Wrap(
+                      spacing: KitSize.gap,
+                      children: [
+                        for (var i = 0; i < _attachments.length; i++)
+                          PhotoThumb(
+                            key: Key('attachment-$i'),
+                            bytes: _attachments[i].bytes,
+                            size: 64,
+                            onRemove: _sending
+                                ? null
+                                : () =>
+                                      setState(() => _attachments.removeAt(i)),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
               // Sits above the floating tab bar.
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 8, 12, 96),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    if (widget.cameraSupported) ...[
+                      IconButton(
+                        key: const Key('message-attach'),
+                        onPressed: _sending || !canAttach ? null : _attachPhoto,
+                        tooltip: 'Add a photo',
+                        color: context.kit.accentText,
+                        style: IconButton.styleFrom(
+                          minimumSize: const Size(46, 46),
+                        ),
+                        icon: const Icon(Icons.photo_camera_outlined),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                     Expanded(
                       child: TextField(
                         key: const Key('message-input'),
@@ -314,13 +390,33 @@ class MessageBubble extends StatelessWidget {
                   bottomRight: Radius.circular(mine ? 6 : 20),
                 ),
               ),
-              child: Text(
-                message.body,
-                style: TextStyle(
-                  fontSize: 16,
-                  height: 1.35,
-                  color: mine ? ShineColors.ink : palette.ink,
-                ),
+              child: Column(
+                crossAxisAlignment: mine
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (message.photos.isNotEmpty)
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (final photo in message.photos)
+                          _MessagePhotoTile(photo: photo),
+                      ],
+                    ),
+                  if (message.photos.isNotEmpty && message.body.isNotEmpty)
+                    const SizedBox(height: 8),
+                  if (message.body.isNotEmpty)
+                    Text(
+                      message.body,
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1.35,
+                        color: mine ? ShineColors.ink : palette.ink,
+                      ),
+                    ),
+                ],
               ),
             ),
             if (meta.isNotEmpty)
@@ -332,6 +428,72 @@ class MessageBubble extends StatelessWidget {
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A photo in a message bubble; a tap opens it full screen.
+class _MessagePhotoTile extends StatelessWidget {
+  const _MessagePhotoTile({required this.photo});
+
+  final MessagePhoto photo;
+
+  @override
+  Widget build(BuildContext context) {
+    final kit = context.kit;
+    return Semantics(
+      button: true,
+      label: 'Open photo',
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => _PhotoViewer(url: photo.url)),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Image.network(
+            photo.url,
+            key: Key('message-photo-${photo.id}'),
+            width: 120,
+            height: 120,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Container(
+              width: 120,
+              height: 120,
+              color: kit.tile,
+              child: Icon(Icons.image_outlined, color: kit.secondary),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PhotoViewer extends StatelessWidget {
+  const _PhotoViewer({required this.url});
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: const Text('Photo'),
+      ),
+      body: InteractiveViewer(
+        child: Center(
+          child: Image.network(
+            url,
+            errorBuilder: (_, _, _) => const Text(
+              'This photo didn\'t load. Please try again later.',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
         ),
       ),
     );

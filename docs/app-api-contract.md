@@ -90,7 +90,11 @@ Without an account the app works offline (smile simulation). The patient links t
 
   `sign_url` is a short-lived link that opens the consent signing page in the browser, already verified.
 - `POST /check-ins {fit: seated|loose|tight|damaged, wear_hours?, comfort?: none|mild|strong, notes?}` → `201 {check_in}`. The aligner is the current one; the clinic sees it with source "app".
-- `GET /messages` → `{data: [{id, author: clinic|patient, name, body, at}]}` (newest last; marks the clinic's messages read)
+  - **Photos (added 2026-10-27):** optional intraoral photos, sent as `multipart/form-data` with the same fields plus any of `photos[front]`, `photos[right]`, `photos[left]`, `photos[upper]`, `photos[lower]`. Each is one image (jpeg/png/heic/webp, max 8 MB), and none is required. Without photos the app sends JSON exactly as above. The doctor sees them with that check-in (per step), privately stored.
+- `GET /messages` → `{data: [message]}` (newest last; marks the clinic's messages read)
 - `POST /messages {body}` → `201 {message}`
+  - **Photos (added 2026-10-27):** photos are attachments of a message. `multipart/form-data` with `body` (optional when photos are attached) and `photos[]`: 1 to 3 images (jpeg/png/heic/webp, max 8 MB each). Without photos the app sends JSON exactly as above.
 
-`check_in` = `{id, aligner, fit, fit_label, wear_hours, comfort, outcome, outcome_label, source, at}`.
+`check_in` = `{id, aligner, fit, fit_label, wear_hours, comfort, outcome, outcome_label, source, at, photos}`. `photos` is how many were stored (an int; the app also accepts a list and counts it; missing means 0).
+
+`message` = `{id, author: clinic|patient, name, body, at, photos: [{id, url}]}`. `url` is a short-lived private link the app loads directly (like `sign_url`); `photos` missing means none. `body` may be empty when the message has photos.

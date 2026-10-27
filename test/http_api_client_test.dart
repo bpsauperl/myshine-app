@@ -123,19 +123,22 @@ void main() {
       expect(checkIn.photos, 2);
     });
 
-    test('sends multipart with photos[]', () async {
+    test('sends multipart with photos keyed by view', () async {
       await client.sendCheckIn(
         CheckInDraft(
           fit: 'tight',
           wearHours: 20,
           comfort: 'mild',
-          photos: [
-            CheckInPhoto(
+          photos: {
+            IntraoralView.front: PhotoUpload(
               bytes: Uint8List.fromList([1, 2, 3]),
               filename: 'a.jpg',
             ),
-            CheckInPhoto(bytes: Uint8List.fromList([4, 5]), filename: 'b.png'),
-          ],
+            IntraoralView.lower: PhotoUpload(
+              bytes: Uint8List.fromList([4, 5]),
+              filename: 'b.png',
+            ),
+          },
         ),
       );
 
@@ -149,9 +152,60 @@ void main() {
         'wear_hours': '20',
         'comfort': 'mild',
       });
-      expect(request.files.map((f) => f.field), ['photos[]', 'photos[]']);
+      expect(request.files.map((f) => f.field), [
+        'photos[front]',
+        'photos[lower]',
+      ]);
       expect(request.files.map((f) => f.filename), ['a.jpg', 'b.png']);
       expect(request.files.first.length, 3);
+    });
+  });
+
+  group('sendMessage', () {
+    late List<http.BaseRequest> requests;
+    late HttpApiClient client;
+
+    setUp(() {
+      requests = [];
+      client = HttpApiClient(
+        baseUrl: 'https://example.test',
+        token: 'abc',
+        httpClient: _RecordingClient(requests, {
+          'message': {
+            'id': 3,
+            'author': 'patient',
+            'body': '',
+            'photos': [
+              {'id': 8, 'url': 'https://example.test/p/8'},
+            ],
+          },
+        }),
+      );
+    });
+
+    test('sends JSON without photos', () async {
+      await client.sendMessage('Hello');
+
+      final request = requests.single as http.Request;
+      expect(request.url.path, '/api/myshine/v1/messages');
+      expect(jsonDecode(request.body), {'body': 'Hello'});
+    });
+
+    test('sends multipart with photos[], the text optional', () async {
+      final message = await client.sendMessage(
+        '',
+        photos: [
+          PhotoUpload(bytes: Uint8List.fromList([1]), filename: 'q.jpg'),
+        ],
+      );
+
+      final request = requests.single as http.MultipartRequest;
+      expect(request.url.path, '/api/myshine/v1/messages');
+      expect(request.headers['Authorization'], 'Bearer abc');
+      expect(request.fields, isEmpty);
+      expect(request.files.single.field, 'photos[]');
+      expect(request.files.single.filename, 'q.jpg');
+      expect(message.photos.single.url, 'https://example.test/p/8');
     });
   });
 

@@ -214,7 +214,9 @@ class CheckIn {
     outcomeLabel: _string(json['outcome_label']),
     source: _string(json['source']),
     at: parseMoment(json['at']),
-    photos: _int(json['photos']) ?? 0,
+    photos: json['photos'] is List
+        ? (json['photos'] as List).length
+        : _int(json['photos']) ?? 0,
   );
 
   final int id;
@@ -297,6 +299,7 @@ class Message {
     this.name,
     required this.body,
     this.at,
+    this.photos = const [],
   });
 
   factory Message.fromJson(Map<String, dynamic> json) => Message(
@@ -307,6 +310,10 @@ class Message {
     name: _string(json['name']),
     body: _string(json['body']) ?? '',
     at: parseMoment(json['at']),
+    photos: _list(json['photos'])
+        .map(MessagePhoto.fromJson)
+        .where((p) => p.url.isNotEmpty)
+        .toList(),
   );
 
   final int id;
@@ -314,6 +321,18 @@ class Message {
   final String? name;
   final String body;
   final DateTime? at;
+  final List<MessagePhoto> photos;
+}
+
+/// A photo attached to a message. [url] is a short-lived private link.
+class MessagePhoto {
+  const MessagePhoto({required this.id, required this.url});
+
+  factory MessagePhoto.fromJson(Map<String, dynamic> json) =>
+      MessagePhoto(id: _int(json['id']) ?? 0, url: _string(json['url']) ?? '');
+
+  final int id;
+  final String url;
 }
 
 /// What `POST /connect` returns.
@@ -331,11 +350,8 @@ class CheckInDraft {
     this.wearHours,
     this.comfort,
     this.notes,
-    this.photos = const [],
+    this.photos = const {},
   });
-
-  /// The most photos one check-in may carry.
-  static const int maxPhotos = 3;
 
   /// seated | loose | tight | damaged
   final String fit;
@@ -345,8 +361,9 @@ class CheckInDraft {
   final String? comfort;
   final String? notes;
 
-  /// Taken in the app; sent as `photos[]` in a multipart request.
-  final List<CheckInPhoto> photos;
+  /// Intraoral photos, all optional; sent as `photos[front]` etc. in a
+  /// multipart request.
+  final Map<IntraoralView, PhotoUpload> photos;
 
   Map<String, dynamic> toJson() => {
     'fit': fit,
@@ -356,9 +373,45 @@ class CheckInDraft {
   };
 }
 
-/// A photo for a check-in, e.g. of an aligner that doesn't fit.
-class CheckInPhoto {
-  const CheckInPhoto({required this.bytes, required this.filename});
+/// The five intraoral views a check-in can carry, in the order shown.
+enum IntraoralView {
+  front(
+    'front',
+    'Front',
+    'Bite together and smile wide, so all front teeth show.',
+  ),
+  right(
+    'right',
+    'Right',
+    'Bite together, pull your right cheek back and turn a little.',
+  ),
+  left(
+    'left',
+    'Left',
+    'Bite together, pull your left cheek back and turn a little.',
+  ),
+  upper(
+    'upper',
+    'Upper',
+    'Tilt your head back and open wide to show your upper teeth.',
+  ),
+  lower(
+    'lower',
+    'Lower',
+    'Tilt your head down and open wide to show your lower teeth.',
+  );
+
+  const IntraoralView(this.key, this.label, this.hint);
+
+  /// The API's word, as in `photos[front]`.
+  final String key;
+  final String label;
+  final String hint;
+}
+
+/// A photo taken in the app, ready to upload with a check-in or message.
+class PhotoUpload {
+  const PhotoUpload({required this.bytes, required this.filename});
 
   final Uint8List bytes;
 
