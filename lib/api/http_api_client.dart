@@ -14,12 +14,16 @@ class HttpApiClient implements ApiClient {
     this.token,
     http.Client? httpClient,
     this.timeout = const Duration(seconds: 20),
+    this.uploadTimeout = const Duration(seconds: 90),
   }) : baseUrl = baseUrl.replaceAll(RegExp(r'/+$'), ''),
        _http = httpClient ?? http.Client();
 
   final String baseUrl;
   final http.Client _http;
   final Duration timeout;
+
+  /// For requests carrying photos (up to 3 × 8 MB).
+  final Duration uploadTimeout;
 
   /// The patient's token, set after connecting.
   String? token;
@@ -28,7 +32,6 @@ class HttpApiClient implements ApiClient {
 
   Map<String, String> get _headers => {
     'Accept': 'application/json',
-    'Content-Type': 'application/json; charset=utf-8',
     if (token != null) 'Authorization': 'Bearer $token',
   };
 
@@ -36,16 +39,37 @@ class HttpApiClient implements ApiClient {
     String method,
     String path, {
     Map<String, dynamic>? body,
-  }) async {
+  }) {
+    final request = http.Request(method, _uri(path))
+      ..headers.addAll(_headers)
+      ..headers['Content-Type'] = 'application/json; charset=utf-8';
+    if (body != null) {
+      request.body = jsonEncode(body);
+    }
+    return _dispatch(request, timeout);
+  }
+
+  /// A multipart POST: [fields] as form fields, [files] under their names.
+  Future<Map<String, dynamic>> _sendMultipart(
+    String path, {
+    required Map<String, String> fields,
+    required List<http.MultipartFile> files,
+  }) {
+    final request = http.MultipartRequest('POST', _uri(path))
+      ..headers.addAll(_headers)
+      ..fields.addAll(fields)
+      ..files.addAll(files);
+    return _dispatch(request, uploadTimeout);
+  }
+
+  Future<Map<String, dynamic>> _dispatch(
+    http.BaseRequest request,
+    Duration limit,
+  ) async {
     http.Response response;
     try {
-      final request = http.Request(method, _uri(path))
-        ..headers.addAll(_headers);
-      if (body != null) {
-        request.body = jsonEncode(body);
-      }
       response = await http.Response.fromStream(
-        await _http.send(request).timeout(timeout),
+        await _http.send(request).timeout(limit),
       );
     } on TimeoutException {
       throw const ApiException(
@@ -133,7 +157,22 @@ class HttpApiClient implements ApiClient {
 
   @override
   Future<CheckIn> sendCheckIn(CheckInDraft draft) async {
-    final json = await _send('POST', '/check-ins', body: draft.toJson());
+    final json = draft.photos.isEmpty
+        ? await _send('POST', '/check-ins', body: draft.toJson())
+        : await _sendMultipart(
+            '/check-ins',
+            fields: draft.toJson().map(
+              (key, value) => MapEntry(key, value.toString()),
+            ),
+            files: [
+              for (final photo in draft.photos)
+                http.MultipartFile.fromBytes(
+                  'photos[]',
+                  photo.bytes,
+                  filename: photo.filename,
+                ),
+            ],
+          );
     return CheckIn.fromJson(
       json['check_in'] is Map
           ? Map<String, dynamic>.from(json['check_in'] as Map)

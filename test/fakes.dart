@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:flutter/widgets.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/api/models.dart';
 
@@ -152,6 +155,7 @@ class FakeApiClient implements ApiClient {
       fit: draft.fit,
       wearHours: draft.wearHours,
       comfort: draft.comfort,
+      photos: draft.photos.length,
     );
   }
 
@@ -162,5 +166,89 @@ class FakeApiClient implements ApiClient {
   Future<Message> sendMessage(String body) async {
     sentMessages.add(body);
     return Message(id: 1, author: MessageAuthor.patient, body: body);
+  }
+}
+
+/// A valid 1×1 PNG, so thumbnails decode in widget tests.
+final Uint8List kTinyPng = Uint8List.fromList(const [
+  0x89,
+  0x50,
+  0x4E,
+  0x47,
+  0x0D,
+  0x0A,
+  0x1A,
+  0x0A,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x48,
+  0x44,
+  0x52,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x08,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x1F,
+  0x15,
+  0xC4,
+  0x89,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x44,
+  0x41,
+  0x54,
+  0x78,
+  0x9C,
+  0x63,
+  0xF8,
+  0xCF,
+  0xC0,
+  0xF0,
+  0x1F,
+  0x00,
+  0x05,
+  0x00,
+  0x01,
+  0xFF,
+  0x89,
+  0x99,
+  0x3D,
+  0x1D,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x49,
+  0x45,
+  0x4E,
+  0x44,
+  0xAE,
+  0x42,
+  0x60,
+  0x82,
+]);
+
+/// Stands in for the in-app camera: each call returns the next example photo.
+class FakeCamera {
+  int taken = 0;
+
+  Future<CheckInPhoto?> take(BuildContext _) async {
+    taken++;
+    return CheckInPhoto(bytes: kTinyPng, filename: 'photo-$taken.png');
   }
 }

@@ -2,6 +2,8 @@
 /// a missing or oddly typed field becomes null or empty rather than a crash.
 library;
 
+import 'dart:typed_data';
+
 String? _string(Object? value) => value?.toString();
 
 int? _int(Object? value) {
@@ -198,6 +200,7 @@ class CheckIn {
     this.outcomeLabel,
     this.source,
     this.at,
+    this.photos = 0,
   });
 
   factory CheckIn.fromJson(Map<String, dynamic> json) => CheckIn(
@@ -211,6 +214,7 @@ class CheckIn {
     outcomeLabel: _string(json['outcome_label']),
     source: _string(json['source']),
     at: parseMoment(json['at']),
+    photos: _int(json['photos']) ?? 0,
   );
 
   final int id;
@@ -223,6 +227,9 @@ class CheckIn {
   final String? outcomeLabel;
   final String? source;
   final DateTime? at;
+
+  /// How many photos the server stored with this check-in.
+  final int photos;
 }
 
 class Consent {
@@ -324,7 +331,11 @@ class CheckInDraft {
     this.wearHours,
     this.comfort,
     this.notes,
+    this.photos = const [],
   });
+
+  /// The most photos one check-in may carry.
+  static const int maxPhotos = 3;
 
   /// seated | loose | tight | damaged
   final String fit;
@@ -334,10 +345,23 @@ class CheckInDraft {
   final String? comfort;
   final String? notes;
 
+  /// Taken in the app; sent as `photos[]` in a multipart request.
+  final List<CheckInPhoto> photos;
+
   Map<String, dynamic> toJson() => {
     'fit': fit,
     if (wearHours != null) 'wear_hours': wearHours,
     if (comfort != null) 'comfort': comfort,
     if (notes != null && notes!.trim().isNotEmpty) 'notes': notes!.trim(),
   };
+}
+
+/// A photo for a check-in, e.g. of an aligner that doesn't fit.
+class CheckInPhoto {
+  const CheckInPhoto({required this.bytes, required this.filename});
+
+  final Uint8List bytes;
+
+  /// With its extension (jpg, png, heic or webp).
+  final String filename;
 }

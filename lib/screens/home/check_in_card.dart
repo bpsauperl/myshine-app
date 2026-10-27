@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
@@ -6,6 +7,7 @@ import '../../api/models.dart';
 import '../../config.dart';
 import '../../theme.dart';
 import '../../widgets/common.dart';
+import 'check_in_camera_screen.dart';
 
 /// The fit choices, in the API's words and the patient's.
 const Map<String, String> kFitOptions = {
@@ -15,19 +17,36 @@ const Map<String, String> kFitOptions = {
   'damaged': 'Damaged or lost',
 };
 
+/// Fits where a photo helps the clinic most.
+const Set<String> kFitsAskingForPhotos = {'loose', 'tight', 'damaged'};
+
 const Map<String, String> kComfortOptions = {
   'none': 'None',
   'mild': 'Mild',
   'strong': 'Strong',
 };
 
-/// "How is your aligner?" — posts to `/check-ins`, then says thank you.
+/// "How is your aligner?" — posts to `/check-ins` (with up to 3 photos), then
+/// says thank you.
 class CheckInCard extends StatefulWidget {
-  const CheckInCard({super.key, required this.api, this.aligner, this.onSent});
+  const CheckInCard({
+    super.key,
+    required this.api,
+    this.aligner,
+    this.onSent,
+    this.cameraSupported = !kIsWeb,
+    this.takePhoto = CheckInCameraScreen.take,
+  });
 
   final ApiClient api;
   final int? aligner;
   final ValueChanged<CheckIn>? onSent;
+
+  /// False on web: photos can only be taken in the phone app.
+  final bool cameraSupported;
+
+  /// Opens the in-app camera; tests pass a fake.
+  final Future<CheckInPhoto?> Function(BuildContext context) takePhoto;
 
   @override
   State<CheckInCard> createState() => _CheckInCardState();
@@ -38,6 +57,7 @@ class _CheckInCardState extends State<CheckInCard> {
   String? _fit;
   int _hours = AppConfig.wearHoursGoal;
   String? _comfort;
+  final List<CheckInPhoto> _photos = [];
   bool _sending = false;
   bool _sent = false;
   String? _error;
@@ -65,6 +85,7 @@ class _CheckInCardState extends State<CheckInCard> {
           wearHours: _hours,
           comfort: _comfort,
           notes: _notes.text,
+          photos: List.of(_photos),
         ),
       );
       widget.onSent?.call(checkIn);
@@ -84,8 +105,17 @@ class _CheckInCardState extends State<CheckInCard> {
       _fit = null;
       _hours = AppConfig.wearHoursGoal;
       _comfort = null;
+      _photos.clear();
       _notes.clear();
     });
+  }
+
+  Future<void> _addPhoto() async {
+    final photo = await widget.takePhoto(context);
+    if (photo == null || !mounted || _photos.length >= CheckInDraft.maxPhotos) {
+      return;
+    }
+    setState(() => _photos.add(photo));
   }
 
   @override
@@ -218,6 +248,15 @@ class _CheckInCardState extends State<CheckInCard> {
             ],
           ),
           const SizedBox(height: 20),
+          _PhotosSection(
+            photos: _photos,
+            asking: kFitsAskingForPhotos.contains(_fit),
+            cameraSupported: widget.cameraSupported,
+            enabled: !_sending,
+            onAdd: _addPhoto,
+            onRemove: (index) => setState(() => _photos.removeAt(index)),
+          ),
+          const SizedBox(height: 20),
           _Label('Notes for your clinic'),
           TextField(
             key: const Key('check-in-notes'),
@@ -265,6 +304,186 @@ class _Label extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.w600,
           color: context.shine.muted,
+        ),
+      ),
+    );
+  }
+}
+
+/// "Add photos": up to 3 thumbnails, each with a remove button, and an add
+/// tile. On web a calm note instead, since the camera works only in the app.
+class _PhotosSection extends StatelessWidget {
+  const _PhotosSection({
+    required this.photos,
+    required this.asking,
+    required this.cameraSupported,
+    required this.enabled,
+    required this.onAdd,
+    required this.onRemove,
+  });
+
+  final List<CheckInPhoto> photos;
+
+  /// The fit is a problem: explain why a photo helps.
+  final bool asking;
+  final bool cameraSupported;
+  final bool enabled;
+  final VoidCallback onAdd;
+  final ValueChanged<int> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final kit = context.kit;
+    final hint = asking
+        ? 'A photo of the aligner helps your clinic see what\'s wrong.'
+        : 'Optional. Up to ${CheckInDraft.maxPhotos} photos, only your clinic sees them.';
+    return Column(
+      key: const Key('check-in-photos'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Label('Photos'),
+        if (!cameraSupported)
+          Container(
+            key: const Key('photos-unavailable'),
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: kit.tile,
+              borderRadius: BorderRadius.circular(KitSize.tileRadius),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.photo_camera_outlined, color: kit.secondary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'You can add photos of your aligner in the myShine app on your phone.',
+                    style: KitType.label(color: kit.secondary),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else ...[
+          Text(
+            hint,
+            key: const Key('photos-hint'),
+            style: KitType.label(
+              color: asking ? kit.accentText : kit.secondary,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: KitSize.gap,
+            runSpacing: KitSize.gap,
+            children: [
+              for (var i = 0; i < photos.length; i++)
+                _PhotoThumb(
+                  key: Key('photo-$i'),
+                  photo: photos[i],
+                  onRemove: enabled ? () => onRemove(i) : null,
+                ),
+              if (photos.length < CheckInDraft.maxPhotos)
+                _AddPhotoTile(
+                  key: const Key('photo-add'),
+                  onPressed: enabled ? onAdd : null,
+                ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+const double _kThumbSize = 84;
+
+class _PhotoThumb extends StatelessWidget {
+  const _PhotoThumb({super.key, required this.photo, this.onRemove});
+
+  final CheckInPhoto photo;
+  final VoidCallback? onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final kit = context.kit;
+    return SizedBox(
+      width: _kThumbSize,
+      height: _kThumbSize,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Image.memory(
+              photo.bytes,
+              fit: BoxFit.cover,
+              gaplessPlayback: true,
+              errorBuilder: (_, _, _) => ColoredBox(
+                color: kit.tile,
+                child: Icon(Icons.image_outlined, color: kit.secondary),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 4,
+            right: 4,
+            child: Semantics(
+              button: true,
+              label: 'Remove photo',
+              child: GestureDetector(
+                onTap: onRemove,
+                child: Container(
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddPhotoTile extends StatelessWidget {
+  const _AddPhotoTile({super.key, this.onPressed});
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final kit = context.kit;
+    return Semantics(
+      button: true,
+      label: 'Add a photo',
+      child: Material(
+        color: kit.tile,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onPressed,
+          child: SizedBox(
+            width: _kThumbSize,
+            height: _kThumbSize,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_a_photo_outlined, color: kit.accentText),
+                const SizedBox(height: 4),
+                Text('Add', style: KitType.label(color: kit.accentText)),
+              ],
+            ),
+          ),
         ),
       ),
     );

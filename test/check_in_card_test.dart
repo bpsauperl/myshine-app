@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myshine/api/api_client.dart';
+import 'package:myshine/api/models.dart';
 import 'package:myshine/screens/home/check_in_card.dart';
 import 'package:myshine/theme.dart';
 
@@ -83,5 +84,72 @@ void main() {
 
     expect(find.text('Your treatment hasn\'t started yet.'), findsOneWidget);
     expect(find.byKey(const Key('check-in-thanks')), findsNothing);
+  });
+
+  testWidgets('adds up to 3 photos, removes one and sends the rest', (
+    tester,
+  ) async {
+    final api = FakeApiClient();
+    final camera = FakeCamera();
+    CheckIn? sent;
+    await tester.pumpWidget(
+      _wrap(
+        CheckInCard(
+          api: api,
+          cameraSupported: true,
+          takePhoto: camera.take,
+          onSent: (checkIn) => sent = checkIn,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('fit-loose')));
+    await tester.pump();
+    expect(
+      find.text('A photo of the aligner helps your clinic see what\'s wrong.'),
+      findsOneWidget,
+    );
+
+    for (var i = 0; i < 3; i++) {
+      await tester.ensureVisible(find.byKey(const Key('photo-add')));
+      await tester.tap(find.byKey(const Key('photo-add')));
+      await tester.pumpAndSettle();
+    }
+    expect(find.byKey(const Key('photo-2')), findsOneWidget);
+    expect(find.byKey(const Key('photo-add')), findsNothing);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('photo-0')),
+        matching: find.byIcon(Icons.close_rounded),
+      ),
+    );
+    await tester.pump();
+    expect(find.byKey(const Key('photo-2')), findsNothing);
+    expect(find.byKey(const Key('photo-add')), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const Key('check-in-send')));
+    await tester.tap(find.byKey(const Key('check-in-send')));
+    await tester.pumpAndSettle();
+
+    final draft = api.sentCheckIns.single;
+    expect(draft.photos.map((p) => p.filename), ['photo-2.png', 'photo-3.png']);
+    expect(sent?.photos, 2);
+  });
+
+  testWidgets('on web a calm note replaces the camera', (tester) async {
+    final camera = FakeCamera();
+    await tester.pumpWidget(
+      _wrap(
+        CheckInCard(
+          api: FakeApiClient(),
+          cameraSupported: false,
+          takePhoto: camera.take,
+        ),
+      ),
+    );
+
+    expect(find.byKey(const Key('photos-unavailable')), findsOneWidget);
+    expect(find.byKey(const Key('photo-add')), findsNothing);
   });
 }
