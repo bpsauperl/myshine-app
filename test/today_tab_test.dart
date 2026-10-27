@@ -37,6 +37,26 @@ void main() {
     expect(find.text('Check in'), findsOneWidget);
   });
 
+  testWidgets('a late change shows on the next aligner tile', (tester) async {
+    final me = await _loaded(FakeApiClient(me: meJson(lateDays: 2)));
+    await tester.pumpWidget(
+      _wrap(TodayTab(me: me, now: DateTime(2026, 10, 31))),
+    );
+
+    expect(find.text('2 days late', findRichText: true), findsOneWidget);
+  });
+
+  testWidgets('without check-in only the schedule shows', (tester) async {
+    final me = await _loaded(FakeApiClient(me: meJson(checkIn: false)));
+    await tester.pumpWidget(
+      _wrap(TodayTab(me: me, now: DateTime(2026, 10, 24))),
+    );
+
+    expect(find.text('Aligner 04/22', findRichText: true), findsOneWidget);
+    expect(find.byKey(const Key('hero-check-in')), findsNothing);
+    expect(find.byKey(const Key('check-in-upcoming')), findsNothing);
+  });
+
   testWidgets('says the next aligner is tomorrow the day before', (
     tester,
   ) async {

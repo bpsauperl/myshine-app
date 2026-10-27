@@ -9,6 +9,8 @@ import 'package:myshine/screens/home/photo_camera_screen.dart';
 Map<String, dynamic> meJson({
   bool withTherapy = true,
   bool planShared = false,
+  bool checkIn = true,
+  int lateDays = 0,
 }) => {
   'patient': {
     'first_name': 'Ana',
@@ -40,6 +42,12 @@ Map<String, dynamic> meJson({
             'day': 3,
           },
           'next_change': '2026-10-29',
+          'check_in': {
+            'enabled': checkIn,
+            'next_aligner': checkIn ? 5 : null,
+            'due_on': checkIn ? '2026-10-29' : null,
+            'late_days': lateDays,
+          },
           'ends_on': '2027-03-03',
           'rows': [
             {
@@ -153,10 +161,10 @@ class FakeApiClient implements ApiClient {
     sentCheckIns.add(draft);
     return CheckIn(
       id: 99,
-      aligner: 4,
+      aligner: 5,
       fit: draft.fit,
-      wearHours: draft.wearHours,
       comfort: draft.comfort,
+      alignerChange: true,
       photos: draft.photos.length,
     );
   }

@@ -118,7 +118,9 @@ class _TodayTabState extends State<TodayTab> {
                         child: _Hero(
                           therapy: therapy,
                           current: current,
-                          onCheckIn: _goToCheckIn,
+                          onCheckIn: therapy.checkIn.canCheckIn
+                              ? _goToCheckIn
+                              : null,
                           onSchedule: widget.onOpenTab == null
                               ? null
                               : () => widget.onOpenTab!(2),
@@ -152,13 +154,20 @@ class _TodayTabState extends State<TodayTab> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 18),
-                            CheckInCard(
-                              key: _checkInKey,
-                              api: widget.me.api,
-                              aligner: current.aligner,
-                              onSent: widget.me.addCheckIn,
-                            ),
+                            if (therapy.checkIn.canCheckIn) ...[
+                              const SizedBox(height: 18),
+                              CheckInCard(
+                                key: _checkInKey,
+                                api: widget.me.api,
+                                checkIn: therapy.checkIn,
+                                now: widget.now,
+                                onSent: (checkIn) {
+                                  widget.me.addCheckIn(checkIn);
+                                  // The schedule follows the change.
+                                  widget.me.refresh();
+                                },
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -185,7 +194,9 @@ class _Hero extends StatelessWidget {
 
   final Therapy therapy;
   final CurrentAligner current;
-  final VoidCallback onCheckIn;
+
+  /// Null when the doctor doesn't use check-in: only the schedule shows.
+  final VoidCallback? onCheckIn;
   final VoidCallback? onSchedule;
 
   @override
@@ -225,7 +236,7 @@ class _Hero extends StatelessWidget {
         const SizedBox(height: 18),
         Row(
           children: [
-            if (onSchedule != null) ...[
+            if (onSchedule != null)
               Expanded(
                 child: KitButton.secondary(
                   label: 'Schedule',
@@ -234,16 +245,18 @@ class _Hero extends StatelessWidget {
                   onPressed: onSchedule,
                 ),
               ),
+            if (onSchedule != null && onCheckIn != null)
               const SizedBox(width: 8),
-            ],
-            Expanded(
-              child: KitButton(
-                label: 'Check in',
-                icon: Icons.check_rounded,
-                height: 48,
-                onPressed: onCheckIn,
+            if (onCheckIn != null)
+              Expanded(
+                child: KitButton(
+                  key: const Key('hero-check-in'),
+                  label: 'Check in',
+                  icon: Icons.check_rounded,
+                  height: 48,
+                  onPressed: onCheckIn,
+                ),
               ),
-            ),
           ],
         ),
       ],
@@ -275,7 +288,10 @@ class _Facts extends StatelessWidget {
     final done = therapy.total == 0
         ? 0
         : (finished / therapy.total * 100).round();
-    final nextValue = isLast || next == null
+    final late = therapy.checkIn.canCheckIn ? therapy.checkIn.lateDays : 0;
+    final nextValue = late > 0
+        ? (late == 1 ? '1 day late' : '$late days late')
+        : isLast || next == null
         ? 'Last one'
         : _capitalise(relativeDay(next, now: now).replaceFirst('on ', ''));
     final tiles = [

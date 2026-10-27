@@ -41,6 +41,15 @@ Map<String, dynamic> _me() => {
       'day': 3,
     },
     'next_change': _day(5),
+    // ?late shows the check-in as 2 days late; ?nocheckin as the doctor not using it.
+    'check_in': {
+      'enabled': !Uri.base.queryParameters.containsKey('nocheckin'),
+      'next_aligner': 5,
+      'due_on': Uri.base.queryParameters.containsKey('late')
+          ? _day(-2)
+          : _day(5),
+      'late_days': Uri.base.queryParameters.containsKey('late') ? 2 : 0,
+    },
     'ends_on': _day(-23 + 22 * 7 - 1),
     'rows': [
       for (var i = 1; i <= 22; i++)
@@ -104,8 +113,13 @@ class _PreviewApi implements ApiClient {
   Future<MeData> me() async => MeData.fromJson(_me());
 
   @override
-  Future<CheckIn> sendCheckIn(CheckInDraft draft) async =>
-      CheckIn(id: 1, aligner: 4, fit: draft.fit, photos: draft.photos.length);
+  Future<CheckIn> sendCheckIn(CheckInDraft draft) async => CheckIn(
+    id: 1,
+    aligner: 5,
+    fit: draft.fit,
+    alignerChange: true,
+    photos: draft.photos.length,
+  );
 
   @override
   Future<List<Message>> messages() async => List.of(_messages);

@@ -83,18 +83,20 @@ Without an account the app works offline (smile simulation). The patient links t
   `{`
   - `patient: {first_name, clinic: {name, phone, email, city}, doctor: {name}, status, status_label},`
   - `plan: {shared: bool, url: string | null, series},` — `url` is the Stella viewer link, only when the clinic shared the plan;
-  - `therapy: null | {started, series, total, current: {aligner, from, to, days, day}, next_change, ends_on, rows: [{aligner, from, to, days, state: done|now|next}]},`
+  - `therapy: null | {started, series, total, current: {aligner, from, to, days, day}, next_change, ends_on, check_in: {enabled, next_aligner, due_on, late_days}, rows: [{aligner, from, to, days, state: done|now|next}]},`
+
+  `check_in` (added 2026-10-27): whether the doctor chose check-in for this patient when starting therapy. When on, the next aligner change (`next_aligner`, null after the last), its `due_on` date and `late_days` past it (0 when not yet due). Missing means off.
   - `check_ins: [check_in], consents: [{id, status, devices, signed_at, sign_url | null}], unread_messages`
 
   `}`
 
   `sign_url` is a short-lived link that opens the consent signing page in the browser, already verified.
-- `POST /check-ins {fit: seated|loose|tight|damaged, wear_hours?, comfort?: none|mild|strong, notes?}` → `201 {check_in}`. The aligner is the current one; the clinic sees it with source "app".
+- `POST /check-ins {fit: seated|loose|tight|damaged, comfort?: none|mild|strong, notes?}` → `201 {check_in}`. **Since 2026-10-27 a check-in is the patient's aligner change:** the patient confirms they put in `therapy.check_in.next_aligner`; drShine records it on that aligner with its due date, and the schedule follows the day of the change. `409` when the doctor doesn't use check-in for this patient, or after the last aligner. The app no longer sends `wear_hours`.
   - **Photos (added 2026-10-27):** optional intraoral photos, sent as `multipart/form-data` with the same fields plus any of `photos[front]`, `photos[right]`, `photos[left]`, `photos[upper]`, `photos[lower]`. Each is one image (jpeg/png/heic/webp, max 8 MB), and none is required. Without photos the app sends JSON exactly as above. The doctor sees them with that check-in (per step), privately stored.
 - `GET /messages` → `{data: [message]}` (newest last; marks the clinic's messages read)
 - `POST /messages {body}` → `201 {message}`
   - **Photos (added 2026-10-27):** photos are attachments of a message. `multipart/form-data` with `body` (optional when photos are attached) and `photos[]`: 1 to 3 images (jpeg/png/heic/webp, max 8 MB each). Without photos the app sends JSON exactly as above.
 
-`check_in` = `{id, aligner, fit, fit_label, wear_hours, comfort, outcome, outcome_label, source, at, photos}`. `photos` is how many were stored (an int; the app also accepts a list and counts it; missing means 0).
+`check_in` = `{id, aligner, aligner_change, due_on, late_days, fit, fit_label, wear_hours, comfort, outcome, outcome_label, source, at, photos}`. `aligner_change` is true for the patient's change from myShine; `late_days` is how many days after `due_on` it came. `photos` is how many were stored (an int; the app also accepts a list and counts it; missing means 0).
 
 `message` = `{id, author: clinic|patient, name, body, at, photos: [{id, url}]}`. `url` is a short-lived private link the app loads directly (like `sign_url`); `photos` missing means none. `body` may be empty when the message has photos.

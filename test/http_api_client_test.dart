@@ -108,18 +108,14 @@ void main() {
 
     test('sends JSON without photos', () async {
       final checkIn = await client.sendCheckIn(
-        const CheckInDraft(fit: 'seated', wearHours: 22, notes: ' Fine. '),
+        const CheckInDraft(fit: 'seated', notes: ' Fine. '),
       );
 
       final request = requests.single as http.Request;
       expect(request.method, 'POST');
       expect(request.url.path, '/api/myshine/v1/check-ins');
       expect(request.headers['Content-Type'], startsWith('application/json'));
-      expect(jsonDecode(request.body), {
-        'fit': 'seated',
-        'wear_hours': 22,
-        'notes': 'Fine.',
-      });
+      expect(jsonDecode(request.body), {'fit': 'seated', 'notes': 'Fine.'});
       expect(checkIn.photos, 2);
     });
 
@@ -127,7 +123,6 @@ void main() {
       await client.sendCheckIn(
         CheckInDraft(
           fit: 'tight',
-          wearHours: 20,
           comfort: 'mild',
           photos: {
             IntraoralView.front: PhotoUpload(
@@ -147,11 +142,7 @@ void main() {
       expect(request.url.path, '/api/myshine/v1/check-ins');
       expect(request.headers['Authorization'], 'Bearer abc');
       expect(request.headers['Accept'], 'application/json');
-      expect(request.fields, {
-        'fit': 'tight',
-        'wear_hours': '20',
-        'comfort': 'mild',
-      });
+      expect(request.fields, {'fit': 'tight', 'comfort': 'mild'});
       expect(request.files.map((f) => f.field), [
         'photos[front]',
         'photos[lower]',

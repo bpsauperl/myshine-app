@@ -52,11 +52,21 @@ void main() {
     expect(
       const CheckInDraft(
         fit: 'seated',
-        wearHours: 20,
         comfort: 'mild',
         notes: ' Ok ',
       ).toJson(),
-      {'fit': 'seated', 'wear_hours': 20, 'comfort': 'mild', 'notes': 'Ok'},
+      {'fit': 'seated', 'comfort': 'mild', 'notes': 'Ok'},
     );
+  });
+
+  test('check-in state: off when missing, the next change when on', () {
+    final off = Therapy.fromJson({'total': 22});
+    expect(off.checkIn.canCheckIn, isFalse);
+
+    final on = MeData.fromJson(meJson()).therapy!.checkIn;
+    expect(on.enabled, isTrue);
+    expect(on.nextAligner, 5);
+    expect(on.dueOn, DateTime(2026, 10, 29));
+    expect(on.lateDays, 0);
   });
 }

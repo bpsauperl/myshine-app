@@ -3,8 +3,8 @@ import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
 import '../../api/models.dart';
-import '../../config.dart';
 import '../../theme.dart';
+import '../../util/dates.dart';
 import '../../widgets/common.dart';
 import '../../widgets/photo_thumb.dart';
 import 'photo_camera_screen.dart';
@@ -26,21 +26,29 @@ const Map<String, String> kComfortOptions = {
   'strong': 'Strong',
 };
 
-/// "How is your aligner?" — posts to `/check-ins` (with up to five optional
-/// intraoral photos), then says thank you.
+/// The aligner change: when check-in is on, the patient confirms they put in
+/// the next aligner and says how it fits (discomfort, a note, up to five
+/// optional intraoral photos). Until the change is due, a quiet line says when
+/// it is, with a way to check in early. The schedule follows each change.
 class CheckInCard extends StatefulWidget {
   const CheckInCard({
     super.key,
     required this.api,
-    this.aligner,
+    required this.checkIn,
     this.onSent,
+    this.now,
     this.cameraSupported,
     this.takePhoto,
   });
 
   final ApiClient api;
-  final int? aligner;
+
+  /// Which aligner is next and when it is due ([CheckInState.canCheckIn]).
+  final CheckInState checkIn;
   final ValueChanged<CheckIn>? onSent;
+
+  /// Today, for tests.
+  final DateTime? now;
 
   /// False on web: photos can only be taken in the phone app. Defaults to
   /// [PhotoCapture.supported].
@@ -59,12 +67,15 @@ class CheckInCard extends StatefulWidget {
 
 class _CheckInCardState extends State<CheckInCard> {
   final _notes = TextEditingController();
+  bool _switched = false;
   String? _fit;
-  int _hours = AppConfig.wearHoursGoal;
   String? _comfort;
   final Map<IntraoralView, PhotoUpload> _photos = {};
   bool _sending = false;
-  bool _sent = false;
+  bool _early = false;
+
+  /// The aligner just checked in, until the schedule moves on to the next.
+  int? _sentAligner;
   String? _error;
 
   @override
@@ -73,10 +84,26 @@ class _CheckInCardState extends State<CheckInCard> {
     super.dispose();
   }
 
+  int get _aligner => widget.checkIn.nextAligner!;
+
+  bool get _isDue {
+    final dueOn = widget.checkIn.dueOn;
+    final today = dateOnly(widget.now ?? DateTime.now());
+    return widget.checkIn.lateDays > 0 ||
+        dueOn == null ||
+        !dateOnly(dueOn).isAfter(today);
+  }
+
   Future<void> _send() async {
     final fit = _fit;
+    if (!_switched) {
+      setState(
+        () => _error = 'Confirm that you have put in aligner $_aligner.',
+      );
+      return;
+    }
     if (fit == null) {
-      setState(() => _error = 'Choose how your aligner fits.');
+      setState(() => _error = 'Choose how aligner $_aligner fits.');
       return;
     }
     setState(() {
@@ -87,14 +114,21 @@ class _CheckInCardState extends State<CheckInCard> {
       final checkIn = await widget.api.sendCheckIn(
         CheckInDraft(
           fit: fit,
-          wearHours: _hours,
           comfort: _comfort,
           notes: _notes.text,
           photos: Map.of(_photos),
         ),
       );
+      setState(() {
+        _sentAligner = checkIn.aligner ?? _aligner;
+        _switched = false;
+        _fit = null;
+        _comfort = null;
+        _photos.clear();
+        _notes.clear();
+        _early = false;
+      });
       widget.onSent?.call(checkIn);
-      setState(() => _sent = true);
     } on ApiException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -102,17 +136,6 @@ class _CheckInCardState extends State<CheckInCard> {
         setState(() => _sending = false);
       }
     }
-  }
-
-  void _reset() {
-    setState(() {
-      _sent = false;
-      _fit = null;
-      _hours = AppConfig.wearHoursGoal;
-      _comfort = null;
-      _photos.clear();
-      _notes.clear();
-    });
   }
 
   Future<void> _takePhoto(IntraoralView view) async {
@@ -128,41 +151,96 @@ class _CheckInCardState extends State<CheckInCard> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.shine;
-    if (_sent) {
-      return ShineCard(
-        key: const Key('check-in-thanks'),
-        color: palette.accentSoft,
-        child: Column(
-          children: [
-            Icon(
-              Icons.check_circle_rounded,
-              color: palette.accentText,
-              size: 40,
+    if (!widget.checkIn.canCheckIn) {
+      return const SizedBox.shrink();
+    }
+    // Waiting for the schedule to move on after a check-in, or not due yet.
+    final waiting = _sentAligner != null && _sentAligner! >= _aligner;
+    if (waiting || (!_isDue && !_early)) {
+      return _upcoming(context);
+    }
+    return _form(context);
+  }
+
+  Widget _upcoming(BuildContext context) {
+    final kit = context.kit;
+    final dueOn = widget.checkIn.dueOn;
+    final waiting = _sentAligner != null && _sentAligner! >= _aligner;
+    final thanks = _sentAligner;
+    return ShineCard(
+      key: const Key('check-in-upcoming'),
+      color: thanks != null ? kit.accentSoft : kit.inset,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (thanks != null) ...[
+            Row(
+              key: const Key('check-in-thanks'),
+              children: [
+                Icon(Icons.check_circle_rounded, color: kit.accentText),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Aligner $thanks it is. Thank you!',
+                    style: KitType.body(color: kit.ink)
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            Text('Thank you!', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 10),
+          ],
+          if (!waiting) ...[
+            Text(
+              'Your check-in',
+              style: KitType.eyebrow(color: kit.accentText),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              dueOn == null
+                  ? 'Next: aligner $_aligner'
+                  : 'Aligner $_aligner ${relativeDay(dueOn, now: widget.now)}',
+              style: KitType.title(color: kit.ink).copyWith(fontSize: 22),
+            ),
             const SizedBox(height: 6),
             Text(
-              'Your clinic sees your check-in and will get in touch if anything needs to change.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: palette.ink, height: 1.4),
+              'When you put it in, check in here. Your schedule follows the day you change.',
+              style: KitType.body(color: kit.secondary),
             ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: _reset,
-              child: const Text('Send another check-in'),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('check-in-early'),
+                onPressed: () => setState(() {
+                  _early = true;
+                  _sentAligner = null;
+                }),
+                child: Text('I\'ve switched to aligner $_aligner already'),
+              ),
             ),
-          ],
-        ),
-      );
-    }
+          ] else
+            Text(
+              'Your clinic sees your check-in.',
+              style: KitType.body(color: kit.secondary),
+            ),
+        ],
+      ),
+    );
+  }
 
-    final title = widget.aligner == null
-        ? 'How is your aligner?'
-        : 'How is aligner ${widget.aligner}?';
+  Widget _form(BuildContext context) {
+    final palette = context.shine;
+    final kit = context.kit;
+    final late = widget.checkIn.lateDays;
+    final dueOn = widget.checkIn.dueOn;
+    final status = late > 0
+        ? 'Due ${late == 1 ? 'yesterday' : '$late days ago'}. Check in when you\'ve changed.'
+        : dueOn == null
+        ? null
+        : 'Due ${relativeDay(dueOn, now: widget.now)}.';
     return ShineCard(
-      color: context.kit.inset,
+      key: const Key('check-in-form'),
+      color: kit.inset,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -172,11 +250,44 @@ class _CheckInCardState extends State<CheckInCard> {
           ),
           const SizedBox(height: 6),
           Text(
-            title,
+            'Switch to aligner $_aligner',
             style: KitType.title(color: palette.ink).copyWith(fontSize: 26),
           ),
+          if (status != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              status,
+              key: const Key('check-in-status'),
+              style: KitType.label(color: kit.secondary),
+            ),
+          ],
           const SizedBox(height: 16),
-          _Label('Fit'),
+          Material(
+            color: _switched ? kit.accentSoft : kit.tile,
+            borderRadius: BorderRadius.circular(KitSize.tileRadius),
+            child: SwitchListTile.adaptive(
+              key: const Key('check-in-switched'),
+              value: _switched,
+              onChanged: _sending
+                  ? null
+                  : (value) => setState(() {
+                      _switched = value;
+                      _error = null;
+                    }),
+              title: Text(
+                'I\'ve put in aligner $_aligner',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: palette.ink,
+                ),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(KitSize.tileRadius),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          _Label('How does aligner $_aligner fit?'),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -200,34 +311,6 @@ class _CheckInCardState extends State<CheckInCard> {
                           _error = null;
                         }),
                 ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          _Label('Hours a day'),
-          Row(
-            children: [
-              _StepButton(
-                key: const Key('hours-minus'),
-                icon: Icons.remove_rounded,
-                onPressed: _sending || _hours <= 0
-                    ? null
-                    : () => setState(() => _hours--),
-              ),
-              Expanded(
-                child: Text(
-                  '$_hours h',
-                  key: const Key('hours-value'),
-                  textAlign: TextAlign.center,
-                  style: KitType.number(size: 30, color: palette.ink),
-                ),
-              ),
-              _StepButton(
-                key: const Key('hours-plus'),
-                icon: Icons.add_rounded,
-                onPressed: _sending || _hours >= 24
-                    ? null
-                    : () => setState(() => _hours++),
-              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -265,7 +348,7 @@ class _CheckInCardState extends State<CheckInCard> {
             onRemove: (view) => setState(() => _photos.remove(view)),
           ),
           const SizedBox(height: 20),
-          _Label('Notes for your clinic'),
+          _Label('Note for your clinic'),
           TextField(
             key: const Key('check-in-notes'),
             controller: _notes,
@@ -290,7 +373,7 @@ class _CheckInCardState extends State<CheckInCard> {
           FilledButton(
             key: const Key('check-in-send'),
             onPressed: _sending ? null : _send,
-            child: Text(_sending ? 'Sending…' : 'Send check-in'),
+            child: Text(_sending ? 'Sending…' : 'Check in aligner $_aligner'),
           ),
         ],
       ),
@@ -439,26 +522,6 @@ class _TakePhotoTile extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _StepButton extends StatelessWidget {
-  const _StepButton({super.key, required this.icon, this.onPressed});
-
-  final IconData icon;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton.filledTonal(
-      onPressed: onPressed,
-      icon: Icon(icon),
-      style: IconButton.styleFrom(
-        backgroundColor: context.kit.tile,
-        foregroundColor: context.shine.ink,
-        minimumSize: const Size(48, 48),
       ),
     );
   }

@@ -162,6 +162,7 @@ class Therapy {
     this.nextChange,
     this.endsOn,
     required this.rows,
+    this.checkIn = CheckInState.off,
   });
 
   factory Therapy.fromJson(Map<String, dynamic> json) {
@@ -176,6 +177,9 @@ class Therapy {
       nextChange: parseDate(json['next_change']),
       endsOn: parseDate(json['ends_on']),
       rows: rows,
+      checkIn: json['check_in'] is Map
+          ? CheckInState.fromJson(_map(json['check_in']))
+          : CheckInState.off,
     );
   }
 
@@ -186,6 +190,39 @@ class Therapy {
   final DateTime? nextChange;
   final DateTime? endsOn;
   final List<ScheduleRow> rows;
+
+  /// Whether the patient checks in each aligner change (the doctor's choice).
+  final CheckInState checkIn;
+}
+
+/// Check-in as the doctor set it: when on, the patient confirms each aligner
+/// change, and the schedule follows. [nextAligner] is null after the last.
+class CheckInState {
+  const CheckInState({
+    required this.enabled,
+    this.nextAligner,
+    this.dueOn,
+    this.lateDays = 0,
+  });
+
+  factory CheckInState.fromJson(Map<String, dynamic> json) => CheckInState(
+    enabled: json['enabled'] == true,
+    nextAligner: _int(json['next_aligner']),
+    dueOn: parseDate(json['due_on']),
+    lateDays: _int(json['late_days']) ?? 0,
+  );
+
+  static const CheckInState off = CheckInState(enabled: false);
+
+  final bool enabled;
+  final int? nextAligner;
+  final DateTime? dueOn;
+
+  /// Days past [dueOn] without a check-in.
+  final int lateDays;
+
+  /// There is an aligner change the patient can check in.
+  bool get canCheckIn => enabled && nextAligner != null;
 }
 
 class CheckIn {
@@ -201,6 +238,8 @@ class CheckIn {
     this.source,
     this.at,
     this.photos = 0,
+    this.alignerChange = false,
+    this.lateDays = 0,
   });
 
   factory CheckIn.fromJson(Map<String, dynamic> json) => CheckIn(
@@ -217,6 +256,8 @@ class CheckIn {
     photos: json['photos'] is List
         ? (json['photos'] as List).length
         : _int(json['photos']) ?? 0,
+    alignerChange: json['aligner_change'] == true,
+    lateDays: _int(json['late_days']) ?? 0,
   );
 
   final int id;
@@ -232,6 +273,12 @@ class CheckIn {
 
   /// How many photos the server stored with this check-in.
   final int photos;
+
+  /// The patient's aligner change (to [aligner]), rather than a clinic check-in.
+  final bool alignerChange;
+
+  /// How many days after it was due the patient changed.
+  final int lateDays;
 }
 
 class Consent {
@@ -343,11 +390,12 @@ class ConnectResult {
   final Patient patient;
 }
 
-/// A check-in as the patient fills it in.
+/// The patient's aligner change as they fill it in: how the new aligner fits,
+/// discomfort, a note and optional intraoral photos. The server knows which
+/// aligner is next.
 class CheckInDraft {
   const CheckInDraft({
     required this.fit,
-    this.wearHours,
     this.comfort,
     this.notes,
     this.photos = const {},
@@ -355,7 +403,6 @@ class CheckInDraft {
 
   /// seated | loose | tight | damaged
   final String fit;
-  final int? wearHours;
 
   /// none | mild | strong
   final String? comfort;
@@ -367,7 +414,6 @@ class CheckInDraft {
 
   Map<String, dynamic> toJson() => {
     'fit': fit,
-    if (wearHours != null) 'wear_hours': wearHours,
     if (comfort != null) 'comfort': comfort,
     if (notes != null && notes!.trim().isNotEmpty) 'notes': notes!.trim(),
   };
