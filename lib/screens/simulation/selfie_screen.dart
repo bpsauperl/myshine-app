@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme.dart';
+import '../../util/captured_file.dart';
 import 'preview_screen.dart';
 import 'sample_face.dart';
 import 'smile_guide_painter.dart';
@@ -108,7 +109,7 @@ class _SelfieScreenState extends State<SelfieScreen>
     setState(() => _capturing = true);
     try {
       final file = await controller.takePicture();
-      final bytes = await file.readAsBytes();
+      final bytes = await readAndDeleteCapture(file);
       if (!mounted) {
         return;
       }

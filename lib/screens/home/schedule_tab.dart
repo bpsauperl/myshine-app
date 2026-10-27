@@ -16,6 +16,11 @@ class ScheduleTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final therapy = me.data!.therapy;
+    final changes = <int, CheckIn>{
+      for (final checkIn in me.data!.checkIns.reversed)
+        if (checkIn.alignerChange && checkIn.aligner != null)
+          checkIn.aligner!: checkIn,
+    };
     final palette = context.shine;
     if (therapy == null || therapy.rows.isEmpty) {
       return TabPage(
@@ -48,7 +53,10 @@ class ScheduleTab extends StatelessWidget {
             children: [
               for (var i = 0; i < therapy.rows.length; i++) ...[
                 if (i > 0) const Divider(indent: 72),
-                _AlignerRow(row: therapy.rows[i]),
+                _AlignerRow(
+                  row: therapy.rows[i],
+                  checkIn: changes[therapy.rows[i].aligner],
+                ),
               ],
             ],
           ),
@@ -134,9 +142,12 @@ class _Figures extends StatelessWidget {
 }
 
 class _AlignerRow extends StatelessWidget {
-  const _AlignerRow({required this.row});
+  const _AlignerRow({required this.row, this.checkIn});
 
   final ScheduleRow row;
+
+  /// The patient's check-in for switching to this aligner, if any.
+  final CheckIn? checkIn;
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +204,7 @@ class _AlignerRow extends StatelessWidget {
                     ),
                   ),
                   Text(dates, style: TextStyle(color: palette.muted)),
+                  if (checkIn != null) _CheckedIn(checkIn: checkIn!),
                 ],
               ),
             ),
@@ -206,6 +218,42 @@ class _AlignerRow extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// "Checked in 29 Oct" with "on time" or "2 days late".
+class _CheckedIn extends StatelessWidget {
+  const _CheckedIn({required this.checkIn});
+
+  final CheckIn checkIn;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.kit;
+    final at = checkIn.at;
+    final late = checkIn.lateDays;
+    final when = at == null ? 'Checked in' : 'Checked in ${shortDate(at)}';
+    final timing = late == 0
+        ? 'on time'
+        : late == 1
+        ? '1 day late'
+        : '$late days late';
+    return Padding(
+      key: Key('checked-in-${checkIn.aligner}'),
+      padding: const EdgeInsets.only(top: 2),
+      child: Row(
+        children: [
+          Icon(Icons.check_circle_rounded, size: 14, color: p.accentText),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              '$when · $timing',
+              style: KitType.label(color: p.secondary).copyWith(fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }

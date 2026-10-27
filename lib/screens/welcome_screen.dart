@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
+import '../config.dart';
 import '../state/session.dart';
 import '../widgets/common.dart';
 import 'connect_screen.dart';
@@ -40,10 +41,12 @@ class WelcomeScreen extends StatelessWidget {
                       children: [
                         GestureDetector(
                           key: const Key('welcome-logo'),
-                          onLongPress: () => showServerSettings(
-                            context,
-                            SessionScope.of(context),
-                          ),
+                          onLongPress: AppConfig.serverSettingEnabled
+                              ? () => showServerSettings(
+                                  context,
+                                  SessionScope.of(context),
+                                )
+                              : null,
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 12),
                             child: Wordmark(size: 22),

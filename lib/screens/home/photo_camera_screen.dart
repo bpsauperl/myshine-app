@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../api/models.dart';
 import '../../theme.dart';
+import '../../util/captured_file.dart';
 
 /// What the camera screen asks for: a title and a line of guidance.
 class PhotoPrompt {
@@ -159,7 +160,7 @@ class _PhotoCameraScreenState extends State<PhotoCameraScreen>
     setState(() => _capturing = true);
     try {
       final file = await controller.takePicture();
-      final bytes = await file.readAsBytes();
+      final bytes = await readAndDeleteCapture(file);
       if (!mounted) {
         return;
       }
