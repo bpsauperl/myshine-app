@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
@@ -35,19 +34,24 @@ class CheckInCard extends StatefulWidget {
     required this.api,
     this.aligner,
     this.onSent,
-    this.cameraSupported = !kIsWeb,
-    this.takePhoto = PhotoCameraScreen.take,
+    this.cameraSupported,
+    this.takePhoto,
   });
 
   final ApiClient api;
   final int? aligner;
   final ValueChanged<CheckIn>? onSent;
 
-  /// False on web: photos can only be taken in the phone app.
-  final bool cameraSupported;
+  /// False on web: photos can only be taken in the phone app. Defaults to
+  /// [PhotoCapture.supported].
+  final bool? cameraSupported;
 
-  /// Opens the in-app camera; tests pass a fake.
-  final PhotoTaker takePhoto;
+  /// Opens the in-app camera; tests pass a fake. Defaults to [PhotoCapture].
+  final PhotoTaker? takePhoto;
+
+  bool get _cameraSupported => cameraSupported ?? PhotoCapture.supported;
+
+  PhotoTaker get _takePhoto => takePhoto ?? PhotoCapture.take;
 
   @override
   State<CheckInCard> createState() => _CheckInCardState();
@@ -112,7 +116,7 @@ class _CheckInCardState extends State<CheckInCard> {
   }
 
   Future<void> _takePhoto(IntraoralView view) async {
-    final photo = await widget.takePhoto(
+    final photo = await widget._takePhoto(
       context,
       PhotoPrompt(title: '${view.label} photo', hint: view.hint),
     );
@@ -255,7 +259,7 @@ class _CheckInCardState extends State<CheckInCard> {
           _PhotosSection(
             photos: _photos,
             asking: kFitsAskingForPhotos.contains(_fit),
-            cameraSupported: widget.cameraSupported,
+            cameraSupported: widget._cameraSupported,
             enabled: !_sending,
             onTake: _takePhoto,
             onRemove: (view) => setState(() => _photos.remove(view)),

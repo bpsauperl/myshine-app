@@ -1,9 +1,13 @@
 // A preview of the connected app with made-up example data and no server.
 // Build: flutter build web -t tool/preview_main.dart -o build/web-preview
+import 'dart:convert';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/api/models.dart';
 import 'package:myshine/app.dart';
+import 'package:myshine/screens/home/photo_camera_screen.dart';
 import 'package:myshine/state/session.dart';
 
 String _day(int offset) {
@@ -101,7 +105,7 @@ class _PreviewApi implements ApiClient {
 
   @override
   Future<CheckIn> sendCheckIn(CheckInDraft draft) async =>
-      CheckIn(id: 1, aligner: 4, fit: draft.fit);
+      CheckIn(id: 1, aligner: 4, fit: draft.fit, photos: draft.photos.length);
 
   @override
   Future<List<Message>> messages() async => List.of(_messages);
@@ -116,14 +120,62 @@ class _PreviewApi implements ApiClient {
       author: MessageAuthor.patient,
       body: body,
       at: DateTime.now(),
+      photos: [
+        for (final photo in photos)
+          MessagePhoto(
+            id: photo.bytes.length,
+            url: 'data:image/png;base64,${base64Encode(photo.bytes)}',
+          ),
+      ],
     );
     _messages.add(message);
     return message;
   }
 }
 
+/// The preview has no camera: a "photo" is a drawn sample tile, so the photo
+/// rows can be tried in the browser. Example data only.
+Future<PhotoUpload?> _samplePhoto(BuildContext _, PhotoPrompt prompt) async {
+  const size = 480.0;
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder);
+  canvas.drawRect(
+    const Rect.fromLTWH(0, 0, size, size),
+    Paint()..color = const Color(0xFFE8F5F5),
+  );
+  final tooth = Paint()..color = Colors.white;
+  for (var i = 0; i < 6; i++) {
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(60.0 + i * 62, 170, 54, 110),
+        const Radius.circular(18),
+      ),
+      tooth,
+    );
+  }
+  final label = TextPainter(
+    text: TextSpan(
+      text: 'Sample · ${prompt.title}',
+      style: const TextStyle(color: Color(0xFF12787C), fontSize: 30),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout(maxWidth: size - 40);
+  label.paint(canvas, const Offset(30, 340));
+  final image = await recorder.endRecording().toImage(
+    size.toInt(),
+    size.toInt(),
+  );
+  final png = await image.toByteData(format: ui.ImageByteFormat.png);
+  if (png == null) {
+    return null;
+  }
+  return PhotoUpload(bytes: png.buffer.asUint8List(), filename: 'sample.png');
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  PhotoCapture.supported = !Uri.base.queryParameters.containsKey('nocamera');
+  PhotoCapture.take = _samplePhoto;
   final api = _PreviewApi();
   final session = Session(
     storage: MemorySessionStorage(

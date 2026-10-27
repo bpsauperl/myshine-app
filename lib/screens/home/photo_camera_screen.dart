@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../api/models.dart';
@@ -17,6 +18,15 @@ typedef PhotoTaker = Future<PhotoUpload?> Function(
   BuildContext context,
   PhotoPrompt prompt,
 );
+
+/// The app's camera, as the check-in card and Messages use it. The web
+/// preview (`tool/preview_main.dart`) swaps in sample photos.
+abstract final class PhotoCapture {
+  /// False on web: the camera works only in the phone app.
+  static bool supported = !kIsWeb;
+
+  static PhotoTaker take = PhotoCameraScreen.take;
+}
 
 /// Takes one photo for a check-in or a message and returns it as a
 /// [PhotoUpload] (or null when the patient goes back). Nothing is uploaded

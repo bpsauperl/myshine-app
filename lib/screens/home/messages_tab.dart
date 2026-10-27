@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
@@ -21,8 +20,8 @@ class MessagesTab extends StatefulWidget {
     super.key,
     required this.api,
     required this.active,
-    this.cameraSupported = !kIsWeb,
-    this.takePhoto = PhotoCameraScreen.take,
+    this.cameraSupported,
+    this.takePhoto,
   });
 
   final ApiClient api;
@@ -30,11 +29,16 @@ class MessagesTab extends StatefulWidget {
   /// True while this tab is the one on screen.
   final bool active;
 
-  /// False on web: photos can only be attached in the phone app.
-  final bool cameraSupported;
+  /// False on web: photos can only be attached in the phone app. Defaults to
+  /// [PhotoCapture.supported].
+  final bool? cameraSupported;
 
-  /// Opens the in-app camera; tests pass a fake.
-  final PhotoTaker takePhoto;
+  /// Opens the in-app camera; tests pass a fake. Defaults to [PhotoCapture].
+  final PhotoTaker? takePhoto;
+
+  bool get _cameraSupported => cameraSupported ?? PhotoCapture.supported;
+
+  PhotoTaker get _takePhoto => takePhoto ?? PhotoCapture.take;
 
   @override
   State<MessagesTab> createState() => _MessagesTabState();
@@ -163,7 +167,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
   }
 
   Future<void> _attachPhoto() async {
-    final photo = await widget.takePhoto(
+    final photo = await widget._takePhoto(
       context,
       const PhotoPrompt(
         title: 'Photo for your clinic',
@@ -180,7 +184,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final messages = _messages;
     final canAttach =
-        widget.cameraSupported && _attachments.length < maxMessagePhotos;
+        widget._cameraSupported && _attachments.length < maxMessagePhotos;
     return SafeArea(
       bottom: false,
       child: Center(
@@ -274,7 +278,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    if (widget.cameraSupported) ...[
+                    if (widget._cameraSupported) ...[
                       IconButton(
                         key: const Key('message-attach'),
                         onPressed: _sending || !canAttach ? null : _attachPhoto,
@@ -391,9 +395,7 @@ class MessageBubble extends StatelessWidget {
                 ),
               ),
               child: Column(
-                crossAxisAlignment: mine
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (message.photos.isNotEmpty)
