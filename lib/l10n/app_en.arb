@@ -197,9 +197,9 @@
   "profileFooter": "Shine clear aligners by SmileLabs",
 
   "documentsTitle": "Documents",
-  "documentsEmptyTitle": "Nothing to sign",
-  "documentsEmptyBody": "When your clinic asks you to sign something, it shows here.",
-  "documentsFootnote": "After you sign, your clinic keeps the signed copy with your records. Ask them if you would like a copy for yourself.",
+  "documentsEmptyTitle": "Nothing here yet",
+  "documentsEmptyBody": "What you sign, and the statements for your aligners, show here.",
+  "documentsFootnote": "Everything you signed and the statement for each of your devices stays here. Tap one to open, print or save it. Your clinic keeps the same copies.",
   "documentsConsent": "Treatment consent",
   "documentsConsentFor": "Consent: {devices}",
   "@documentsConsentFor": {"description": "{devices} comes from the clinic, e.g. 'Shine aligners'."},
@@ -209,6 +209,7 @@
   "@documentsSignThere": {"description": "The consent is signed at the clinic, not in the app."},
   "documentsWaiting": "Waiting for your signature",
   "documentsSign": "Sign",
+  "documentsOpen": "Open",
 
   "messagesTitle": "Messages",
   "messagesSubtitle": "Write to your clinic. They usually answer within a working day.",

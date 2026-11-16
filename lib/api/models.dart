@@ -292,20 +292,53 @@ class Consent {
   });
 
   factory Consent.fromJson(Map<String, dynamic> json) => Consent(
-    id: _int(json['id']) ?? 0,
+    id: _string(json['id']) ?? '',
     status: _string(json['status']) ?? 'pending',
     devices: _string(json['devices']),
     signedAt: parseMoment(json['signed_at']),
     signUrl: _string(json['sign_url']),
   );
 
-  final int id;
+  final String id;
   final String status;
   final String? devices;
   final DateTime? signedAt;
   final String? signUrl;
 
   bool get isSigned => status == 'signed';
+}
+
+/// A document the patient can open: a consent they signed, or the statement
+/// for one of their custom-made devices. [url] is a short-lived private link
+/// that opens without a code, because the app is signed in as the patient.
+class PatientDocument {
+  const PatientDocument({
+    required this.id,
+    required this.type,
+    required this.title,
+    this.detail,
+    this.date,
+    required this.url,
+  });
+
+  factory PatientDocument.fromJson(Map<String, dynamic> json) =>
+      PatientDocument(
+        id: _string(json['id']) ?? '',
+        type: _string(json['type']) ?? 'consent',
+        title: _string(json['title']) ?? '',
+        detail: _string(json['detail']),
+        date: parseMoment(json['date']),
+        url: _string(json['url']) ?? '',
+      );
+
+  final String id;
+  final String type;
+  final String title;
+  final String? detail;
+  final DateTime? date;
+  final String url;
+
+  bool get isConsent => type == 'consent';
 }
 
 /// Everything `GET /me` returns.
@@ -316,6 +349,7 @@ class MeData {
     this.therapy,
     required this.checkIns,
     required this.consents,
+    this.documents = const [],
     required this.unreadMessages,
   });
 
@@ -327,6 +361,10 @@ class MeData {
         : null,
     checkIns: _list(json['check_ins']).map(CheckIn.fromJson).toList(),
     consents: _list(json['consents']).map(Consent.fromJson).toList(),
+    documents: _list(json['documents'])
+        .map(PatientDocument.fromJson)
+        .where((d) => d.url.isNotEmpty)
+        .toList(),
     unreadMessages: _int(json['unread_messages']) ?? 0,
   );
 
@@ -335,6 +373,7 @@ class MeData {
   final Therapy? therapy;
   final List<CheckIn> checkIns;
   final List<Consent> consents;
+  final List<PatientDocument> documents;
   final int unreadMessages;
 }
 

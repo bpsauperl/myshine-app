@@ -605,15 +605,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get documentsTitle => 'Dokumente';
 
   @override
-  String get documentsEmptyTitle => 'Nichts zu unterschreiben';
+  String get documentsEmptyTitle => 'Hier ist noch nichts';
 
   @override
   String get documentsEmptyBody =>
-      'Wenn deine Praxis dich um eine Unterschrift bittet, erscheint es hier.';
+      'Was du unterschreibst und die Erklärungen zu deinen Alignern erscheinen hier.';
 
   @override
   String get documentsFootnote =>
-      'Nach deiner Unterschrift bewahrt deine Praxis das unterschriebene Exemplar in deiner Akte auf. Frag sie, wenn du eine Kopie für dich möchtest.';
+      'Alles, was du unterschrieben hast, und die Erklärung zu jedem deiner Produkte bleibt hier. Tippe darauf, um es zu öffnen, zu drucken oder zu speichern. Deine Praxis bewahrt dieselben Exemplare auf.';
 
   @override
   String get documentsConsent => 'Einwilligung zur Behandlung';
@@ -640,6 +640,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get documentsSign => 'Unterschreiben';
+
+  @override
+  String get documentsOpen => 'Öffnen';
 
   @override
   String get messagesTitle => 'Nachrichten';

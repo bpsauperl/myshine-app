@@ -29,6 +29,10 @@ void main() {
     expect(me.checkIns.single.fitLabel, 'Fits well');
     expect(me.consents.first.isSigned, isTrue);
     expect(me.consents.last.signUrl, 'https://example.test/sign');
+    expect(me.consents.first.id, '0199a1b2-0000-7000-8000-000000000001');
+    expect(me.documents.map((d) => d.type), ['consent', 'statement']);
+    expect(me.documents.first.isConsent, isTrue);
+    expect(me.documents.last.url, 'https://example.test/d/statement');
     expect(me.unreadMessages, 2);
   });
 

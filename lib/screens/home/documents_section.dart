@@ -8,7 +8,8 @@ import '../../util/dates.dart';
 import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
 
-/// Consents to sign, shown on Profile.
+/// The patient's documents on Profile: everything they signed and the
+/// statement for each device, one tap to open, and consents still to sign.
 class DocumentsSection extends StatelessWidget {
   const DocumentsSection({super.key, required this.me});
 
@@ -20,22 +21,54 @@ class DocumentsSection extends StatelessWidget {
     await me.refresh();
   }
 
+  /// The link is short-lived: fetch a fresh one, then open it.
+  Future<void> _open(BuildContext context, PatientDocument document) async {
+    await me.refresh();
+    if (!context.mounted) return;
+    final fresh = me.data?.documents
+        .where((d) => d.id == document.id && d.type == document.type)
+        .firstOrNull;
+    await openInBrowserView(context, (fresh ?? document).url);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final consents = me.data!.consents;
+    final documents = me.data!.documents;
+    // A signed consent is among the documents (to open). An older drShine
+    // sends no documents: then the signed consent still shows, as before.
+    final consents = me.data!.consents
+        .where((c) => !c.isSigned || documents.isEmpty)
+        .toList();
     final palette = context.shine;
     final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SectionLabel(l10n.documentsTitle),
-        if (consents.isEmpty)
+        if (documents.isNotEmpty) ...[
+          ShineCard(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Column(
+              children: [
+                for (var i = 0; i < documents.length; i++) ...[
+                  if (i > 0) const Divider(indent: 64),
+                  _DocumentRow(
+                    document: documents[i],
+                    onOpen: () => _open(context, documents[i]),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (consents.isNotEmpty) const SizedBox(height: 10),
+        ],
+        if (consents.isEmpty && documents.isEmpty)
           CalmMessage(
             icon: Icons.description_outlined,
             title: l10n.documentsEmptyTitle,
             body: l10n.documentsEmptyBody,
           )
-        else
+        else if (consents.isNotEmpty)
           ShineCard(
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Column(
@@ -119,6 +152,68 @@ class _ConsentRow extends StatelessWidget {
               child: Text(l10n.documentsSign),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _DocumentRow extends StatelessWidget {
+  const _DocumentRow({required this.document, required this.onOpen});
+
+  final PatientDocument document;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.shine;
+    final l10n = context.l10n;
+    return InkWell(
+      onTap: onOpen,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(
+              document.isConsent
+                  ? Icons.verified_rounded
+                  : Icons.shield_outlined,
+              color: palette.accentText,
+              size: 30,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    document.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  if (document.detail != null &&
+                      document.detail!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      document.detail!,
+                      style: TextStyle(color: palette.muted),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              l10n.documentsOpen,
+              style: TextStyle(
+                color: palette.accentText,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: palette.accentText),
+          ],
+        ),
       ),
     );
   }

@@ -625,15 +625,15 @@ class AppLocalizationsSl extends AppLocalizations {
   String get documentsTitle => 'Dokumenti';
 
   @override
-  String get documentsEmptyTitle => 'Ničesar ni treba podpisati';
+  String get documentsEmptyTitle => 'Tukaj še ni ničesar';
 
   @override
   String get documentsEmptyBody =>
-      'Ko te ordinacija prosi za podpis, se dokument prikaže tukaj.';
+      'Kar podpišeš, in izjave za tvoje opornice, se prikažejo tukaj.';
 
   @override
   String get documentsFootnote =>
-      'Ko podpišeš, ordinacija podpisani izvod hrani v tvoji dokumentaciji. Če želiš kopijo zase, jih prosi zanjo.';
+      'Vse, kar si podpisal/-a, in izjava za vsak tvoj pripomoček ostane tukaj. Tapni, da dokument odpreš, natisneš ali shraniš. Enake izvode hrani tvoja ordinacija.';
 
   @override
   String get documentsConsent => 'Soglasje za zdravljenje';
@@ -660,6 +660,9 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get documentsSign => 'Podpiši';
+
+  @override
+  String get documentsOpen => 'Odpri';
 
   @override
   String get messagesTitle => 'Sporočila';

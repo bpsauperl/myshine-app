@@ -612,15 +612,15 @@ class AppLocalizationsSr extends AppLocalizations {
   String get documentsTitle => 'Dokumenti';
 
   @override
-  String get documentsEmptyTitle => 'Nema ničega za potpis';
+  String get documentsEmptyTitle => 'Ovde još nema ničega';
 
   @override
   String get documentsEmptyBody =>
-      'Kada te ordinacija zamoli da nešto potpišeš, pojaviće se ovde.';
+      'Ono što potpišeš i izjave za tvoje alajnere pojaviće se ovde.';
 
   @override
   String get documentsFootnote =>
-      'Kada potpišeš, ordinacija čuva potpisani primerak u tvojoj dokumentaciji. Ako želiš kopiju za sebe, zatraži je.';
+      'Sve što si potpisao/-la i izjava za svako tvoje pomagalo ostaje ovde. Dodirni dokument da ga otvoriš, odštampaš ili sačuvaš. Iste primerke čuva tvoja ordinacija.';
 
   @override
   String get documentsConsent => 'Saglasnost za terapiju';
@@ -647,6 +647,9 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get documentsSign => 'Potpiši';
+
+  @override
+  String get documentsOpen => 'Otvori';
 
   @override
   String get messagesTitle => 'Poruke';
@@ -1387,15 +1390,15 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
   String get documentsTitle => 'Dokumenti';
 
   @override
-  String get documentsEmptyTitle => 'Nema ničega za potpis';
+  String get documentsEmptyTitle => 'Ovde još nema ničega';
 
   @override
   String get documentsEmptyBody =>
-      'Kada te ordinacija zamoli da nešto potpišeš, pojaviće se ovde.';
+      'Ono što potpišeš i izjave za tvoje alajnere pojaviće se ovde.';
 
   @override
   String get documentsFootnote =>
-      'Kada potpišeš, ordinacija čuva potpisani primerak u tvojoj dokumentaciji. Ako želiš kopiju za sebe, zatraži je.';
+      'Sve što si potpisao/-la i izjava za svako tvoje pomagalo ostaje ovde. Dodirni dokument da ga otvoriš, odštampaš ili sačuvaš. Iste primerke čuva tvoja ordinacija.';
 
   @override
   String get documentsConsent => 'Saglasnost za terapiju';
@@ -1422,6 +1425,9 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
 
   @override
   String get documentsSign => 'Potpiši';
+
+  @override
+  String get documentsOpen => 'Otvori';
 
   @override
   String get messagesTitle => 'Poruke';

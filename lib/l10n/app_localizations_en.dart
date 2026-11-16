@@ -601,15 +601,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get documentsTitle => 'Documents';
 
   @override
-  String get documentsEmptyTitle => 'Nothing to sign';
+  String get documentsEmptyTitle => 'Nothing here yet';
 
   @override
   String get documentsEmptyBody =>
-      'When your clinic asks you to sign something, it shows here.';
+      'What you sign, and the statements for your aligners, show here.';
 
   @override
   String get documentsFootnote =>
-      'After you sign, your clinic keeps the signed copy with your records. Ask them if you would like a copy for yourself.';
+      'Everything you signed and the statement for each of your devices stays here. Tap one to open, print or save it. Your clinic keeps the same copies.';
 
   @override
   String get documentsConsent => 'Treatment consent';
@@ -635,6 +635,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get documentsSign => 'Sign';
+
+  @override
+  String get documentsOpen => 'Open';
 
   @override
   String get messagesTitle => 'Messages';

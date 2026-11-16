@@ -47,6 +47,22 @@ void main() {
     expect(find.text('+386 1 000 0000'), findsOneWidget);
   });
 
+  testWidgets('lists what was signed and each device statement, to open', (
+    tester,
+  ) async {
+    await _show(tester);
+
+    expect(find.text('Treatment consent'), findsOneWidget);
+    expect(find.text('Aligners · Signed 30 Sep 2026'), findsOneWidget);
+    expect(find.text('Statement for your custom-made device'), findsOneWidget);
+    expect(find.text('Open'), findsNWidgets(2));
+    // The signed consent is a document to open, not a second row; the one
+    // still to sign keeps its button.
+    expect(find.text('Consent: Shine aligners'), findsNothing);
+    expect(find.text('Consent: Retainers'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Sign'), findsOneWidget);
+  });
+
   testWidgets('disconnecting asks first, then signs out', (tester) async {
     final (session, api) = await _show(tester);
 

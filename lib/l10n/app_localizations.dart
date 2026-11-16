@@ -976,19 +976,19 @@ abstract class AppLocalizations {
   /// No description provided for @documentsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Nothing to sign'**
+  /// **'Nothing here yet'**
   String get documentsEmptyTitle;
 
   /// No description provided for @documentsEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'When your clinic asks you to sign something, it shows here.'**
+  /// **'What you sign, and the statements for your aligners, show here.'**
   String get documentsEmptyBody;
 
   /// No description provided for @documentsFootnote.
   ///
   /// In en, this message translates to:
-  /// **'After you sign, your clinic keeps the signed copy with your records. Ask them if you would like a copy for yourself.'**
+  /// **'Everything you signed and the statement for each of your devices stays here. Tap one to open, print or save it. Your clinic keeps the same copies.'**
   String get documentsFootnote;
 
   /// No description provided for @documentsConsent.
@@ -1032,6 +1032,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign'**
   String get documentsSign;
+
+  /// No description provided for @documentsOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get documentsOpen;
 
   /// No description provided for @messagesTitle.
   ///

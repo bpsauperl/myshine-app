@@ -102,16 +102,34 @@ Map<String, dynamic> meJson({
       'at': '2026-10-20T09:30:00+02:00',
     },
   ],
+  'documents': [
+    {
+      'id': '0199a1b2-0000-7000-8000-000000000001',
+      'type': 'consent',
+      'title': 'Treatment consent',
+      'detail': 'Aligners · Signed 30 Sep 2026',
+      'date': '2026-09-30T10:00:00+02:00',
+      'url': 'https://example.test/d/consent',
+    },
+    {
+      'id': '0199a1b2-0000-7000-8000-000000000002',
+      'type': 'statement',
+      'title': 'Statement for your custom-made device',
+      'detail': 'Custom-made clear aligners · Series 1 · Issued 12 Oct 2026',
+      'date': '2026-10-12T09:00:00+02:00',
+      'url': 'https://example.test/d/statement',
+    },
+  ],
   'consents': [
     {
-      'id': 1,
+      'id': '0199a1b2-0000-7000-8000-000000000001',
       'status': 'signed',
       'devices': 'Shine aligners',
       'signed_at': '2026-09-30T10:00:00+02:00',
       'sign_url': null,
     },
     {
-      'id': 2,
+      'id': '0199a1b2-0000-7000-8000-000000000003',
       'status': 'pending',
       'devices': 'Retainers',
       'signed_at': null,
