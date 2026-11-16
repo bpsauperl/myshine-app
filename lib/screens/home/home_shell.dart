@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
@@ -35,7 +37,7 @@ class HomeShell extends StatefulWidget {
   State<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends State<HomeShell> {
+class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   late final MeController _me = MeController(
     api: widget.api,
     onUnauthorized: () async {
@@ -60,14 +62,32 @@ class _HomeShellState extends State<HomeShell> {
   );
   int _index = 0;
 
+  /// Links to documents and photos are short-lived: this keeps them fresh.
+  Timer? _keepFresh;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _me.refresh();
+    _keepFresh = Timer.periodic(
+      const Duration(minutes: 20),
+      (_) => _me.refresh(),
+    );
+  }
+
+  /// Back in the app (or the browser tab is shown again): load what changed.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _me.refresh();
+    }
   }
 
   @override
   void dispose() {
+    _keepFresh?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     _me.dispose();
     super.dispose();
   }

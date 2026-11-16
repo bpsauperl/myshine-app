@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../api/models.dart';
@@ -21,8 +22,14 @@ class DocumentsSection extends StatelessWidget {
     await me.refresh();
   }
 
-  /// The link is short-lived: fetch a fresh one, then open it.
+  /// The link is short-lived: fetch a fresh one, then open it. On the web
+  /// the browser only lets a new tab open straight from the tap, so there
+  /// the link at hand is used (the home screen keeps it fresh).
   Future<void> _open(BuildContext context, PatientDocument document) async {
+    if (kIsWeb) {
+      await openInBrowserView(context, document.url);
+      return;
+    }
     await me.refresh();
     if (!context.mounted) return;
     final fresh = me.data?.documents

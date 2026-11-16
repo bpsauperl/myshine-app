@@ -1,6 +1,6 @@
 # myShine
 
-The patient app for **Shine clear aligners** by SmileLabs (Slovenia). It's built in Flutter for iOS and Android; the web build is only for previews.
+The patient app for **Shine clear aligners** by SmileLabs (Slovenia). It's built in Flutter for iOS and Android, and runs as a web app at myshine.smilelabs.app (served by drShine itself; see "Web app" below).
 
 - **Without an account:** a friendly entry point with a smile simulation. The patient takes a guided front-camera selfie and gets an illustrative preview made on the phone. Nothing is uploaded.
 - **With the connect code from the clinic:** the full myShine:
@@ -57,7 +57,16 @@ cd build/web-preview && python3 -m http.server 8093    # open http://127.0.0.1:8
 
 Add `?welcome` to the address to start at the welcome screen. The preview never talks to a server.
 
-The real web build calls the server from the browser, so the server would also have to allow CORS. Mobile apps don't need CORS.
+### Web app (myshine.smilelabs.app)
+
+drShine serves the web app itself: each release lives in its own folder under drShine's `public/myshine-web/`, drShine answers `myshine.smilelabs.app/` with that release's `index.html`, and the app calls `/api/myshine/v1` on the address it was loaded from. So there is nothing to configure and no CORS.
+
+```sh
+tool/publish_web.sh ~/code/drshine     # builds, and copies the release into drShine
+# then commit and deploy drShine
+```
+
+The drawing engine (CanvasKit) is kept on our own server instead of being loaded from Google, and there is no service worker.
 
 ## Build and sign
 

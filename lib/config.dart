@@ -4,14 +4,23 @@ import 'package:flutter/foundation.dart';
 class AppConfig {
   AppConfig._();
 
-  /// The drShine server the app talks to. A build can name another with
-  /// `--dart-define=MYSHINE_SERVER=https://…`; in development builds the
-  /// hidden "Server" setting (long-press the logo on the welcome screen) can
-  /// also change it.
-  static const String defaultBaseUrl = String.fromEnvironment(
-    'MYSHINE_SERVER',
-    defaultValue: 'https://drshine-dev-h4s1yo.laravel.cloud',
-  );
+  static const String _namedServer = String.fromEnvironment('MYSHINE_SERVER');
+
+  /// The drShine server the app talks to. A build can name one with
+  /// `--dart-define=MYSHINE_SERVER=https://…`. Without that, the web app
+  /// talks to the address it is served from (myShine on the web is served by
+  /// drShine itself, so there is nothing to configure and no CORS), and the
+  /// phone apps to the development server. In development builds the hidden
+  /// "Server" setting (long-press the logo on the welcome screen) can also
+  /// change it.
+  static String get defaultBaseUrl {
+    if (_namedServer.isNotEmpty) {
+      return _namedServer;
+    }
+    return kIsWeb
+        ? Uri.base.origin
+        : 'https://drshine-dev-h4s1yo.laravel.cloud';
+  }
 
   /// Whether the hidden "Server" setting exists. Release builds always use
   /// [defaultBaseUrl], so a patient can't point the app anywhere else.

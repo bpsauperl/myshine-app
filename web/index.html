@@ -18,7 +18,9 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="myShine, the patient app for Shine clear aligners.">
+  <meta name="description" content="myShine: your Shine clear aligner treatment. Your plan, your aligner schedule, messages with your clinic and your documents.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#83C9CB">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -33,6 +35,22 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <!-- Shown while the app loads; removed when Flutter has drawn its first frame. -->
+  <style>
+    html, body { margin: 0; height: 100%; background: #ffffff; }
+    #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1d1d1f; }
+    #loading b { font-size: 28px; letter-spacing: -0.03em; } #loading b span { color: #12787c; }
+    #loading i { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #e8f5f5; border-top-color: #83c9cb; animation: spin 0.9s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-color-scheme: dark) { html, body { background: #101114; } #loading { color: #f5f5f7; } }
+  </style>
+  <div id="loading" aria-label="myShine"><b><span>my</span>Shine</b><i></i></div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var loading = document.getElementById('loading');
+      if (loading) { loading.remove(); }
+    });
+  </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
