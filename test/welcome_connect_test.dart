@@ -30,7 +30,8 @@ Future<void> _enterCode(WidgetTester tester, String code) async {
 void main() {
   testWidgets('a clinic code connects and opens the app', (tester) async {
     final session = await _start(tester);
-    expect(find.byKey(const Key('welcome-simulate')), findsOneWidget);
+    expect(find.byKey(const Key('welcome-photo')), findsOneWidget);
+    expect(find.byKey(const Key('welcome-simulate')), findsNothing);
 
     await tester.tap(find.byKey(const Key('welcome-code')));
     await tester.pumpAndSettle();
@@ -48,6 +49,21 @@ void main() {
 
     expect(session.isConnected, isTrue);
     expect(find.text('Hello, Ana'), findsOneWidget);
+  });
+
+  testWidgets('what myShine is for opens from the welcome screen', (
+    tester,
+  ) async {
+    await _start(tester);
+
+    await tester.ensureVisible(find.byKey(const Key('welcome-about')));
+    await tester.tap(find.byKey(const Key('welcome-about')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('about-myshine')), findsOneWidget);
+    expect(find.text('What myShine is for'), findsOneWidget);
+    expect(find.textContaining("doesn't diagnose"), findsOneWidget);
+    expect(find.byKey(const Key('about-privacy')), findsOneWidget);
   });
 
   testWidgets('development builds open the server setting from the logo', (

@@ -17,7 +17,8 @@ void main() {
   testWidgets('a shared plan can be opened', (tester) async {
     await _show(tester, shared: true);
 
-    expect(find.text('Series 1 · in 3D'), findsOneWidget);
+    expect(find.text('Series 1'), findsOneWidget);
+    expect(find.text('Your plan in 3D'), findsOneWidget);
     expect(find.text('Open your plan'), findsOneWidget);
   });
 

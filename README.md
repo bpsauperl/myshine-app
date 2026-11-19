@@ -2,7 +2,7 @@
 
 The patient app for **Shine clear aligners** by SmileLabs (Slovenia). It's built in Flutter for iOS and Android, and runs as a web app at myshine.smilelabs.app (served by drShine itself; see "Web app" below).
 
-- **Without an account:** a friendly entry point with a smile simulation. The patient takes a guided front-camera selfie and gets an illustrative preview made on the phone. Nothing is uploaded.
+- **Without an account:** the welcome screen (a real Shine photo) says what myShine is for and asks for the clinic's code. There is no smile simulation (removed on 19.11.2026).
 - **With the connect code from the clinic:** the full myShine:
   - today's aligner and check-ins;
   - the link to the treatment plan in 3D;
@@ -25,7 +25,7 @@ The app follows the drShine app API **contract v1, section B** (`/api/myshine/v1
 
 How the app talks to it:
 - **Code layout:** all HTTP is in `lib/api/`, behind the `ApiClient` interface. `HttpApiClient` is the real client; tests use a fake.
-- **Server address:** the default is `https://drshine-dev-h4s1yo.laravel.cloud` (`lib/config.dart`). To change it, **long-press the myShine logo** on the welcome screen. This opens the hidden "Server" setting, which is meant for testing.
+- **Server address:** phone builds talk to `https://myshine.smilelabs.app` (drShine production); on the web the app uses the address it was loaded from (`lib/config.dart`). For DEV build with `--dart-define=MYSHINE_SERVER=https://drshine-dev-h4s1yo.laravel.cloud`, or in a debug build **long-press the myShine logo** on the welcome screen for the hidden "Server" setting.
 - **Storage:** the token is kept with `flutter_secure_storage` (Keychain on iOS, Keystore on Android). The server address is kept in `shared_preferences`.
 - **Expired sign-in:** a `401` takes the patient back to the welcome screen.
 - **Connect code:** shown as `ABCD-2345` and sent in that form; the server ignores the dash. Codes never use 0, O, 1, I or L, and the app says so if one is typed.
@@ -38,7 +38,7 @@ flutter pub get
 flutter analyze
 flutter test
 flutter run                 # on a connected device or simulator
-flutter run -d chrome       # web preview (no camera there: it shows a sample illustration)
+flutter run -d chrome       # web preview (no camera there: photos come from a file picker)
 ```
 
 ### Preview in a browser
@@ -78,7 +78,7 @@ You need a Mac with Xcode and an Apple Developer account.
 2. In App Store Connect, create the app with the same bundle id.
 3. Run `flutter build ipa --release`. Then upload `build/ios/ipa/*.ipa` with Transporter (or with Xcode → Organizer → Distribute).
 4. Already set:
-   - the camera text (`NSCameraUsageDescription`): "myShine uses the camera to take a smile photo for your preview. The photo stays on your phone."
+   - the camera text (`NSCameraUsageDescription`): "myShine uses the camera only for photos you choose to send to your clinic with a check-in or a message."
    - `ITSAppUsesNonExemptEncryption` = `false` (the app only uses HTTPS).
    - `UIRequiresFullScreen`, because the app is portrait only.
 
@@ -123,10 +123,10 @@ lib/
   util/                        connect code formatting and validation, dates
   widgets/                     wordmark, cards, in-app browser helpers
   screens/
-    welcome_screen.dart        "Your Shine smile starts here."
+    welcome_screen.dart        real photo, "Your treatment, with your clinic.", the code
+    about_sheet.dart           "What myShine is for": the purpose map, Help, Privacy
     connect_screen.dart        ABCD-2345 code, then POST /connect
     server_settings_sheet.dart the hidden "Server" setting
-    simulation/                selfie with the smile-zone guide; before/after preview
     home/                      Today, Plan, Schedule, Messages, Documents, Profile
 test/                          unit and widget tests (with a fake ApiClient)
 tool/preview_main.dart         example-data preview (not part of the app)
@@ -134,18 +134,6 @@ tool/preview_main.dart         example-data preview (not part of the app)
 
 ## What's left
 
-- **App icons and launch screen:** these are still Flutter's defaults. Replace them in:
-  - `ios/Runner/Assets.xcassets`
-  - `android/app/src/main/res/mipmap-*`
-  - `web/icons`
-- **Store screenshots** for the App Store and Google Play.
-- **Privacy policy URL** for both stores, plus the App Store privacy label:
-  - the smile photo stays on the device;
-  - check-ins and messages go to the clinic.
-- **A real smile-simulation service, later.** Today the preview is a gentle illustration made on the phone: brighter, whiter teeth inside the lips box. It is labelled "An illustration, not a treatment plan."
-- **Push notifications, later:** reminders to change aligners and alerts for new messages. For now, Messages checks for new messages every 30 s while it is open.
-- **"Find a Shine clinic"** opens `https://shine.smilelabs.si` as a placeholder (`AppConfig.clinicFinderUrl`).
-- **Share** from the preview isn't built.
-- **Release signing:** the Android upload key and the iOS team (see above).
+The purpose, the rules, the roadmap and the App Store / Google Play checklist are in [`docs/launch-plan.md`](docs/launch-plan.md). The store texts, privacy-label answers, reviewer notes and screenshot list are in [`docs/store/`](docs/store/).
 
 There is no real patient data anywhere: the tests and the preview use made-up example data only.

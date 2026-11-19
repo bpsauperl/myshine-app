@@ -8,6 +8,7 @@ import '../../state/session.dart';
 import '../../theme.dart';
 import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
+import '../about_sheet.dart';
 import 'documents_section.dart';
 import 'home_shell.dart';
 
@@ -109,6 +110,18 @@ class ProfileTab extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         DocumentsSection(me: me),
+        const SizedBox(height: 14),
+        KitListGroup(
+          children: [
+            KitListRow(
+              key: const Key('profile-about'),
+              icon: Icons.info_outline_rounded,
+              title: l10n.profileAbout,
+              detail: l10n.profileAboutDetail,
+              onTap: () => showAboutMyShine(context),
+            ),
+          ],
+        ),
         const SizedBox(height: 24),
         KitTile(
           key: const Key('disconnect'),

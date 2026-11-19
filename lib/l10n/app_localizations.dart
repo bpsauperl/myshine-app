@@ -145,12 +145,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 day late} other{{count} days late}}'**
   String commonDaysLate(num count);
 
-  /// Screen reader label for the aligner illustration.
-  ///
-  /// In en, this message translates to:
-  /// **'A clear Shine aligner'**
-  String get archHeroLabel;
-
   /// Lower case, used inside a sentence: 'Aligner 5 today', 'Due today.'
   ///
   /// In en, this message translates to:
@@ -250,32 +244,20 @@ abstract class AppLocalizations {
   /// First half of the headline 'Your smile, revealed.'
   ///
   /// In en, this message translates to:
-  /// **'Your smile,'**
+  /// **'Your treatment,'**
   String get welcomeTitle;
 
   /// Second half of the headline 'Your smile, revealed.', shown in grey.
   ///
   /// In en, this message translates to:
-  /// **'revealed.'**
+  /// **'with your clinic.'**
   String get welcomeTitleMuted;
 
   /// No description provided for @welcomeBody.
   ///
   /// In en, this message translates to:
-  /// **'See your new smile in a minute. Then follow every aligner, day by day, with your clinic.'**
+  /// **'Your aligner of the day, every change date, your plan and messages with your clinic. In one place.'**
   String get welcomeBody;
-
-  /// No description provided for @welcomeSimulate.
-  ///
-  /// In en, this message translates to:
-  /// **'See your new smile'**
-  String get welcomeSimulate;
-
-  /// Button: connect with the code the clinic gave you.
-  ///
-  /// In en, this message translates to:
-  /// **'Clinic code'**
-  String get welcomeClinicCode;
 
   /// First half of the headline 'Your clinic has a key for you.'
   ///
@@ -394,25 +376,25 @@ abstract class AppLocalizations {
   /// No description provided for @todayNotStartedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Treatment not started yet'**
+  /// **'Your clinic starts your treatment'**
   String get todayNotStartedTitle;
 
   /// No description provided for @todayNotStartedBody.
   ///
   /// In en, this message translates to:
-  /// **'Your clinic will start your treatment and give you your first aligners. Your schedule will show here then.'**
+  /// **'You get your first aligners there. Your schedule shows here then.'**
   String get todayNotStartedBody;
 
   /// No description provided for @todayAllDoneTitle.
   ///
   /// In en, this message translates to:
-  /// **'All aligners done'**
+  /// **'Treatment finished'**
   String get todayAllDoneTitle;
 
   /// No description provided for @todayAllDoneBody.
   ///
   /// In en, this message translates to:
-  /// **'Well done! Your clinic will tell you what comes next.'**
+  /// **'Your clinic tells you what comes next.'**
   String get todayAllDoneBody;
 
   /// No description provided for @todayAllDoneBodyWithDate.
@@ -420,12 +402,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your last aligner ended on {date}. Your clinic will tell you what comes next.'**
   String todayAllDoneBodyWithDate(Object date);
-
-  /// Screen reader label for the aligner illustration on Today.
-  ///
-  /// In en, this message translates to:
-  /// **'Your aligner'**
-  String get todayAlignerLabel;
 
   /// No description provided for @todayWearHint.
   ///
@@ -493,12 +469,6 @@ abstract class AppLocalizations {
   /// **'Your plan'**
   String get planTitle;
 
-  /// No description provided for @planHeroLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Your treatment plan'**
-  String get planHeroLabel;
-
   /// No description provided for @planIn3d.
   ///
   /// In en, this message translates to:
@@ -514,13 +484,13 @@ abstract class AppLocalizations {
   /// No description provided for @planCardTitle.
   ///
   /// In en, this message translates to:
-  /// **'Every step to your new smile.'**
+  /// **'Your plan in 3D'**
   String get planCardTitle;
 
   /// No description provided for @planCardBody.
   ///
   /// In en, this message translates to:
-  /// **'See how your teeth move, aligner by aligner, from today to the end.'**
+  /// **'Your doctor shared it with you. It shows how your teeth move, aligner by aligner. Questions? Write in Messages.'**
   String get planCardBody;
 
   /// No description provided for @planOpen.
@@ -532,13 +502,13 @@ abstract class AppLocalizations {
   /// No description provided for @planNotSharedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your clinic will share your plan here.'**
+  /// **'Your doctor shares your plan when it\'s ready'**
   String get planNotSharedTitle;
 
   /// No description provided for @planNotSharedBody.
   ///
   /// In en, this message translates to:
-  /// **'When your dentist has prepared your plan, you can see it in 3D right here.'**
+  /// **'You\'ll see it here in 3D.'**
   String get planNotSharedBody;
 
   /// No description provided for @scheduleEmptyTitle.
@@ -1141,96 +1111,6 @@ abstract class AppLocalizations {
   /// **'Take photo'**
   String get cameraTakePhoto;
 
-  /// No description provided for @selfieTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Smile photo'**
-  String get selfieTitle;
-
-  /// No description provided for @selfieGuide.
-  ///
-  /// In en, this message translates to:
-  /// **'Fit your face in the oval and smile, so your teeth sit in the box.'**
-  String get selfieGuide;
-
-  /// No description provided for @selfiePrivate.
-  ///
-  /// In en, this message translates to:
-  /// **'The photo stays on your phone. Nothing is uploaded.'**
-  String get selfiePrivate;
-
-  /// No description provided for @selfieSample.
-  ///
-  /// In en, this message translates to:
-  /// **'See a sample preview'**
-  String get selfieSample;
-
-  /// No description provided for @selfieDenied.
-  ///
-  /// In en, this message translates to:
-  /// **'Allow camera access for myShine in Settings to take your photo.'**
-  String get selfieDenied;
-
-  /// The simulated new smile (an illustration made on the phone).
-  ///
-  /// In en, this message translates to:
-  /// **'Your preview'**
-  String get previewTitle;
-
-  /// No description provided for @previewSampleNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Camera unavailable here, so this is a sample illustration.'**
-  String get previewSampleNote;
-
-  /// No description provided for @previewLikeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Like what you see?'**
-  String get previewLikeTitle;
-
-  /// No description provided for @previewLikeBody.
-  ///
-  /// In en, this message translates to:
-  /// **'A Shine dentist checks your teeth and plans every step with you.'**
-  String get previewLikeBody;
-
-  /// No description provided for @previewFindClinic.
-  ///
-  /// In en, this message translates to:
-  /// **'Find a Shine clinic'**
-  String get previewFindClinic;
-
-  /// No description provided for @previewTakeAnother.
-  ///
-  /// In en, this message translates to:
-  /// **'Take another photo'**
-  String get previewTakeAnother;
-
-  /// No description provided for @previewHaveCode.
-  ///
-  /// In en, this message translates to:
-  /// **'I have a code from my clinic'**
-  String get previewHaveCode;
-
-  /// No description provided for @previewHonest.
-  ///
-  /// In en, this message translates to:
-  /// **'An illustration, not a treatment plan. Your dentist shows your real plan in 3D.'**
-  String get previewHonest;
-
-  /// No description provided for @previewAfter.
-  ///
-  /// In en, this message translates to:
-  /// **'After'**
-  String get previewAfter;
-
-  /// No description provided for @previewBefore.
-  ///
-  /// In en, this message translates to:
-  /// **'Before'**
-  String get previewBefore;
-
   /// Phone notification title on the morning of an aligner change.
   ///
   /// In en, this message translates to:
@@ -1260,6 +1140,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check in when you have, so your schedule stays right.'**
   String get reminderLateBody;
+
+  /// No description provided for @welcomeHaveCode.
+  ///
+  /// In en, this message translates to:
+  /// **'I have a code'**
+  String get welcomeHaveCode;
+
+  /// No description provided for @welcomeWhatIs.
+  ///
+  /// In en, this message translates to:
+  /// **'What is myShine?'**
+  String get welcomeWhatIs;
+
+  /// No description provided for @welcomeNoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'No code yet? Ask your Shine clinic.'**
+  String get welcomeNoCode;
+
+  /// No description provided for @welcomePhotoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'A smile with a clear Shine aligner'**
+  String get welcomePhotoLabel;
+
+  /// No description provided for @commonPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get commonPrivacy;
+
+  /// No description provided for @commonHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get commonHelp;
+
+  /// No description provided for @aboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What myShine is for'**
+  String get aboutTitle;
+
+  /// No description provided for @aboutIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'myShine is your companion during Shine aligner treatment. Your clinic gives it to you.'**
+  String get aboutIntro;
+
+  /// No description provided for @aboutToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Which aligner you wear and when to change.'**
+  String get aboutToday;
+
+  /// No description provided for @aboutCheckInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get aboutCheckInTitle;
+
+  /// No description provided for @aboutCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell your doctor you changed: the fit, a note, photos if you like. When your doctor uses check-ins.'**
+  String get aboutCheckIn;
+
+  /// No description provided for @aboutPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan in 3D, when your doctor shares it.'**
+  String get aboutPlan;
+
+  /// No description provided for @aboutSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Every change date.'**
+  String get aboutSchedule;
+
+  /// No description provided for @aboutMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your clinic something, or send a photo.'**
+  String get aboutMessages;
+
+  /// No description provided for @aboutDocumentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get aboutDocumentsTitle;
+
+  /// No description provided for @aboutDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign and keep your papers.'**
+  String get aboutDocuments;
+
+  /// No description provided for @aboutClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Your doctor, phone and email.'**
+  String get aboutClinic;
+
+  /// No description provided for @aboutNot.
+  ///
+  /// In en, this message translates to:
+  /// **'myShine doesn\'t diagnose and never changes your treatment. Your doctor decides every step. For pain or a broken aligner, call your clinic.'**
+  String get aboutNot;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String aboutVersion(String version);
+
+  /// No description provided for @profileAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About myShine'**
+  String get profileAbout;
+
+  /// No description provided for @profileAboutDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'What it\'s for, help and privacy'**
+  String get profileAboutDetail;
+
+  /// {when} is dateToday, dateTomorrow, dateOnWeekday or dateOnDate, e.g. 'Change to aligner 5 on Saturday'.
+  ///
+  /// In en, this message translates to:
+  /// **'Change to aligner {aligner} {when}'**
+  String todayChangeTo(int aligner, String when);
+
+  /// {late} is commonDaysLate, e.g. '2 days late'.
+  ///
+  /// In en, this message translates to:
+  /// **'Change to aligner {aligner} · {late}'**
+  String todayChangeLate(int aligner, String late);
+
+  /// No description provided for @todayLastAlignerNow.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your last aligner'**
+  String get todayLastAlignerNow;
+
+  /// No description provided for @todayProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} aligners done'**
+  String todayProgress(int done, int total);
+
+  /// No description provided for @todayDaysLeftLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Days left on this aligner'**
+  String get todayDaysLeftLabel;
+
+  /// No description provided for @todayStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment started'**
+  String get todayStarted;
+
+  /// No description provided for @todayLastCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last check-in'**
+  String get todayLastCheckIn;
+
+  /// No description provided for @todayCheckInOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'on time'**
+  String get todayCheckInOnTime;
+
+  /// No description provided for @todayCheckInPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 photo} other{{count} photos}}'**
+  String todayCheckInPhotos(int count);
+
+  /// No description provided for @planCardSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Series {series}'**
+  String planCardSeries(int series);
 }
 
 class _AppLocalizationsDelegate

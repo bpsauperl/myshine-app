@@ -62,7 +62,19 @@ Map<String, dynamic> _me() => {
         },
     ],
   },
-  'check_ins': [],
+  'check_ins': [
+    {
+      'id': 1,
+      'aligner': 4,
+      'fit': 'seated',
+      'fit_label': 'Fits well',
+      'source': 'app',
+      'at': _day(-2),
+      'photos': 2,
+      'aligner_change': true,
+      'late_days': 0,
+    },
+  ],
   'consents': [
     {
       'id': 1,

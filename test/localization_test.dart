@@ -22,7 +22,7 @@ void main() {
 
     expect(find.text('Živjo, Ana'), findsOneWidget);
     expect(find.text('sobota, 24. oktober'), findsOneWidget);
-    expect(find.text('Četrtek', findRichText: true), findsOneWidget);
+    expect(find.text('Menjava na alajner 5 v četrtek'), findsOneWidget);
     expect(find.text('Alajner 5 v četrtek'), findsOneWidget);
   });
 

@@ -100,6 +100,8 @@ Map<String, dynamic> meJson({
       'outcome_label': 'Continue as planned',
       'source': 'app',
       'at': '2026-10-20T09:30:00+02:00',
+      'aligner_change': true,
+      'photos': 2,
     },
   ],
   'documents': [

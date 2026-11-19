@@ -43,9 +43,6 @@ class AppLocalizationsSl extends AppLocalizations {
   }
 
   @override
-  String get archHeroLabel => 'Prozoren alajner Shine';
-
-  @override
   String get dateToday => 'danes';
 
   @override
@@ -113,20 +110,14 @@ class AppLocalizationsSl extends AppLocalizations {
   String get welcomeEyebrow => 'Prozorni alajnerji Shine';
 
   @override
-  String get welcomeTitle => 'Tvoj nasmeh,';
+  String get welcomeTitle => 'Tvoje zdravljenje,';
 
   @override
-  String get welcomeTitleMuted => 'razkrit.';
+  String get welcomeTitleMuted => 's tvojo ordinacijo.';
 
   @override
   String get welcomeBody =>
-      'Oglej si svoj novi nasmeh v minuti. Nato s svojo ordinacijo spremljaj vsak alajner, dan za dnem.';
-
-  @override
-  String get welcomeSimulate => 'Poglej svoj novi nasmeh';
-
-  @override
-  String get welcomeClinicCode => 'Koda ordinacije';
+      'Alajner, ki ga nosiš danes, vsi datumi menjav, tvoj plan in sporočila z ordinacijo. Na enem mestu.';
 
   @override
   String get connectTitle => 'Tvoja ordinacija';
@@ -214,26 +205,22 @@ class AppLocalizationsSl extends AppLocalizations {
   }
 
   @override
-  String get todayNotStartedTitle => 'Zdravljenje se še ni začelo';
+  String get todayNotStartedTitle => 'Zdravljenje začne tvoja ordinacija';
 
   @override
   String get todayNotStartedBody =>
-      'Tvoja ordinacija bo začela zdravljenje in ti dala prve alajnerje. Takrat se bo tukaj prikazal tvoj urnik.';
+      'Tam dobiš prve alajnerje. Nato se tukaj prikaže tvoj urnik.';
 
   @override
-  String get todayAllDoneTitle => 'Vsi alajnerji opravljeni';
+  String get todayAllDoneTitle => 'Zdravljenje je končano';
 
   @override
-  String get todayAllDoneBody =>
-      'Odlično! Tvoja ordinacija ti bo povedala, kaj sledi.';
+  String get todayAllDoneBody => 'Ordinacija ti pove, kaj sledi.';
 
   @override
   String todayAllDoneBodyWithDate(Object date) {
     return 'Tvoj zadnji alajner se je končal $date. Tvoja ordinacija ti bo povedala, kaj sledi.';
   }
-
-  @override
-  String get todayAlignerLabel => 'Tvoj alajner';
 
   @override
   String todayWearHint(num hours) {
@@ -299,9 +286,6 @@ class AppLocalizationsSl extends AppLocalizations {
   String get planTitle => 'Tvoj plan';
 
   @override
-  String get planHeroLabel => 'Tvoj plan zdravljenja';
-
-  @override
   String get planIn3d => 'V 3D';
 
   @override
@@ -310,22 +294,20 @@ class AppLocalizationsSl extends AppLocalizations {
   }
 
   @override
-  String get planCardTitle => 'Vsak korak do tvojega novega nasmeha.';
+  String get planCardTitle => 'Tvoj plan v 3D';
 
   @override
   String get planCardBody =>
-      'Poglej, kako se tvoji zobje premikajo, alajner za alajnerjem, od danes do konca.';
+      'Zdravnik ga je delil s tabo. Pokaže, kako se zobje premikajo, alajner za alajnerjem. Vprašanja? Piši v Sporočila.';
 
   @override
   String get planOpen => 'Odpri svoj plan';
 
   @override
-  String get planNotSharedTitle =>
-      'Tvoja ordinacija bo tukaj delila tvoj plan.';
+  String get planNotSharedTitle => 'Zdravnik deli tvoj plan, ko je pripravljen';
 
   @override
-  String get planNotSharedBody =>
-      'Ko zobozdravnik pripravi tvoj plan, si ga lahko tukaj ogledaš v 3D.';
+  String get planNotSharedBody => 'Tukaj ga boš videl v 3D.';
 
   @override
   String get scheduleEmptyTitle => 'Urnika še ni';
@@ -721,57 +703,6 @@ class AppLocalizationsSl extends AppLocalizations {
   String get cameraTakePhoto => 'Posnemi fotografijo';
 
   @override
-  String get selfieTitle => 'Fotografija nasmeha';
-
-  @override
-  String get selfieGuide =>
-      'Postavi obraz v oval in se nasmehni, da so zobje v okvirju.';
-
-  @override
-  String get selfiePrivate =>
-      'Fotografija ostane na tvojem telefonu. Nič se ne naloži.';
-
-  @override
-  String get selfieSample => 'Poglej primer predogleda';
-
-  @override
-  String get selfieDenied =>
-      'V Nastavitvah dovoli aplikaciji myShine dostop do kamere, da posnameš fotografijo.';
-
-  @override
-  String get previewTitle => 'Tvoj predogled';
-
-  @override
-  String get previewSampleNote =>
-      'Kamera tukaj ni na voljo, zato je to vzorčna ilustracija.';
-
-  @override
-  String get previewLikeTitle => 'Ti je všeč?';
-
-  @override
-  String get previewLikeBody =>
-      'Zobozdravnik Shine pregleda tvoje zobe in s tabo načrtuje vsak korak.';
-
-  @override
-  String get previewFindClinic => 'Poišči ordinacijo Shine';
-
-  @override
-  String get previewTakeAnother => 'Posnemi novo fotografijo';
-
-  @override
-  String get previewHaveCode => 'Imam kodo iz svoje ordinacije';
-
-  @override
-  String get previewHonest =>
-      'Ilustracija, ne plan zdravljenja. Zobozdravnik ti pokaže tvoj pravi plan v 3D.';
-
-  @override
-  String get previewAfter => 'Potem';
-
-  @override
-  String get previewBefore => 'Prej';
-
-  @override
   String reminderChangeTitle(Object aligner) {
     return 'Čas je za alajner $aligner';
   }
@@ -793,4 +724,120 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get reminderLateBody => 'Prijavi menjavo, da bo tvoj urnik pravilen.';
+
+  @override
+  String get welcomeHaveCode => 'Imam kodo';
+
+  @override
+  String get welcomeWhatIs => 'Kaj je myShine?';
+
+  @override
+  String get welcomeNoCode => 'Še nimaš kode? Vprašaj svojo ordinacijo Shine.';
+
+  @override
+  String get welcomePhotoLabel => 'Nasmeh s prozornim alajnerjem Shine';
+
+  @override
+  String get commonPrivacy => 'Zasebnost';
+
+  @override
+  String get commonHelp => 'Pomoč';
+
+  @override
+  String get aboutTitle => 'Čemu je namenjen myShine';
+
+  @override
+  String get aboutIntro =>
+      'myShine te spremlja med zdravljenjem z alajnerji Shine. Dostop ti da tvoja ordinacija.';
+
+  @override
+  String get aboutToday => 'Kateri alajner nosiš in kdaj ga zamenjaš.';
+
+  @override
+  String get aboutCheckInTitle => 'Prijava menjave';
+
+  @override
+  String get aboutCheckIn =>
+      'Sporoči zdravniku, da si zamenjal alajner: kako se prilega, opombo in po želji fotografije. Če tvoj zdravnik uporablja prijave.';
+
+  @override
+  String get aboutPlan => 'Tvoj plan v 3D, ko ga zdravnik deli s tabo.';
+
+  @override
+  String get aboutSchedule => 'Vsi datumi menjav.';
+
+  @override
+  String get aboutMessages => 'Vprašaj ordinacijo ali pošlji fotografijo.';
+
+  @override
+  String get aboutDocumentsTitle => 'Dokumenti';
+
+  @override
+  String get aboutDocuments => 'Podpiši in shrani svoje dokumente.';
+
+  @override
+  String get aboutClinic => 'Tvoj zdravnik, telefon in e-pošta.';
+
+  @override
+  String get aboutNot =>
+      'myShine ne postavlja diagnoz in nikoli ne spreminja zdravljenja. O vsakem koraku odloča tvoj zdravnik. Ob bolečini ali zlomljenem alajnerju pokliči ordinacijo.';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Različica $version';
+  }
+
+  @override
+  String get profileAbout => 'O aplikaciji myShine';
+
+  @override
+  String get profileAboutDetail => 'Namen, pomoč in zasebnost';
+
+  @override
+  String todayChangeTo(int aligner, String when) {
+    return 'Menjava na alajner $aligner $when';
+  }
+
+  @override
+  String todayChangeLate(int aligner, String late) {
+    return 'Menjava na alajner $aligner · $late';
+  }
+
+  @override
+  String get todayLastAlignerNow => 'To je tvoj zadnji alajner';
+
+  @override
+  String todayProgress(int done, int total) {
+    return '$done od $total alajnerjev za tabo';
+  }
+
+  @override
+  String get todayDaysLeftLabel => 'Še dni s tem alajnerjem';
+
+  @override
+  String get todayStarted => 'Začetek zdravljenja';
+
+  @override
+  String get todayLastCheckIn => 'Tvoja zadnja prijava';
+
+  @override
+  String get todayCheckInOnTime => 'pravočasno';
+
+  @override
+  String todayCheckInPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fotografij',
+      few: '$count fotografije',
+      two: '2 fotografiji',
+      one: '1 fotografija',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planCardSeries(int series) {
+    return 'Serija $series';
+  }
 }

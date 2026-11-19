@@ -41,9 +41,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get archHeroLabel => 'A clear Shine aligner';
-
-  @override
   String get dateToday => 'today';
 
   @override
@@ -112,20 +109,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeEyebrow => 'Shine clear aligners';
 
   @override
-  String get welcomeTitle => 'Your smile,';
+  String get welcomeTitle => 'Your treatment,';
 
   @override
-  String get welcomeTitleMuted => 'revealed.';
+  String get welcomeTitleMuted => 'with your clinic.';
 
   @override
   String get welcomeBody =>
-      'See your new smile in a minute. Then follow every aligner, day by day, with your clinic.';
-
-  @override
-  String get welcomeSimulate => 'See your new smile';
-
-  @override
-  String get welcomeClinicCode => 'Clinic code';
+      'Your aligner of the day, every change date, your plan and messages with your clinic. In one place.';
 
   @override
   String get connectTitle => 'Your clinic';
@@ -209,26 +200,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get todayNotStartedTitle => 'Treatment not started yet';
+  String get todayNotStartedTitle => 'Your clinic starts your treatment';
 
   @override
   String get todayNotStartedBody =>
-      'Your clinic will start your treatment and give you your first aligners. Your schedule will show here then.';
+      'You get your first aligners there. Your schedule shows here then.';
 
   @override
-  String get todayAllDoneTitle => 'All aligners done';
+  String get todayAllDoneTitle => 'Treatment finished';
 
   @override
-  String get todayAllDoneBody =>
-      'Well done! Your clinic will tell you what comes next.';
+  String get todayAllDoneBody => 'Your clinic tells you what comes next.';
 
   @override
   String todayAllDoneBodyWithDate(Object date) {
     return 'Your last aligner ended on $date. Your clinic will tell you what comes next.';
   }
-
-  @override
-  String get todayAlignerLabel => 'Your aligner';
 
   @override
   String todayWearHint(num hours) {
@@ -287,9 +274,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planTitle => 'Your plan';
 
   @override
-  String get planHeroLabel => 'Your treatment plan';
-
-  @override
   String get planIn3d => 'In 3D';
 
   @override
@@ -298,21 +282,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get planCardTitle => 'Every step to your new smile.';
+  String get planCardTitle => 'Your plan in 3D';
 
   @override
   String get planCardBody =>
-      'See how your teeth move, aligner by aligner, from today to the end.';
+      'Your doctor shared it with you. It shows how your teeth move, aligner by aligner. Questions? Write in Messages.';
 
   @override
   String get planOpen => 'Open your plan';
 
   @override
-  String get planNotSharedTitle => 'Your clinic will share your plan here.';
+  String get planNotSharedTitle =>
+      'Your doctor shares your plan when it\'s ready';
 
   @override
-  String get planNotSharedBody =>
-      'When your dentist has prepared your plan, you can see it in 3D right here.';
+  String get planNotSharedBody => 'You\'ll see it here in 3D.';
 
   @override
   String get scheduleEmptyTitle => 'No schedule yet';
@@ -696,57 +680,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cameraTakePhoto => 'Take photo';
 
   @override
-  String get selfieTitle => 'Smile photo';
-
-  @override
-  String get selfieGuide =>
-      'Fit your face in the oval and smile, so your teeth sit in the box.';
-
-  @override
-  String get selfiePrivate =>
-      'The photo stays on your phone. Nothing is uploaded.';
-
-  @override
-  String get selfieSample => 'See a sample preview';
-
-  @override
-  String get selfieDenied =>
-      'Allow camera access for myShine in Settings to take your photo.';
-
-  @override
-  String get previewTitle => 'Your preview';
-
-  @override
-  String get previewSampleNote =>
-      'Camera unavailable here, so this is a sample illustration.';
-
-  @override
-  String get previewLikeTitle => 'Like what you see?';
-
-  @override
-  String get previewLikeBody =>
-      'A Shine dentist checks your teeth and plans every step with you.';
-
-  @override
-  String get previewFindClinic => 'Find a Shine clinic';
-
-  @override
-  String get previewTakeAnother => 'Take another photo';
-
-  @override
-  String get previewHaveCode => 'I have a code from my clinic';
-
-  @override
-  String get previewHonest =>
-      'An illustration, not a treatment plan. Your dentist shows your real plan in 3D.';
-
-  @override
-  String get previewAfter => 'After';
-
-  @override
-  String get previewBefore => 'Before';
-
-  @override
   String reminderChangeTitle(Object aligner) {
     return 'Time for aligner $aligner';
   }
@@ -769,4 +702,118 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reminderLateBody =>
       'Check in when you have, so your schedule stays right.';
+
+  @override
+  String get welcomeHaveCode => 'I have a code';
+
+  @override
+  String get welcomeWhatIs => 'What is myShine?';
+
+  @override
+  String get welcomeNoCode => 'No code yet? Ask your Shine clinic.';
+
+  @override
+  String get welcomePhotoLabel => 'A smile with a clear Shine aligner';
+
+  @override
+  String get commonPrivacy => 'Privacy';
+
+  @override
+  String get commonHelp => 'Help';
+
+  @override
+  String get aboutTitle => 'What myShine is for';
+
+  @override
+  String get aboutIntro =>
+      'myShine is your companion during Shine aligner treatment. Your clinic gives it to you.';
+
+  @override
+  String get aboutToday => 'Which aligner you wear and when to change.';
+
+  @override
+  String get aboutCheckInTitle => 'Check in';
+
+  @override
+  String get aboutCheckIn =>
+      'Tell your doctor you changed: the fit, a note, photos if you like. When your doctor uses check-ins.';
+
+  @override
+  String get aboutPlan => 'Your plan in 3D, when your doctor shares it.';
+
+  @override
+  String get aboutSchedule => 'Every change date.';
+
+  @override
+  String get aboutMessages => 'Ask your clinic something, or send a photo.';
+
+  @override
+  String get aboutDocumentsTitle => 'Documents';
+
+  @override
+  String get aboutDocuments => 'Sign and keep your papers.';
+
+  @override
+  String get aboutClinic => 'Your doctor, phone and email.';
+
+  @override
+  String get aboutNot =>
+      'myShine doesn\'t diagnose and never changes your treatment. Your doctor decides every step. For pain or a broken aligner, call your clinic.';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get profileAbout => 'About myShine';
+
+  @override
+  String get profileAboutDetail => 'What it\'s for, help and privacy';
+
+  @override
+  String todayChangeTo(int aligner, String when) {
+    return 'Change to aligner $aligner $when';
+  }
+
+  @override
+  String todayChangeLate(int aligner, String late) {
+    return 'Change to aligner $aligner · $late';
+  }
+
+  @override
+  String get todayLastAlignerNow => 'This is your last aligner';
+
+  @override
+  String todayProgress(int done, int total) {
+    return '$done of $total aligners done';
+  }
+
+  @override
+  String get todayDaysLeftLabel => 'Days left on this aligner';
+
+  @override
+  String get todayStarted => 'Treatment started';
+
+  @override
+  String get todayLastCheckIn => 'Your last check-in';
+
+  @override
+  String get todayCheckInOnTime => 'on time';
+
+  @override
+  String todayCheckInPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count photos',
+      one: '1 photo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planCardSeries(int series) {
+    return 'Series $series';
+  }
 }

@@ -7,7 +7,7 @@ import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
 import 'home_shell.dart';
 
-/// The plan in 3D, once the clinic shares it.
+/// The plan in 3D, once the doctor shares it: one clear card, no pictures.
 class PlanTab extends StatelessWidget {
   const PlanTab({super.key, required this.me});
 
@@ -22,8 +22,6 @@ class PlanTab extends StatelessWidget {
       onRefresh: me.refresh,
       children: [
         PageTitle(l10n.planTitle),
-        KitArchHero(height: 220, semanticLabel: l10n.planHeroLabel),
-        const SizedBox(height: 8),
         if (plan.shared)
           KitTile(
             key: const Key('plan-card'),
@@ -31,13 +29,13 @@ class PlanTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  plan.series == null
-                      ? l10n.planIn3d
-                      : l10n.planSeriesIn3d(plan.series!),
-                  style: KitType.eyebrow(color: p.accentText),
-                ),
-                const SizedBox(height: 6),
+                if (plan.series != null) ...[
+                  Text(
+                    l10n.planCardSeries(plan.series!),
+                    style: KitType.eyebrow(color: p.accentText),
+                  ),
+                  const SizedBox(height: 6),
+                ],
                 Text(
                   l10n.planCardTitle,
                   style: KitType.title(color: p.ink).copyWith(fontSize: 26),

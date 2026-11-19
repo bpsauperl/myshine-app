@@ -63,6 +63,21 @@ void main() {
     expect(find.widgetWithText(FilledButton, 'Sign'), findsOneWidget);
   });
 
+  testWidgets('About myShine opens what it is for, with help and privacy', (
+    tester,
+  ) async {
+    await _show(tester);
+
+    await tester.ensureVisible(find.byKey(const Key('profile-about')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('profile-about')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('What myShine is for'), findsOneWidget);
+    expect(find.byKey(const Key('about-help')), findsOneWidget);
+    expect(find.text('Version 1.0.0'), findsOneWidget);
+  });
+
   testWidgets('disconnecting asks first, then signs out', (tester) async {
     final (session, api) = await _show(tester);
 

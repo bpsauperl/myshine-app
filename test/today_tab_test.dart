@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shine_kit/shine_kit.dart';
 import 'package:myshine/api/api_client.dart';
 import 'package:myshine/screens/home/home_shell.dart';
 import 'package:myshine/screens/home/today_tab.dart';
@@ -27,19 +28,35 @@ void main() {
     expect(find.text('Hello, Ana'), findsOneWidget);
     expect(find.text('Aligner 04/22', findRichText: true), findsOneWidget);
     expect(find.textContaining('day 3 of 7'), findsOneWidget);
-    expect(find.text('Thursday', findRichText: true), findsOneWidget);
-    expect(find.text('4 days left', findRichText: true), findsOneWidget);
+    expect(find.text('Change to aligner 5 on Thursday'), findsOneWidget);
+    expect(find.text('1 of 22 aligners done'), findsOneWidget);
+    expect(find.text('Days left on this aligner'), findsOneWidget);
     expect(find.textContaining('22 hours a day'), findsOneWidget);
     expect(find.text('Check in'), findsOneWidget);
   });
 
-  testWidgets('a late change shows on the next aligner tile', (tester) async {
+  testWidgets('shows the last check-in and the clinic, without drawings', (
+    tester,
+  ) async {
+    final me = await _loaded(FakeApiClient());
+    await tester.pumpWidget(
+      _wrap(TodayTab(me: me, now: DateTime(2026, 10, 24))),
+    );
+
+    expect(find.byType(KitArchHero), findsNothing);
+    expect(find.text('Your last check-in'), findsOneWidget);
+    expect(find.text('Aligner 3 · on time'), findsOneWidget);
+    expect(find.textContaining('Fits well · 2 photos'), findsOneWidget);
+    expect(find.text('Example Dental Studio'), findsOneWidget);
+  });
+
+  testWidgets('a late change shows under the aligner', (tester) async {
     final me = await _loaded(FakeApiClient(me: meJson(lateDays: 2)));
     await tester.pumpWidget(
       _wrap(TodayTab(me: me, now: DateTime(2026, 10, 31))),
     );
 
-    expect(find.text('2 days late', findRichText: true), findsOneWidget);
+    expect(find.text('Change to aligner 5 · 2 days late'), findsOneWidget);
   });
 
   testWidgets('without check-in only the schedule shows', (tester) async {
@@ -60,7 +77,7 @@ void main() {
     await tester.pumpWidget(
       _wrap(TodayTab(me: me, now: DateTime(2026, 10, 28))),
     );
-    expect(find.text('Tomorrow', findRichText: true), findsOneWidget);
+    expect(find.text('Change to aligner 5 tomorrow'), findsOneWidget);
   });
 
   testWidgets('says treatment has not started when therapy is null', (
@@ -69,7 +86,7 @@ void main() {
     final me = await _loaded(FakeApiClient(me: meJson(withTherapy: false)));
     await tester.pumpWidget(_wrap(TodayTab(me: me)));
 
-    expect(find.text('Treatment not started yet'), findsOneWidget);
+    expect(find.text('Your clinic starts your treatment'), findsOneWidget);
     expect(find.text('Check in'), findsNothing);
   });
 

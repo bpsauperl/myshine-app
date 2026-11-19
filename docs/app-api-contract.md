@@ -73,7 +73,7 @@ The API sends `label`, `group` and `required`; the app draws its outline for eac
 
 ## B. myShine app (patients) — prefix `/api/myshine/v1`
 
-Without an account the app works offline (smile simulation). The patient links to their clinic with a **connect code** the clinic gives them. The code is 8 characters, shown as `ABCD-2345`, valid for 14 days and usable once. drShine shows it in the Treatment center.
+Without an account the app shows only the welcome screen. The patient links to their clinic with a **connect code** the clinic gives them. The code is 8 characters, shown as `ABCD-2345`, valid for 14 days and usable once. drShine shows it in the Treatment center.
 
 - `POST /connect {code, device}` → `200 {token, patient}`
   - `422` if the code is unknown or expired

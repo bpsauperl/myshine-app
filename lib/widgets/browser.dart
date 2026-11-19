@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/l10n.dart';
 
 /// Opens [url] in the in-app browser view (Safari View Controller / Custom
-/// Tabs), falling back to the default browser.
+/// Tabs), or a new tab on the web, falling back to the default browser.
 Future<void> openInBrowserView(BuildContext context, String url) async {
   final uri = Uri.tryParse(url);
   final messenger = ScaffoldMessenger.of(context);
@@ -15,7 +16,12 @@ Future<void> openInBrowserView(BuildContext context, String url) async {
   }
   var opened = false;
   try {
-    opened = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+    // On the web, always a new tab, so the app stays open behind it.
+    opened = await launchUrl(
+      uri,
+      mode: LaunchMode.inAppBrowserView,
+      webOnlyWindowName: kIsWeb ? '_blank' : null,
+    );
   } catch (_) {
     opened = false;
   }
