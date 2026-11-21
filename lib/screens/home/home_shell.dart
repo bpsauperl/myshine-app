@@ -150,12 +150,12 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
                 bottom: 0,
                 child: SafeArea(
                   top: false,
-                  minimum: const EdgeInsets.only(bottom: 26),
+                  minimum: const EdgeInsets.only(bottom: 20),
                   child: Center(
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 440),
+                      constraints: const BoxConstraints(maxWidth: 420),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: GlassTabBar(
                           index: _index,
                           onSelect: _select,
