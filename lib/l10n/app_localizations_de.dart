@@ -251,7 +251,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get todayCheckIn => 'Wechsel bestätigen';
 
   @override
-  String get todayLastOne => 'Der letzte';
+  String todayLastOne(String date) {
+    return 'Letzter am $date';
+  }
 
   @override
   String get todayNextAligner => 'Nächster Aligner';
@@ -821,5 +823,42 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String planCardSeries(int series) {
     return 'Serie $series';
+  }
+
+  @override
+  String todayOfAligners(int total) {
+    return 'von $total Alignern';
+  }
+
+  @override
+  String todayDoneCount(int count) {
+    return '$count erledigt';
+  }
+
+  @override
+  String todayCheckInAligner(int aligner) {
+    return 'Aligner $aligner bestätigen';
+  }
+
+  @override
+  String get todayDaysLeftUnit => 'Tage übrig';
+
+  @override
+  String get todayWear => 'Tragen';
+
+  @override
+  String get todayHoursUnit => 'Std. am Tag';
+
+  @override
+  String todayLastCheckInOn(String date) {
+    return 'Letzter Check-in · $date';
+  }
+
+  @override
+  String get todayOpenSchedule => 'Zeitplan ansehen';
+
+  @override
+  String scheduleEndsOn(String date) {
+    return 'endet am $date';
   }
 }

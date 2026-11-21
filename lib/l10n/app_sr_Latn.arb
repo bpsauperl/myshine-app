@@ -55,7 +55,7 @@
   "todayDay": "dan {day} od {days}",
   "todayAlignerOf": "Alajner {aligner} od {total}",
   "todayCheckIn": "Potvrdi zamenu",
-  "todayLastOne": "Poslednji",
+  "todayLastOne": "Poslednji {date}",
   "todayNextAligner": "Sledeći alajner",
   "todayThisAligner": "Ovaj alajner",
   "todayDaysLeft": "{count, plural, one{preostali dan} few{preostala dana} other{preostalih dana}}",
@@ -173,7 +173,6 @@
   "reminderCheckInBody": "Danas stavi alajner {aligner}, zatim potvrdi zamenu u myShine.",
   "reminderLateTitle": "Nosiš li već alajner {aligner}?",
   "reminderLateBody": "Potvrdi zamenu da bi tvoj raspored ostao tačan.",
-
   "welcomeHaveCode": "Imam kod",
   "welcomeWhatIs": "Šta je myShine?",
   "welcomeNoCode": "Još nemaš kod? Pitaj svoju Shine ordinaciju.",
@@ -204,5 +203,14 @@
   "todayLastCheckIn": "Tvoja poslednja prijava",
   "todayCheckInOnTime": "na vreme",
   "todayCheckInPhotos": "{count, plural, =1{1 fotografija} few{{count} fotografije} other{{count} fotografija}}",
-  "planCardSeries": "Serija {series}"
+  "planCardSeries": "Serija {series}",
+  "todayOfAligners": "od {total} alajnera",
+  "todayDoneCount": "{count} gotovo",
+  "todayCheckInAligner": "Potvrdi alajner {aligner}",
+  "todayDaysLeftUnit": "dana još",
+  "todayWear": "Nošenje",
+  "todayHoursUnit": "sati dnevno",
+  "todayLastCheckInOn": "Poslednja prijava · {date}",
+  "todayOpenSchedule": "Pogledaj raspored",
+  "scheduleEndsOn": "kraj {date}"
 }

@@ -1,32 +1,46 @@
 {
   "@@locale": "en",
-
   "commonTryAgain": "Try again",
   "commonBack": "Back",
   "commonCancel": "Cancel",
   "commonDidNotWork": "That didn't work. Please try again.",
-  "@commonDidNotWork": {"description": "Taking a photo failed."},
+  "@commonDidNotWork": {
+    "description": "Taking a photo failed."
+  },
   "commonAlignerNumber": "Aligner {number}",
-  "@commonAlignerNumber": {"description": "An aligner by its number, e.g. 'Aligner 04' or 'Aligner 5'. The number may be zero-padded."},
+  "@commonAlignerNumber": {
+    "description": "An aligner by its number, e.g. 'Aligner 04' or 'Aligner 5'. The number may be zero-padded."
+  },
   "commonLastAligner": "Last aligner",
-  "@commonLastAligner": {"description": "Label over the date the last aligner of the treatment ends."},
+  "@commonLastAligner": {
+    "description": "Label over the date the last aligner of the treatment ends."
+  },
   "commonDaysLate": "{count, plural, =1{1 day late} other{{count} days late}}",
-  "@commonDaysLate": {"description": "How late an aligner change is (or was). Also used after ' · ' in the schedule."},
-
+  "@commonDaysLate": {
+    "description": "How late an aligner change is (or was). Also used after ' · ' in the schedule."
+  },
   "dateToday": "today",
-  "@dateToday": {"description": "Lower case, used inside a sentence: 'Aligner 5 today', 'Due today.'"},
+  "@dateToday": {
+    "description": "Lower case, used inside a sentence: 'Aligner 5 today', 'Due today.'"
+  },
   "dateTomorrow": "tomorrow",
-  "@dateTomorrow": {"description": "Lower case, used inside a sentence: 'Aligner 5 tomorrow', 'Due tomorrow.'"},
+  "@dateTomorrow": {
+    "description": "Lower case, used inside a sentence: 'Aligner 5 tomorrow', 'Due tomorrow.'"
+  },
   "dateOnWeekday": "{weekday, select, monday{on Monday} tuesday{on Tuesday} wednesday{on Wednesday} thursday{on Thursday} friday{on Friday} saturday{on Saturday} sunday{on Sunday} other{on {weekday}}}",
-  "@dateOnWeekday": {"description": "A day within the next week, inside a sentence: 'Aligner 5 on Thursday', 'Due on Thursday.'"},
+  "@dateOnWeekday": {
+    "description": "A day within the next week, inside a sentence: 'Aligner 5 on Thursday', 'Due on Thursday.'"
+  },
   "dateOnDate": "on {date}",
-  "@dateOnDate": {"description": "A day more than a week away, inside a sentence: 'Aligner 5 on 4 Nov'. {date} is already formatted."},
-
+  "@dateOnDate": {
+    "description": "A day more than a week away, inside a sentence: 'Aligner 5 on 4 Nov'. {date} is already formatted."
+  },
   "browserBadLink": "This link doesn't work.",
   "browserCouldNotOpen": "We couldn't open the link.",
   "browserCouldNotOpenContact": "We couldn't open {target}.",
-  "@browserCouldNotOpenContact": {"description": "{target} is a phone number or email address."},
-
+  "@browserCouldNotOpenContact": {
+    "description": "{target} is a phone number or email address."
+  },
   "apiErrorSlow": "The connection is slow. Please try again in a moment.",
   "apiErrorOffline": "We couldn't reach myShine. Check your internet connection.",
   "apiErrorUnauthorized": "Please connect with your clinic again.",
@@ -34,22 +48,30 @@
   "apiErrorTooManyTries": "Too many tries. Please wait a few minutes and try again.",
   "apiErrorServer": "Something went wrong on our side. Please try again later.",
   "apiErrorUnknown": "Something went wrong. Please try again.",
-
   "welcomeBySmileLabs": "by SmileLabs",
-  "@welcomeBySmileLabs": {"description": "Small badge next to the myShine logo."},
+  "@welcomeBySmileLabs": {
+    "description": "Small badge next to the myShine logo."
+  },
   "welcomeEyebrow": "Shine clear aligners",
   "welcomeTitle": "Your treatment,",
-  "@welcomeTitle": {"description": "First half of the headline 'Your smile, revealed.'"},
+  "@welcomeTitle": {
+    "description": "First half of the headline 'Your smile, revealed.'"
+  },
   "welcomeTitleMuted": "with your clinic.",
-  "@welcomeTitleMuted": {"description": "Second half of the headline 'Your smile, revealed.', shown in grey."},
+  "@welcomeTitleMuted": {
+    "description": "Second half of the headline 'Your smile, revealed.', shown in grey."
+  },
   "welcomeBody": "Your aligner of the day, every change date, your plan and messages with your clinic. In one place.",
-
   "connectTitle": "Your clinic",
-  "@connectTitle": {"description": "First half of the headline 'Your clinic has a key for you.'"},
+  "@connectTitle": {
+    "description": "First half of the headline 'Your clinic has a key for you.'"
+  },
   "connectTitleMuted": "has a key for you.",
   "connectBody": "Type the 8-character code from your clinic. Your plan, aligners and messages open right away.",
   "connectPass": "pass",
-  "@connectPass": {"description": "Follows the myShine logo on the code card: 'myShine pass'."},
+  "@connectPass": {
+    "description": "Follows the myShine logo on the code card: 'myShine pass'."
+  },
   "connectWorksOnce": "Works once",
   "connectValidDays": "{days, plural, =1{Valid 1 day} other{Valid {days} days}}",
   "connectButton": "Connect",
@@ -57,16 +79,16 @@
   "connectCodeEmpty": "Type the code from your clinic.",
   "connectCodeConfusing": "Codes don't use 0, O, 1, I or L. Check the letter \"{letter}\".",
   "connectCodeLength": "{length, plural, =1{The code has 1 character.} other{The code has {length} characters.}}",
-
   "homeLoadError": "We couldn't load myShine",
   "tabToday": "Today",
   "tabPlan": "Plan",
   "tabSchedule": "Schedule",
   "tabMessages": "Messages",
   "tabMessagesUnread": "Messages ({count})",
-  "@tabMessagesUnread": {"description": "Tab label with the number of unread messages."},
+  "@tabMessagesUnread": {
+    "description": "Tab label with the number of unread messages."
+  },
   "tabProfile": "Profile",
-
   "todayHello": "Hello, {name}",
   "todayNotStartedTitle": "Your clinic starts your treatment",
   "todayNotStartedBody": "You get your first aligners there. Your schedule shows here then.",
@@ -75,22 +97,65 @@
   "todayAllDoneBodyWithDate": "Your last aligner ended on {date}. Your clinic will tell you what comes next.",
   "todayWearHint": "{hours, plural, =1{Wear your aligners about 1 hour a day. Take them out only to eat and brush.} other{Wear your aligners about {hours} hours a day. Take them out only to eat and brush.}}",
   "todaySeriesDay": "Series {series} · day {day} of {days}",
-  "@todaySeriesDay": {"description": "Small caption over the aligner number: the aligner series and the day of this aligner.", "placeholders": {"series": {"type": "int"}, "day": {"type": "int"}, "days": {"type": "int"}}},
+  "@todaySeriesDay": {
+    "description": "Small caption over the aligner number: the aligner series and the day of this aligner.",
+    "placeholders": {
+      "series": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "todayDay": "day {day} of {days}",
-  "@todayDay": {"placeholders": {"day": {"type": "int"}, "days": {"type": "int"}}},
+  "@todayDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "todayAlignerOf": "Aligner {aligner} of {total}",
-  "@todayAlignerOf": {"description": "Screen reader label for the big 'Aligner 04/22'.", "placeholders": {"aligner": {"type": "int"}, "total": {"type": "int"}}},
+  "@todayAlignerOf": {
+    "description": "Screen reader label for the big 'Aligner 04/22'.",
+    "placeholders": {
+      "aligner": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "todayCheckIn": "Check in",
-  "@todayCheckIn": {"description": "Button: confirm you switched to the next aligner (the check-in)."},
-  "todayLastOne": "Last one",
-  "@todayLastOne": {"description": "Under 'Next aligner' when this is the last aligner."},
+  "@todayCheckIn": {
+    "description": "Button: confirm you switched to the next aligner (the check-in)."
+  },
+  "todayLastOne": "Last one {date}",
+  "@todayLastOne": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "todayNextAligner": "Next aligner",
   "todayThisAligner": "This aligner",
   "todayDaysLeft": "{count, plural, =1{day left} other{days left}}",
-  "@todayDaysLeft": {"description": "Unit after a big number: '4 days left'. The number itself is shown separately."},
+  "@todayDaysLeft": {
+    "description": "Unit after a big number: '4 days left'. The number itself is shown separately."
+  },
   "todayTreatment": "Treatment",
-  "@todayTreatment": {"description": "Label over the treatment progress in percent."},
-
+  "@todayTreatment": {
+    "description": "Label over the treatment progress in percent."
+  },
   "planTitle": "Your plan",
   "planIn3d": "In 3D",
   "planSeriesIn3d": "Series {series} · in 3D",
@@ -99,37 +164,57 @@
   "planOpen": "Open your plan",
   "planNotSharedTitle": "Your doctor shares your plan when it's ready",
   "planNotSharedBody": "You'll see it here in 3D.",
-
   "scheduleEmptyTitle": "No schedule yet",
   "scheduleEmptyBody": "Your aligner schedule shows here once your treatment starts.",
   "scheduleAligners": "{count, plural, =1{1 aligner} other{{count} aligners}}",
   "scheduleSeries": "Series {series} · {aligners}",
-  "@scheduleSeries": {"description": "{aligners} is the text of scheduleAligners, e.g. 'Series 1 · 22 aligners'.", "placeholders": {"series": {"type": "int"}, "aligners": {"type": "String"}}},
+  "@scheduleSeries": {
+    "description": "{aligners} is the text of scheduleAligners, e.g. 'Series 1 · 22 aligners'.",
+    "placeholders": {
+      "series": {
+        "type": "int"
+      },
+      "aligners": {
+        "type": "String"
+      }
+    }
+  },
   "scheduleLastEnds": "Your last aligner ends on {date}.",
   "scheduleStarted": "Started",
   "scheduleDone": "Done",
-  "@scheduleDone": {"description": "Label over the percentage of aligners finished."},
+  "@scheduleDone": {
+    "description": "Label over the percentage of aligners finished."
+  },
   "scheduleDays": "{count, plural, =1{1 day} other{{count} days}}",
   "scheduleNow": "Today",
-  "@scheduleNow": {"description": "Marks the aligner worn now in the schedule list."},
+  "@scheduleNow": {
+    "description": "Marks the aligner worn now in the schedule list."
+  },
   "scheduleCheckedIn": "Checked in",
-  "@scheduleCheckedIn": {"description": "The patient confirmed switching to this aligner (date unknown)."},
+  "@scheduleCheckedIn": {
+    "description": "The patient confirmed switching to this aligner (date unknown)."
+  },
   "scheduleCheckedInOn": "Checked in {date}",
-  "@scheduleCheckedInOn": {"description": "The patient confirmed switching to this aligner on {date}. Followed by ' · on time' or ' · 2 days late'."},
+  "@scheduleCheckedInOn": {
+    "description": "The patient confirmed switching to this aligner on {date}. Followed by ' · on time' or ' · 2 days late'."
+  },
   "scheduleOnTime": "on time",
-
   "checkInFitSeated": "Fits well",
   "checkInFitLoose": "Not fully seated",
   "checkInFitTight": "Very tight",
   "checkInFitDamaged": "Damaged or lost",
   "checkInComfortNone": "None",
-  "@checkInComfortNone": {"description": "Discomfort: none."},
+  "@checkInComfortNone": {
+    "description": "Discomfort: none."
+  },
   "checkInComfortMild": "Mild",
   "checkInComfortStrong": "Strong",
   "checkInConfirmError": "Confirm that you have put in aligner {aligner}.",
   "checkInChooseFitError": "Choose how aligner {aligner} fits.",
   "checkInPhotoTitle": "{view} photo",
-  "@checkInPhotoTitle": {"description": "Camera screen title; {view} is one of intraoralFront, intraoralRight, ... e.g. 'Front photo'."},
+  "@checkInPhotoTitle": {
+    "description": "Camera screen title; {view} is one of intraoralFront, intraoralRight, ... e.g. 'Front photo'."
+  },
   "intraoralFront": "Front",
   "intraoralRight": "Right",
   "intraoralLeft": "Left",
@@ -141,19 +226,35 @@
   "intraoralUpperHint": "Tilt your head back and open wide to show your upper teeth.",
   "intraoralLowerHint": "Tilt your head down and open wide to show your lower teeth.",
   "checkInThanks": "Aligner {aligner} it is. Thank you!",
-  "@checkInThanks": {"description": "Shown right after the patient checked in the switch to aligner {aligner}."},
+  "@checkInThanks": {
+    "description": "Shown right after the patient checked in the switch to aligner {aligner}."
+  },
   "checkInEyebrow": "Your check-in",
-  "@checkInEyebrow": {"description": "Caption over the check-in card. Check-in = the patient confirms switching to the next aligner."},
+  "@checkInEyebrow": {
+    "description": "Caption over the check-in card. Check-in = the patient confirms switching to the next aligner."
+  },
   "checkInNext": "Next: aligner {aligner}",
   "checkInAlignerWhen": "Aligner {aligner} {when}",
-  "@checkInAlignerWhen": {"description": "{when} is dateToday, dateTomorrow, dateOnWeekday or dateOnDate, e.g. 'Aligner 5 on Thursday'.", "placeholders": {"aligner": {"type": "int"}, "when": {"type": "String"}}},
+  "@checkInAlignerWhen": {
+    "description": "{when} is dateToday, dateTomorrow, dateOnWeekday or dateOnDate, e.g. 'Aligner 5 on Thursday'.",
+    "placeholders": {
+      "aligner": {
+        "type": "int"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "checkInUpcomingBody": "When you put it in, check in here. Your schedule follows the day you change.",
   "checkInEarly": "I've switched to aligner {aligner} already",
   "checkInClinicSees": "Your clinic sees your check-in.",
   "checkInDueYesterday": "Due yesterday. Check in when you've changed.",
   "checkInDueDaysAgo": "{count, plural, =1{Due 1 day ago. Check in when you've changed.} other{Due {count} days ago. Check in when you've changed.}}",
   "checkInDue": "Due {when}.",
-  "@checkInDue": {"description": "{when} is dateToday, dateTomorrow, dateOnWeekday or dateOnDate, e.g. 'Due on Thursday.'"},
+  "@checkInDue": {
+    "description": "{when} is dateToday, dateTomorrow, dateOnWeekday or dateOnDate, e.g. 'Due on Thursday.'"
+  },
   "checkInSwitchTitle": "Switch to aligner {aligner}",
   "checkInSwitchedLabel": "I've put in aligner {aligner}",
   "checkInFitQuestion": "How does aligner {aligner} fit?",
@@ -162,17 +263,22 @@
   "checkInNoteHint": "Anything you'd like them to know (optional)",
   "checkInSending": "Sending…",
   "checkInSend": "Check in aligner {aligner}",
-  "@checkInSend": {"description": "Button that sends the check-in for the switch to aligner {aligner}."},
+  "@checkInSend": {
+    "description": "Button that sends the check-in for the switch to aligner {aligner}."
+  },
   "checkInPhotos": "Photos",
   "checkInPhotosAsking": "Photos of your teeth with the aligner in help your clinic see what's wrong.",
   "checkInPhotosOptional": "Optional. Photos of your teeth with the aligner in. Only your clinic sees them.",
   "checkInPhotosWebOnly": "You can add photos of your teeth in the myShine app on your phone.",
   "checkInTakePhoto": "Take the {view} photo",
-  "@checkInTakePhoto": {"description": "Screen reader label; {view} is e.g. 'Front'."},
+  "@checkInTakePhoto": {
+    "description": "Screen reader label; {view} is e.g. 'Front'."
+  },
   "photoRemove": "Remove photo",
   "photoRemoveNamed": "Remove the {view} photo",
-  "@photoRemoveNamed": {"description": "Screen reader label; {view} is e.g. 'Front'."},
-
+  "@photoRemoveNamed": {
+    "description": "Screen reader label; {view} is e.g. 'Front'."
+  },
   "profileTitle": "Profile",
   "profileDisconnectTitle": "Disconnect myShine?",
   "profileDisconnectBody": "Your plan, schedule and messages will no longer show on this phone. To connect again, ask your clinic for a new code.",
@@ -187,22 +293,24 @@
   "profileOn": "On",
   "profileOff": "Off",
   "profileFooter": "Shine clear aligners by SmileLabs",
-
   "documentsTitle": "Documents",
   "documentsEmptyTitle": "Nothing here yet",
   "documentsEmptyBody": "What you sign, and the statements for your aligners, show here.",
   "documentsFootnote": "Everything you signed and the statement for each of your devices stays here. Tap one to open, print or save it. Your clinic keeps the same copies.",
   "documentsConsent": "Treatment consent",
   "documentsConsentFor": "Consent: {devices}",
-  "@documentsConsentFor": {"description": "{devices} comes from the clinic, e.g. 'Shine aligners'."},
+  "@documentsConsentFor": {
+    "description": "{devices} comes from the clinic, e.g. 'Shine aligners'."
+  },
   "documentsSigned": "Signed",
   "documentsSignedOn": "Signed on {date}",
   "documentsSignThere": "Your clinic will ask you to sign it there",
-  "@documentsSignThere": {"description": "The consent is signed at the clinic, not in the app."},
+  "@documentsSignThere": {
+    "description": "The consent is signed at the clinic, not in the app."
+  },
   "documentsWaiting": "Waiting for your signature",
   "documentsSign": "Sign",
   "documentsOpen": "Open",
-
   "messagesTitle": "Messages",
   "messagesSubtitle": "Write to your clinic. They usually answer within a working day.",
   "messagesLoadError": "Messages didn't load",
@@ -216,22 +324,21 @@
   "messagesOpenPhoto": "Open photo",
   "messagesPhoto": "Photo",
   "messagesPhotoFailed": "This photo didn't load. Please try again later.",
-
   "cameraSwitch": "Switch camera",
   "cameraDenied": "Allow camera access for myShine in Settings to add a photo.",
   "cameraUnavailable": "Camera unavailable here",
   "cameraTakePhoto": "Take photo",
-
-
-
   "reminderChangeTitle": "Time for aligner {aligner}",
-  "@reminderChangeTitle": {"description": "Phone notification title on the morning of an aligner change."},
+  "@reminderChangeTitle": {
+    "description": "Phone notification title on the morning of an aligner change."
+  },
   "reminderChangeBody": "Put in aligner {aligner} today.",
   "reminderCheckInBody": "Put in aligner {aligner} today, then check in in myShine.",
   "reminderLateTitle": "Did you switch to aligner {aligner}?",
-  "@reminderLateTitle": {"description": "Phone notification two days after the change day, when the patient hasn't checked in."},
+  "@reminderLateTitle": {
+    "description": "Phone notification two days after the change day, when the patient hasn't checked in."
+  },
   "reminderLateBody": "Check in when you have, so your schedule stays right.",
-
   "welcomeHaveCode": "I have a code",
   "welcomeWhatIs": "What is myShine?",
   "welcomeNoCode": "No code yet? Ask your Shine clinic.",
@@ -251,22 +358,113 @@
   "aboutClinic": "Your doctor, phone and email.",
   "aboutNot": "myShine doesn't diagnose and never changes your treatment. Your doctor decides every step. For pain or a broken aligner, call your clinic.",
   "aboutVersion": "Version {version}",
-  "@aboutVersion": {"placeholders": {"version": {"type": "String"}}},
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "profileAbout": "About myShine",
   "profileAboutDetail": "What it's for, help and privacy",
   "todayChangeTo": "Change to aligner {aligner} {when}",
-  "@todayChangeTo": {"description": "{when} is dateToday, dateTomorrow, dateOnWeekday or dateOnDate, e.g. 'Change to aligner 5 on Saturday'.", "placeholders": {"aligner": {"type": "int"}, "when": {"type": "String"}}},
+  "@todayChangeTo": {
+    "description": "{when} is dateToday, dateTomorrow, dateOnWeekday or dateOnDate, e.g. 'Change to aligner 5 on Saturday'.",
+    "placeholders": {
+      "aligner": {
+        "type": "int"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "todayChangeLate": "Change to aligner {aligner} · {late}",
-  "@todayChangeLate": {"description": "{late} is commonDaysLate, e.g. '2 days late'.", "placeholders": {"aligner": {"type": "int"}, "late": {"type": "String"}}},
+  "@todayChangeLate": {
+    "description": "{late} is commonDaysLate, e.g. '2 days late'.",
+    "placeholders": {
+      "aligner": {
+        "type": "int"
+      },
+      "late": {
+        "type": "String"
+      }
+    }
+  },
   "todayLastAlignerNow": "This is your last aligner",
   "todayProgress": "{done} of {total} aligners done",
-  "@todayProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "@todayProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "todayDaysLeftLabel": "Days left on this aligner",
   "todayStarted": "Treatment started",
   "todayLastCheckIn": "Your last check-in",
   "todayCheckInOnTime": "on time",
   "todayCheckInPhotos": "{count, plural, =1{1 photo} other{{count} photos}}",
-  "@todayCheckInPhotos": {"placeholders": {"count": {"type": "int"}}},
+  "@todayCheckInPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "planCardSeries": "Series {series}",
-  "@planCardSeries": {"placeholders": {"series": {"type": "int"}}}
+  "@planCardSeries": {
+    "placeholders": {
+      "series": {
+        "type": "int"
+      }
+    }
+  },
+  "todayOfAligners": "of {total} aligners",
+  "@todayOfAligners": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "todayDoneCount": "{count} done",
+  "@todayDoneCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayCheckInAligner": "Check in aligner {aligner}",
+  "@todayCheckInAligner": {
+    "placeholders": {
+      "aligner": {
+        "type": "int"
+      }
+    }
+  },
+  "todayDaysLeftUnit": "days left",
+  "todayWear": "Wear",
+  "todayHoursUnit": "h a day",
+  "todayLastCheckInOn": "Last check-in · {date}",
+  "@todayLastCheckInOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "todayOpenSchedule": "See the schedule",
+  "scheduleEndsOn": "ends {date}",
+  "@scheduleEndsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

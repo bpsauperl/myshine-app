@@ -26,13 +26,36 @@ void main() {
     );
 
     expect(find.text('Hello, Ana'), findsOneWidget);
-    expect(find.text('Aligner 04/22', findRichText: true), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(const Key('today-aligner'))).data, '4');
+    expect(find.text('of 22 aligners'), findsOneWidget);
     expect(find.textContaining('day 3 of 7'), findsOneWidget);
     expect(find.text('Change to aligner 5 on Thursday'), findsOneWidget);
-    expect(find.text('1 of 22 aligners done'), findsOneWidget);
-    expect(find.text('Days left on this aligner'), findsOneWidget);
-    expect(find.textContaining('22 hours a day'), findsOneWidget);
-    expect(find.text('Check in'), findsOneWidget);
+    expect(find.text('1 done'), findsOneWidget);
+    expect(find.text('This aligner'), findsOneWidget);
+    expect(find.text('22 h a day', findRichText: true), findsOneWidget);
+    expect(find.text('Check in aligner 5'), findsOneWidget);
+  });
+
+  testWidgets('the black button opens the check-in on its own page', (
+    tester,
+  ) async {
+    final me = await _loaded(FakeApiClient());
+    await tester.pumpWidget(
+      _wrap(TodayTab(me: me, now: DateTime(2026, 10, 24))),
+    );
+
+    await tester.tap(find.byKey(const Key('hero-check-in')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('check-in-close')), findsOneWidget);
+    expect(
+      find.byKey(const Key('check-in-upcoming')).evaluate().isNotEmpty ||
+          find.byKey(const Key('check-in-form')).evaluate().isNotEmpty,
+      isTrue,
+    );
+
+    await tester.tap(find.byKey(const Key('check-in-close')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('check-in-close')), findsNothing);
   });
 
   testWidgets('shows the last check-in and the clinic, without drawings', (
@@ -44,7 +67,7 @@ void main() {
     );
 
     expect(find.byType(KitArchHero), findsNothing);
-    expect(find.text('Your last check-in'), findsOneWidget);
+    expect(find.textContaining('Last check-in · '), findsOneWidget);
     expect(find.text('Aligner 3 · on time'), findsOneWidget);
     expect(find.textContaining('Fits well · 2 photos'), findsOneWidget);
     expect(find.text('Example Dental Studio'), findsOneWidget);
@@ -65,8 +88,9 @@ void main() {
       _wrap(TodayTab(me: me, now: DateTime(2026, 10, 24))),
     );
 
-    expect(find.text('Aligner 04/22', findRichText: true), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(const Key('today-aligner'))).data, '4');
     expect(find.byKey(const Key('hero-check-in')), findsNothing);
+    expect(find.byKey(const Key('hero-schedule')), findsNothing);
     expect(find.byKey(const Key('check-in-upcoming')), findsNothing);
   });
 
@@ -104,7 +128,7 @@ void main() {
     expect(api.meCalls, 1);
     expect(reminders.replaced, 1);
     expect(find.text('Hello, Ana'), findsOneWidget);
-    expect(find.bySemanticsLabel('Messages (2), new'), findsOneWidget);
+    expect(find.bySemanticsLabel('Messages, new'), findsOneWidget);
     handle.dispose();
   });
 

@@ -248,7 +248,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todayCheckIn => 'Check in';
 
   @override
-  String get todayLastOne => 'Last one';
+  String todayLastOne(String date) {
+    return 'Last one $date';
+  }
 
   @override
   String get todayNextAligner => 'Next aligner';
@@ -815,5 +817,42 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String planCardSeries(int series) {
     return 'Series $series';
+  }
+
+  @override
+  String todayOfAligners(int total) {
+    return 'of $total aligners';
+  }
+
+  @override
+  String todayDoneCount(int count) {
+    return '$count done';
+  }
+
+  @override
+  String todayCheckInAligner(int aligner) {
+    return 'Check in aligner $aligner';
+  }
+
+  @override
+  String get todayDaysLeftUnit => 'days left';
+
+  @override
+  String get todayWear => 'Wear';
+
+  @override
+  String get todayHoursUnit => 'h a day';
+
+  @override
+  String todayLastCheckInOn(String date) {
+    return 'Last check-in · $date';
+  }
+
+  @override
+  String get todayOpenSchedule => 'See the schedule';
+
+  @override
+  String scheduleEndsOn(String date) {
+    return 'ends $date';
   }
 }

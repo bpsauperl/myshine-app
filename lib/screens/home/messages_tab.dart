@@ -274,22 +274,18 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                 ),
               // Sits above the floating tab bar.
               Container(
-                padding: const EdgeInsets.fromLTRB(16, 8, 12, 96),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 108),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     if (widget._cameraSupported) ...[
-                      IconButton(
+                      ComposerButton(
                         key: const Key('message-attach'),
-                        onPressed: _sending || !canAttach ? null : _attachPhoto,
                         tooltip: l10n.messagesAddPhoto,
-                        color: context.kit.accentText,
-                        style: IconButton.styleFrom(
-                          minimumSize: const Size(46, 46),
-                        ),
-                        icon: const Icon(Icons.photo_camera_outlined),
+                        icon: Icons.photo_camera_outlined,
+                        onPressed: _sending || !canAttach ? null : _attachPhoto,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 8),
                     ],
                     Expanded(
                       child: TextField(
@@ -299,51 +295,30 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                         maxLines: 5,
                         maxLength: 4000,
                         textCapitalization: TextCapitalization.sentences,
+                        style: const TextStyle(fontSize: 16),
                         decoration: InputDecoration(
                           hintText: l10n.messagesInputHint,
                           counterText: '',
                           isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 13,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide(
-                              color: context.kit.hairline,
-                              width: 0.5,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide(
-                              color: context.kit.hairline,
-                              width: 0.5,
-                            ),
-                          ),
+                          filled: true,
+                          fillColor: context.shine.card,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(22), borderSide: BorderSide.none),
+                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(22), borderSide: BorderSide.none),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide(
-                              color: context.kit.accent,
-                              width: 1.5,
-                            ),
+                            borderRadius: BorderRadius.circular(22),
+                            borderSide: BorderSide(color: context.shine.ink, width: 1.2),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    IconButton.filled(
+                    ComposerButton(
                       key: const Key('message-send'),
-                      onPressed: _sending ? null : _send,
                       tooltip: l10n.messagesSend,
-                      style: IconButton.styleFrom(
-                        backgroundColor: context.kit.accentText,
-                        foregroundColor: context.kit.isDark
-                            ? Colors.black
-                            : Colors.white,
-                        minimumSize: const Size(46, 46),
-                      ),
-                      icon: const Icon(Icons.arrow_upward_rounded),
+                      icon: Icons.arrow_upward_rounded,
+                      filled: true,
+                      onPressed: _sending ? null : _send,
                     ),
                   ],
                 ),
@@ -356,7 +331,52 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
   }
 }
 
-/// Clinic on the left, the patient on the right.
+/// A 44 px round button next to the message field: grey, or black for sending.
+class ComposerButton extends StatelessWidget {
+  const ComposerButton({
+    super.key,
+    required this.tooltip,
+    required this.icon,
+    required this.onPressed,
+    this.filled = false,
+  });
+
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.shine;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final onInk = dark ? Colors.black : Colors.white;
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        enabled: onPressed != null,
+        label: tooltip,
+        excludeSemantics: true,
+        child: Material(
+          color: filled ? (onPressed == null ? palette.hairline : palette.ink) : palette.card,
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onPressed,
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Icon(icon, size: filled ? 20 : 21, color: filled ? onInk : palette.ink),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Clinic on the left in grey, the patient on the right in black.
 class MessageBubble extends StatelessWidget {
   const MessageBubble({super.key, required this.message});
 
@@ -384,10 +404,10 @@ class MessageBubble extends StatelessWidget {
               : CrossAxisAlignment.start,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
               decoration: BoxDecoration(
-                color: mine ? ShineColors.teal : palette.card,
+                color: mine ? palette.ink : palette.card,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(20),
                   topRight: const Radius.circular(20),
@@ -416,7 +436,9 @@ class MessageBubble extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         height: 1.35,
-                        color: mine ? ShineColors.ink : palette.ink,
+                        color: mine
+                            ? (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white)
+                            : palette.ink,
                       ),
                     ),
                 ],
@@ -427,7 +449,7 @@ class MessageBubble extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(6, 4, 6, 0),
                 child: Text(
                   meta,
-                  style: TextStyle(fontSize: 12, color: palette.muted),
+                  style: const TextStyle(fontSize: 11, color: ShineColors.tertiary),
                 ),
               ),
           ],
@@ -454,16 +476,16 @@ class _MessagePhotoTile extends StatelessWidget {
           MaterialPageRoute<void>(builder: (_) => _PhotoViewer(url: photo.url)),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
           child: Image.network(
             photo.url,
             key: Key('message-photo-${photo.id}'),
             width: 120,
-            height: 120,
+            height: 150,
             fit: BoxFit.cover,
             errorBuilder: (_, _, _) => Container(
               width: 120,
-              height: 120,
+              height: 150,
               color: kit.tile,
               child: Icon(Icons.image_outlined, color: kit.secondary),
             ),

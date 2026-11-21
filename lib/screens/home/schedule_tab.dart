@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/models.dart';
 import '../../l10n/l10n.dart';
@@ -22,7 +21,6 @@ class ScheduleTab extends StatelessWidget {
         if (checkIn.alignerChange && checkIn.aligner != null)
           checkIn.aligner!: checkIn,
     };
-    final palette = context.shine;
     final l10n = context.l10n;
     if (therapy == null || therapy.rows.isEmpty) {
       return TabPage(
@@ -38,124 +36,46 @@ class ScheduleTab extends StatelessWidget {
       );
     }
     final aligners = l10n.scheduleAligners(therapy.total);
+    final heading = [
+      therapy.series == null ? aligners : l10n.scheduleSeries(therapy.series!, aligners),
+      if (therapy.endsOn != null) l10n.scheduleEndsOn(shortDate(l10n, therapy.endsOn!)),
+    ].join(' · ');
+    final firstNext = therapy.rows.indexWhere((row) => row.state == AlignerState.next);
     return TabPage(
       onRefresh: me.refresh,
       children: [
-        PageTitle(
-          l10n.tabSchedule,
-          subtitle: therapy.series == null
-              ? aligners
-              : l10n.scheduleSeries(therapy.series!, aligners),
-        ),
-        _Figures(therapy: therapy),
-        const SizedBox(height: 12),
-        ShineCard(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Column(
-            children: [
-              for (var i = 0; i < therapy.rows.length; i++) ...[
-                if (i > 0) const Divider(indent: 72),
-                _AlignerRow(
-                  row: therapy.rows[i],
-                  checkIn: changes[therapy.rows[i].aligner],
-                ),
-              ],
-            ],
+        PageTitle(l10n.tabSchedule, subtitle: heading),
+        for (var i = 0; i < therapy.rows.length; i++)
+          _AlignerRow(
+            row: therapy.rows[i],
+            checkIn: changes[therapy.rows[i].aligner],
+            note: i == firstNext && therapy.rows[i].from != null ? relativeDay(l10n, therapy.rows[i].from!) : null,
+            last: i == therapy.rows.length - 1,
           ),
-        ),
-        if (therapy.endsOn != null) ...[
-          const SizedBox(height: 16),
-          ShineCard(
-            color: palette.accentSoft,
-            child: Row(
-              children: [
-                Icon(Icons.flag_rounded, color: palette.accentText),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    l10n.scheduleLastEnds(longDate(l10n, therapy.endsOn!)),
-                    style: TextStyle(
-                      color: palette.ink,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }
 }
 
-/// Started, how far, and the last aligner, side by side.
-class _Figures extends StatelessWidget {
-  const _Figures({required this.therapy});
-
-  final Therapy therapy;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.kit;
-    final l10n = context.l10n;
-    final done = therapy.rows
-        .where((row) => row.state == AlignerState.done)
-        .length;
-    final percent = therapy.total == 0
-        ? 0
-        : (done / therapy.total * 100).round();
-    Widget figure(String label, String value, {bool accent = false}) =>
-        Expanded(
-          child: Semantics(
-            label: '$label: $value',
-            excludeSemantics: true,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: KitType.label(color: p.secondary)),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: KitType.number(
-                    size: 22,
-                    color: accent ? p.accentText : p.ink,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-    return KitTile(
-      child: Row(
-        children: [
-          figure(
-            l10n.scheduleStarted,
-            therapy.started == null ? '—' : shortDate(l10n, therapy.started!),
-          ),
-          figure(l10n.scheduleDone, '$percent %', accent: true),
-          figure(
-            l10n.commonLastAligner,
-            therapy.endsOn == null ? '—' : shortDate(l10n, therapy.endsOn!),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+/// One aligner: done ones quiet with a tick, the one in the mouth a black tile,
+/// the coming ones with their number in a ring.
 class _AlignerRow extends StatelessWidget {
-  const _AlignerRow({required this.row, this.checkIn});
+  const _AlignerRow({required this.row, this.checkIn, this.note, this.last = false});
 
   final ScheduleRow row;
 
   /// The patient's check-in for switching to this aligner, if any.
   final CheckIn? checkIn;
 
+  /// "Tuesday" next to the next change.
+  final String? note;
+  final bool last;
+
   @override
   Widget build(BuildContext context) {
     final palette = context.shine;
     final l10n = context.l10n;
+    final dark = Theme.of(context).brightness == Brightness.dark;
     final isNow = row.state == AlignerState.now;
     final isDone = row.state == AlignerState.done;
     final from = row.from;
@@ -163,65 +83,81 @@ class _AlignerRow extends StatelessWidget {
     final dates = from != null && to != null
         ? '${shortDate(l10n, from)} – ${shortDate(l10n, to)}'
         : l10n.scheduleDays(row.days);
-    return Opacity(
-      opacity: isDone ? 0.45 : 1,
-      child: Container(
-        key: isNow ? const Key('schedule-now') : null,
-        margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: isNow
-            ? BoxDecoration(
-                color: palette.accentSoft,
-                borderRadius: BorderRadius.circular(16),
-              )
-            : null,
+    final quiet = dark ? const Color(0xFF636366) : const Color(0xFFAEAEB2);
+    final onBlack = dark ? Colors.black : Colors.white;
+
+    if (isNow) {
+      return Container(
+        key: const Key('schedule-now'),
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: palette.ink, borderRadius: BorderRadius.circular(22)),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 32,
+              height: 32,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isNow ? ShineColors.teal : palette.background,
-              ),
-              child: isDone
-                  ? Icon(Icons.check_rounded, size: 20, color: palette.muted)
-                  : Text(
-                      '${row.aligner}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: isNow ? ShineColors.ink : palette.ink,
-                      ),
-                    ),
+              decoration: BoxDecoration(color: onBlack, shape: BoxShape.circle),
+              child: Text('${row.aligner}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: palette.ink)),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    l10n.commonAlignerNumber('${row.aligner}'),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(dates, style: TextStyle(color: palette.muted)),
-                  if (checkIn != null) _CheckedIn(checkIn: checkIn!),
+                  Text(l10n.commonAlignerNumber('${row.aligner}'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: onBlack)),
+                  Text(dates, style: TextStyle(fontSize: 13, color: onBlack.withValues(alpha: 0.6))),
+                  if (checkIn != null) _CheckedIn(checkIn: checkIn!, color: onBlack.withValues(alpha: 0.6)),
                 ],
               ),
             ),
-            if (isNow)
-              Text(
-                l10n.scheduleNow,
-                style: TextStyle(
-                  color: palette.accentText,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(color: onBlack.withValues(alpha: 0.16), borderRadius: BorderRadius.circular(12)),
+              child: Text(l10n.scheduleNow, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: onBlack)),
+            ),
           ],
         ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: isDone || last
+          ? null
+          : BoxDecoration(border: Border(bottom: BorderSide(color: palette.hairline, width: 0.5))),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDone ? palette.card : null,
+              border: isDone ? null : Border.all(color: dark ? const Color(0xFF48484A) : const Color(0xFFD2D2D7)),
+            ),
+            child: isDone
+                ? Icon(Icons.check_rounded, size: 16, color: ShineColors.tertiary)
+                : Text('${row.aligner}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: palette.ink)),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.commonAlignerNumber('${row.aligner}'),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: isDone ? ShineColors.tertiary : palette.ink),
+                ),
+                Text(dates, style: TextStyle(fontSize: 13, color: isDone ? quiet : palette.muted)),
+                if (checkIn != null) _CheckedIn(checkIn: checkIn!, color: isDone ? quiet : palette.muted),
+              ],
+            ),
+          ),
+          if (note != null) Text(note!, style: TextStyle(fontSize: 13, color: palette.muted)),
+        ],
       ),
     );
   }
@@ -229,13 +165,13 @@ class _AlignerRow extends StatelessWidget {
 
 /// "Checked in 29 Oct" with "on time" or "2 days late".
 class _CheckedIn extends StatelessWidget {
-  const _CheckedIn({required this.checkIn});
+  const _CheckedIn({required this.checkIn, required this.color});
 
   final CheckIn checkIn;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final p = context.kit;
     final l10n = context.l10n;
     final at = checkIn.at;
     final late = checkIn.lateDays;
@@ -248,13 +184,10 @@ class _CheckedIn extends StatelessWidget {
       padding: const EdgeInsets.only(top: 2),
       child: Row(
         children: [
-          Icon(Icons.check_circle_rounded, size: 14, color: p.accentText),
+          Icon(Icons.check_circle_rounded, size: 13, color: color),
           const SizedBox(width: 4),
           Flexible(
-            child: Text(
-              '$when · $timing',
-              style: KitType.label(color: p.secondary).copyWith(fontSize: 13),
-            ),
+            child: Text('$when · $timing', style: TextStyle(fontSize: 13, color: color)),
           ),
         ],
       ),

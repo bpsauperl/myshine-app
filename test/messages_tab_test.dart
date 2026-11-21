@@ -29,7 +29,7 @@ void main() {
       await tester.pumpAndSettle();
     }
     expect(find.byKey(const Key('attachment-2')), findsOneWidget);
-    final attach = tester.widget<IconButton>(
+    final attach = tester.widget<ComposerButton>(
       find.byKey(const Key('message-attach')),
     );
     expect(attach.onPressed, isNull, reason: 'at most 3 photos');

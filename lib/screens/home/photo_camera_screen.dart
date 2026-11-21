@@ -246,7 +246,7 @@ class _PhotoCameraScreenState extends State<PhotoCameraScreen>
       return const ColoredBox(
         color: Color(0xFF1C1C1E),
         child: Center(
-          child: CircularProgressIndicator(color: ShineColors.teal),
+          child: CircularProgressIndicator(color: Colors.white),
         ),
       );
     }

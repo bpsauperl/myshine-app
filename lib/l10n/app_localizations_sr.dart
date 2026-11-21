@@ -253,7 +253,9 @@ class AppLocalizationsSr extends AppLocalizations {
   String get todayCheckIn => 'Potvrdi zamenu';
 
   @override
-  String get todayLastOne => 'Poslednji';
+  String todayLastOne(String date) {
+    return 'Poslednji $date';
+  }
 
   @override
   String get todayNextAligner => 'Sledeći alajner';
@@ -826,6 +828,43 @@ class AppLocalizationsSr extends AppLocalizations {
   @override
   String planCardSeries(int series) {
     return 'Serija $series';
+  }
+
+  @override
+  String todayOfAligners(int total) {
+    return 'od $total alajnera';
+  }
+
+  @override
+  String todayDoneCount(int count) {
+    return '$count gotovo';
+  }
+
+  @override
+  String todayCheckInAligner(int aligner) {
+    return 'Potvrdi alajner $aligner';
+  }
+
+  @override
+  String get todayDaysLeftUnit => 'dana još';
+
+  @override
+  String get todayWear => 'Nošenje';
+
+  @override
+  String get todayHoursUnit => 'sati dnevno';
+
+  @override
+  String todayLastCheckInOn(String date) {
+    return 'Poslednja prijava · $date';
+  }
+
+  @override
+  String get todayOpenSchedule => 'Pogledaj raspored';
+
+  @override
+  String scheduleEndsOn(String date) {
+    return 'kraj $date';
   }
 }
 
@@ -1077,7 +1116,9 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
   String get todayCheckIn => 'Potvrdi zamenu';
 
   @override
-  String get todayLastOne => 'Poslednji';
+  String todayLastOne(String date) {
+    return 'Poslednji $date';
+  }
 
   @override
   String get todayNextAligner => 'Sledeći alajner';
@@ -1650,5 +1691,42 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
   @override
   String planCardSeries(int series) {
     return 'Serija $series';
+  }
+
+  @override
+  String todayOfAligners(int total) {
+    return 'od $total alajnera';
+  }
+
+  @override
+  String todayDoneCount(int count) {
+    return '$count gotovo';
+  }
+
+  @override
+  String todayCheckInAligner(int aligner) {
+    return 'Potvrdi alajner $aligner';
+  }
+
+  @override
+  String get todayDaysLeftUnit => 'dana još';
+
+  @override
+  String get todayWear => 'Nošenje';
+
+  @override
+  String get todayHoursUnit => 'sati dnevno';
+
+  @override
+  String todayLastCheckInOn(String date) {
+    return 'Poslednja prijava · $date';
+  }
+
+  @override
+  String get todayOpenSchedule => 'Pogledaj raspored';
+
+  @override
+  String scheduleEndsOn(String date) {
+    return 'kraj $date';
   }
 }

@@ -55,7 +55,7 @@
   "todayDay": "Tag {day} von {days}",
   "todayAlignerOf": "Aligner {aligner} von {total}",
   "todayCheckIn": "Wechsel bestätigen",
-  "todayLastOne": "Der letzte",
+  "todayLastOne": "Letzter am {date}",
   "todayNextAligner": "Nächster Aligner",
   "todayThisAligner": "Dieser Aligner",
   "todayDaysLeft": "{count, plural, =1{Tag übrig} other{Tage übrig}}",
@@ -173,7 +173,6 @@
   "reminderCheckInBody": "Setz heute Aligner {aligner} ein und bestätige dann den Wechsel in myShine.",
   "reminderLateTitle": "Hast du zu Aligner {aligner} gewechselt?",
   "reminderLateBody": "Bestätige den Wechsel, damit dein Zeitplan stimmt.",
-
   "welcomeHaveCode": "Ich habe einen Code",
   "welcomeWhatIs": "Was ist myShine?",
   "welcomeNoCode": "Noch keinen Code? Frag deine Shine-Praxis.",
@@ -204,5 +203,14 @@
   "todayLastCheckIn": "Dein letzter Check-in",
   "todayCheckInOnTime": "pünktlich",
   "todayCheckInPhotos": "{count, plural, =1{1 Foto} other{{count} Fotos}}",
-  "planCardSeries": "Serie {series}"
+  "planCardSeries": "Serie {series}",
+  "todayOfAligners": "von {total} Alignern",
+  "todayDoneCount": "{count} erledigt",
+  "todayCheckInAligner": "Aligner {aligner} bestätigen",
+  "todayDaysLeftUnit": "Tage übrig",
+  "todayWear": "Tragen",
+  "todayHoursUnit": "Std. am Tag",
+  "todayLastCheckInOn": "Letzter Check-in · {date}",
+  "todayOpenSchedule": "Zeitplan ansehen",
+  "scheduleEndsOn": "endet am {date}"
 }

@@ -258,7 +258,9 @@ class AppLocalizationsSl extends AppLocalizations {
   String get todayCheckIn => 'Prijavi menjavo';
 
   @override
-  String get todayLastOne => 'Zadnji';
+  String todayLastOne(String date) {
+    return 'Zadnji $date';
+  }
 
   @override
   String get todayNextAligner => 'Naslednji alajner';
@@ -839,5 +841,42 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String planCardSeries(int series) {
     return 'Serija $series';
+  }
+
+  @override
+  String todayOfAligners(int total) {
+    return 'od $total alajnerjev';
+  }
+
+  @override
+  String todayDoneCount(int count) {
+    return '$count končanih';
+  }
+
+  @override
+  String todayCheckInAligner(int aligner) {
+    return 'Prijavi alajner $aligner';
+  }
+
+  @override
+  String get todayDaysLeftUnit => 'dni še';
+
+  @override
+  String get todayWear => 'Nošenje';
+
+  @override
+  String get todayHoursUnit => 'ur na dan';
+
+  @override
+  String todayLastCheckInOn(String date) {
+    return 'Zadnja prijava · $date';
+  }
+
+  @override
+  String get todayOpenSchedule => 'Poglej urnik';
+
+  @override
+  String scheduleEndsOn(String date) {
+    return 'konec $date';
   }
 }

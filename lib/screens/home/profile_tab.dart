@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shine_kit/shine_kit.dart';
 
 import '../../l10n/l10n.dart';
 import '../../reminders/reminders.dart';
@@ -52,103 +52,103 @@ class ProfileTab extends StatelessWidget {
     final patient = me.data!.patient;
     final clinic = patient.clinic;
     final palette = context.shine;
-    final p = context.kit;
     final l10n = context.l10n;
     final phone = clinic.phone;
     final email = clinic.email;
+    final initial = patient.firstName.isEmpty ? '·' : patient.firstName.characters.first.toUpperCase();
     return TabPage(
       onRefresh: me.refresh,
       children: [
-        PageTitle(
-          patient.firstName.isEmpty ? l10n.profileTitle : patient.firstName,
-          subtitle: patient.statusLabel,
-        ),
-        KitListGroup(
-          title: l10n.profileYourClinic,
-          children: [
-            KitListRow(
-              icon: Icons.local_hospital_outlined,
-              title: clinic.name.isEmpty ? l10n.profileYourClinic : clinic.name,
-              detail: clinic.city,
-              highlight: true,
-            ),
-            if (patient.doctorName != null)
-              KitListRow(
-                icon: Icons.person_outline_rounded,
-                title: patient.doctorName!,
-                detail: l10n.profileYourDentist,
-              ),
-            if (phone != null && phone.isNotEmpty)
-              KitListRow(
-                icon: Icons.call_outlined,
-                title: phone,
-                detail: l10n.profileCall,
-                onTap: () => openContact(
-                  context,
-                  Uri(
-                    scheme: 'tel',
-                    path: phone.replaceAll(RegExp(r'[^0-9+]'), ''),
-                  ),
-                ),
-              ),
-            if (email != null && email.isNotEmpty)
-              KitListRow(
-                icon: Icons.mail_outline_rounded,
-                title: email,
-                detail: l10n.profileEmail,
-                onTap: () =>
-                    openContact(context, Uri(scheme: 'mailto', path: email)),
-              ),
-          ],
-        ),
-        const SizedBox(height: 14),
-        KitListGroup(
-          title: l10n.profileThisPhone,
-          children: [
-            _RemindersRow(reminders: reminders, onEnabled: me.refresh),
-          ],
-        ),
-        const SizedBox(height: 14),
-        DocumentsSection(me: me),
-        const SizedBox(height: 14),
-        KitListGroup(
-          children: [
-            KitListRow(
-              key: const Key('profile-about'),
-              icon: Icons.info_outline_rounded,
-              title: l10n.profileAbout,
-              detail: l10n.profileAboutDetail,
-              onTap: () => showAboutMyShine(context),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        KitTile(
-          key: const Key('disconnect'),
-          onTap: () => _disconnect(context),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 10, 4, 22),
           child: Row(
             children: [
-              Icon(Icons.logout_rounded, color: p.danger),
+              Container(
+                width: 56,
+                height: 56,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: palette.card, shape: BoxShape.circle),
+                child: Text(initial, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: palette.ink)),
+              ),
               const SizedBox(width: 14),
-              Text(
-                l10n.profileDisconnect,
-                style: TextStyle(
-                  color: p.danger,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        patient.firstName.isEmpty ? l10n.profileTitle : patient.firstName,
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.9, color: palette.ink),
+                      ),
+                    ),
+                    if (patient.statusLabel case final status? when status.isNotEmpty)
+                      Text(status, style: TextStyle(fontSize: 14, color: palette.muted)),
+                  ],
                 ),
               ),
             ],
           ),
         ),
+        SectionLabel(l10n.profileYourClinic),
+        ShineGroup(
+          children: [
+            ShineRow(
+              title: clinic.name.isEmpty ? l10n.profileYourClinic : clinic.name,
+              trailingText: clinic.city,
+              bold: true,
+            ),
+            if (patient.doctorName != null)
+              ShineRow(title: patient.doctorName!, trailingText: l10n.profileYourDentist),
+            if (phone != null && phone.isNotEmpty)
+              ShineRow(
+                title: phone,
+                trailingText: l10n.profileCall,
+                onTap: () => openContact(
+                  context,
+                  Uri(scheme: 'tel', path: phone.replaceAll(RegExp(r'[^0-9+]'), '')),
+                ),
+              ),
+            if (email != null && email.isNotEmpty)
+              ShineRow(
+                title: email,
+                trailingText: l10n.profileEmail,
+                onTap: () => openContact(context, Uri(scheme: 'mailto', path: email)),
+              ),
+          ],
+        ),
+        // Reminders are the phone app's own notifications: not on the web.
+        if (!kIsWeb) ...[
+          const SizedBox(height: 8),
+          SectionLabel(l10n.profileThisPhone),
+          ShineGroup(
+            children: [_RemindersRow(reminders: reminders, onEnabled: me.refresh)],
+          ),
+        ],
+        const SizedBox(height: 8),
+        DocumentsSection(me: me),
+        const SizedBox(height: 22),
+        ShineGroup(
+          children: [
+            ShineRow(
+              key: const Key('profile-about'),
+              title: l10n.profileAbout,
+              trailingText: l10n.profileAboutDetail,
+              onTap: () => showAboutMyShine(context),
+            ),
+            ShineRow(
+              key: const Key('disconnect'),
+              title: l10n.profileDisconnect,
+              danger: true,
+              onTap: () => _disconnect(context),
+            ),
+          ],
+        ),
         const SizedBox(height: 28),
-        const Center(child: Wordmark(size: 18)),
+        const Center(child: Wordmark(size: 17)),
         const SizedBox(height: 4),
         Center(
-          child: Text(
-            l10n.profileFooter,
-            style: TextStyle(color: palette.muted, fontSize: 12),
-          ),
+          child: Text(l10n.profileFooter, style: TextStyle(color: palette.muted, fontSize: 12)),
         ),
       ],
     );
@@ -194,15 +194,17 @@ class _RemindersRowState extends State<_RemindersRow> {
   Widget build(BuildContext context) {
     final enabled = _enabled;
     final l10n = context.l10n;
-    return KitListRow(
+    return ShineRow(
       key: const Key('reminders'),
-      icon: Icons.notifications_none_rounded,
       title: l10n.profileReminders,
-      detail: l10n.profileRemindersDetail,
-      state: enabled == null
-          ? null
-          : (enabled ? l10n.profileOn : l10n.profileOff),
+      subtitle: l10n.profileRemindersDetail,
       onTap: enabled == null ? null : _toggle,
+      trailing: enabled == null
+          ? null
+          : Semantics(
+              label: enabled ? l10n.profileOn : l10n.profileOff,
+              child: Switch.adaptive(value: enabled, onChanged: (_) => _toggle()),
+            ),
     );
   }
 }

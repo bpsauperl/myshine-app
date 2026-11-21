@@ -40,7 +40,11 @@ class CheckInCard extends StatefulWidget {
     this.now,
     this.cameraSupported,
     this.takePhoto,
+    this.framed = true,
   });
+
+  /// False on the check-in page: no tile around the questions.
+  final bool framed;
 
   final ApiClient api;
 
@@ -174,7 +178,9 @@ class _CheckInCardState extends State<CheckInCard> {
     final thanks = _sentAligner;
     return ShineCard(
       key: const Key('check-in-upcoming'),
-      color: thanks != null ? kit.accentSoft : kit.inset,
+      color: widget.framed ? kit.tile : Colors.transparent,
+      padding: widget.framed ? const EdgeInsets.all(20) : EdgeInsets.zero,
+      radius: widget.framed ? kCardRadius : 0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -182,13 +188,12 @@ class _CheckInCardState extends State<CheckInCard> {
             Row(
               key: const Key('check-in-thanks'),
               children: [
-                Icon(Icons.check_circle_rounded, color: kit.accentText),
+                Icon(Icons.check_circle_rounded, color: kit.ink),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     l10n.checkInThanks(thanks),
-                    style: KitType.body(color: kit.ink)
-                        .copyWith(fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: kit.ink),
                   ),
                 ),
               ],
@@ -198,9 +203,9 @@ class _CheckInCardState extends State<CheckInCard> {
           if (!waiting) ...[
             Text(
               l10n.checkInEyebrow,
-              style: KitType.eyebrow(color: kit.accentText),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: kit.secondary),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               dueOn == null
                   ? l10n.checkInNext(_aligner)
@@ -208,16 +213,34 @@ class _CheckInCardState extends State<CheckInCard> {
                       _aligner,
                       relativeDay(l10n, dueOn, now: widget.now),
                     ),
-              style: KitType.title(color: kit.ink).copyWith(fontSize: 22),
+              style: TextStyle(
+                fontSize: widget.framed ? 22 : 32,
+                height: 1.1,
+                fontWeight: FontWeight.w700,
+                letterSpacing: widget.framed ? -0.6 : -1.1,
+                color: kit.ink,
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             Text(
               l10n.checkInUpcomingBody,
-              style: KitType.body(color: kit.secondary),
+              style: TextStyle(fontSize: 16, height: 1.45, color: kit.secondary),
             ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
+            SizedBox(height: widget.framed ? 8 : 28),
+            if (widget.framed)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  key: const Key('check-in-early'),
+                  onPressed: () => setState(() {
+                    _early = true;
+                    _sentAligner = null;
+                  }),
+                  child: Text(l10n.checkInEarly(_aligner)),
+                ),
+              )
+            else
+              FilledButton(
                 key: const Key('check-in-early'),
                 onPressed: () => setState(() {
                   _early = true;
@@ -225,7 +248,6 @@ class _CheckInCardState extends State<CheckInCard> {
                 }),
                 child: Text(l10n.checkInEarly(_aligner)),
               ),
-            ),
           ] else
             Text(
               l10n.checkInClinicSees,
@@ -251,18 +273,20 @@ class _CheckInCardState extends State<CheckInCard> {
         : l10n.checkInDue(relativeDay(l10n, dueOn, now: widget.now));
     return ShineCard(
       key: const Key('check-in-form'),
-      color: kit.inset,
+      color: widget.framed ? kit.tile : Colors.transparent,
+      padding: widget.framed ? const EdgeInsets.all(20) : EdgeInsets.zero,
+      radius: widget.framed ? kCardRadius : 0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             l10n.checkInEyebrow,
-            style: KitType.eyebrow(color: palette.accentText),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: palette.muted),
           ),
           const SizedBox(height: 6),
           Text(
             l10n.checkInSwitchTitle(_aligner),
-            style: KitType.title(color: palette.ink).copyWith(fontSize: 26),
+            style: TextStyle(fontSize: 32, height: 1.1, fontWeight: FontWeight.w700, letterSpacing: -1.1, color: palette.ink),
           ),
           if (status != null) ...[
             const SizedBox(height: 4),
@@ -274,8 +298,8 @@ class _CheckInCardState extends State<CheckInCard> {
           ],
           const SizedBox(height: 16),
           Material(
-            color: _switched ? kit.accentSoft : kit.tile,
-            borderRadius: BorderRadius.circular(KitSize.tileRadius),
+            color: widget.framed ? kit.inset : kit.tile,
+            borderRadius: BorderRadius.circular(20),
             child: SwitchListTile.adaptive(
               key: const Key('check-in-switched'),
               value: _switched,
@@ -293,60 +317,53 @@ class _CheckInCardState extends State<CheckInCard> {
                 ),
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KitSize.tileRadius),
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
           ),
           const SizedBox(height: 20),
           _Label(l10n.checkInFitQuestion(_aligner)),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          Column(
             children: [
               for (final entry in fitOptions(l10n).entries)
-                ChoiceChip(
-                  key: Key('fit-${entry.key}'),
-                  label: Text(entry.value),
-                  selected: _fit == entry.key,
-                  showCheckmark: false,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: _fit == entry.key
-                        ? (context.kit.isDark ? Colors.black : Colors.white)
-                        : palette.ink,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _Choice(
+                    key: Key('fit-${entry.key}'),
+                    label: entry.value,
+                    selected: _fit == entry.key,
+                    framed: widget.framed,
+                    onTap: _sending
+                        ? null
+                        : () => setState(() {
+                            _fit = entry.key;
+                            _error = null;
+                          }),
                   ),
-                  onSelected: _sending
-                      ? null
-                      : (_) => setState(() {
-                          _fit = entry.key;
-                          _error = null;
-                        }),
                 ),
             ],
           ),
           const SizedBox(height: 20),
           _Label(l10n.checkInDiscomfort),
-          Wrap(
-            spacing: 8,
+          Row(
             children: [
-              for (final entry in comfortOptions(l10n).entries)
-                ChoiceChip(
-                  key: Key('comfort-${entry.key}'),
-                  label: Text(entry.value),
-                  selected: _comfort == entry.key,
-                  showCheckmark: false,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: _comfort == entry.key
-                        ? (context.kit.isDark ? Colors.black : Colors.white)
-                        : palette.ink,
+              for (final entry in comfortOptions(l10n).entries) ...[
+                if (entry.key != comfortOptions(l10n).keys.first) const SizedBox(width: 8),
+                Expanded(
+                  child: _Choice(
+                    key: Key('comfort-${entry.key}'),
+                    label: entry.value,
+                    selected: _comfort == entry.key,
+                    framed: widget.framed,
+                    compact: true,
+                    onTap: _sending
+                        ? null
+                        : () => setState(
+                            () => _comfort = _comfort == entry.key ? null : entry.key,
+                          ),
                   ),
-                  onSelected: _sending
-                      ? null
-                      : (selected) => setState(
-                          () => _comfort = selected ? entry.key : null,
-                        ),
                 ),
+              ],
             ],
           ),
           const SizedBox(height: 20),
@@ -389,6 +406,80 @@ class _CheckInCardState extends State<CheckInCard> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A big answer row: grey, rounded; the chosen one gets an ink outline and a tick.
+class _Choice extends StatelessWidget {
+  const _Choice({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.framed = true,
+    this.compact = false,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback? onTap;
+  final bool framed;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final kit = context.kit;
+    final palette = context.shine;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      excludeSemantics: true,
+      child: Material(
+        color: framed ? kit.inset : kit.tile,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(compact ? 16 : 20),
+          side: selected ? BorderSide(color: palette.ink, width: 1.5) : BorderSide.none,
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(compact ? 16 : 20),
+          onTap: onTap,
+          child: SizedBox(
+            height: compact ? 52 : 64,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: compact ? 10 : 20),
+              child: Row(
+                mainAxisAlignment: compact ? MainAxisAlignment.center : MainAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Text(
+                      label,
+                      textAlign: compact ? TextAlign.center : TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: compact ? 15 : 17,
+                        fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                        color: palette.ink,
+                      ),
+                    ),
+                  ),
+                  if (selected && !compact) ...[
+                    const Spacer(),
+                    Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(color: palette.ink, shape: BoxShape.circle),
+                      child: Icon(Icons.check_rounded, size: 16, color: kit.isDark ? Colors.black : Colors.white),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

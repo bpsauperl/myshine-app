@@ -109,7 +109,17 @@ void main() {
     await tester.tap(find.byKey(const Key('reminders')));
     await tester.pump();
     expect(reminders.enabled, isFalse);
-    expect(find.text('Off'), findsOneWidget);
+    expect(
+      tester
+          .widget<Switch>(
+            find.descendant(
+              of: find.byKey(const Key('reminders')),
+              matching: find.byType(Switch),
+            ),
+          )
+          .value,
+      isFalse,
+    );
 
     await tester.tap(find.byKey(const Key('reminders')));
     await tester.pump();

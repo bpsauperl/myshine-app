@@ -433,11 +433,11 @@ abstract class AppLocalizations {
   /// **'Check in'**
   String get todayCheckIn;
 
-  /// Under 'Next aligner' when this is the last aligner.
+  /// No description provided for @todayLastOne.
   ///
   /// In en, this message translates to:
-  /// **'Last one'**
-  String get todayLastOne;
+  /// **'Last one {date}'**
+  String todayLastOne(String date);
 
   /// No description provided for @todayNextAligner.
   ///
@@ -1326,6 +1326,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Series {series}'**
   String planCardSeries(int series);
+
+  /// No description provided for @todayOfAligners.
+  ///
+  /// In en, this message translates to:
+  /// **'of {total} aligners'**
+  String todayOfAligners(int total);
+
+  /// No description provided for @todayDoneCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} done'**
+  String todayDoneCount(int count);
+
+  /// No description provided for @todayCheckInAligner.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in aligner {aligner}'**
+  String todayCheckInAligner(int aligner);
+
+  /// No description provided for @todayDaysLeftUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'days left'**
+  String get todayDaysLeftUnit;
+
+  /// No description provided for @todayWear.
+  ///
+  /// In en, this message translates to:
+  /// **'Wear'**
+  String get todayWear;
+
+  /// No description provided for @todayHoursUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'h a day'**
+  String get todayHoursUnit;
+
+  /// No description provided for @todayLastCheckInOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Last check-in · {date}'**
+  String todayLastCheckInOn(String date);
+
+  /// No description provided for @todayOpenSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'See the schedule'**
+  String get todayOpenSchedule;
+
+  /// No description provided for @scheduleEndsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'ends {date}'**
+  String scheduleEndsOn(String date);
 }
 
 class _AppLocalizationsDelegate

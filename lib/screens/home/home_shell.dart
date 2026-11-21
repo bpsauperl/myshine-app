@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shine_kit/shine_kit.dart';
 
 import '../../api/api_client.dart';
 import '../../l10n/l10n.dart';
@@ -151,37 +150,24 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
                 bottom: 0,
                 child: SafeArea(
                   top: false,
-                  minimum: const EdgeInsets.only(bottom: 16),
+                  minimum: const EdgeInsets.only(bottom: 26),
                   child: Center(
-                    child: KitTabBar(
-                      index: _index,
-                      onSelect: _select,
-                      tabs: [
-                        KitTab(
-                          icon: Icons.wb_sunny_outlined,
-                          label: l10n.tabToday,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 440),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: GlassTabBar(
+                          index: _index,
+                          onSelect: _select,
+                          tabs: [
+                            GlassTab(glyph: ShineGlyph.today, label: l10n.tabToday),
+                            GlassTab(glyph: ShineGlyph.plan, label: l10n.tabPlan),
+                            GlassTab(glyph: ShineGlyph.schedule, label: l10n.tabSchedule),
+                            GlassTab(glyph: ShineGlyph.messages, label: l10n.tabMessages, dot: unread > 0),
+                            GlassTab(glyph: ShineGlyph.profile, label: l10n.tabProfile, dot: pending > 0),
+                          ],
                         ),
-                        KitTab(
-                          icon: Icons.view_in_ar_outlined,
-                          label: l10n.tabPlan,
-                        ),
-                        KitTab(
-                          icon: Icons.calendar_month_outlined,
-                          label: l10n.tabSchedule,
-                        ),
-                        KitTab(
-                          icon: Icons.chat_bubble_outline_rounded,
-                          label: unread > 0
-                              ? l10n.tabMessagesUnread(unread)
-                              : l10n.tabMessages,
-                          dot: unread > 0,
-                        ),
-                        KitTab(
-                          icon: Icons.person_outline_rounded,
-                          label: l10n.tabProfile,
-                          dot: pending > 0,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -209,12 +195,7 @@ class TabPage extends StatelessWidget {
         onRefresh: onRefresh,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(
-            KitSize.gutter,
-            12,
-            KitSize.gutter,
-            120,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 128),
           children: [
             Center(
               child: ConstrainedBox(

@@ -53,19 +53,16 @@ class DocumentsSection extends StatelessWidget {
       children: [
         SectionLabel(l10n.documentsTitle),
         if (documents.isNotEmpty) ...[
-          ShineCard(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Column(
-              children: [
-                for (var i = 0; i < documents.length; i++) ...[
-                  if (i > 0) const Divider(indent: 64),
-                  _DocumentRow(
-                    document: documents[i],
-                    onOpen: () => _open(context, documents[i]),
-                  ),
-                ],
-              ],
-            ),
+          ShineGroup(
+            children: [
+              for (final document in documents)
+                ShineRow(
+                  title: document.title,
+                  subtitle: document.detail == null || document.detail!.isEmpty ? null : document.detail,
+                  trailingText: l10n.documentsOpen,
+                  onTap: () => _open(context, document),
+                ),
+            ],
           ),
           if (consents.isNotEmpty) const SizedBox(height: 10),
         ],
@@ -76,21 +73,14 @@ class DocumentsSection extends StatelessWidget {
             body: l10n.documentsEmptyBody,
           )
         else if (consents.isNotEmpty)
-          ShineCard(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Column(
-              children: [
-                for (var i = 0; i < consents.length; i++) ...[
-                  if (i > 0) const Divider(indent: 64),
-                  _ConsentRow(
-                    consent: consents[i],
-                    onSign: consents[i].signUrl == null
-                        ? null
-                        : () => _sign(context, consents[i]),
-                  ),
-                ],
-              ],
-            ),
+          ShineGroup(
+            children: [
+              for (final consent in consents)
+                _ConsentRow(
+                  consent: consent,
+                  onSign: consent.signUrl == null ? null : () => _sign(context, consent),
+                ),
+            ],
           ),
         const SizedBox(height: 10),
         Padding(
@@ -105,6 +95,7 @@ class DocumentsSection extends StatelessWidget {
   }
 }
 
+/// A consent: signed (with the date), or waiting, with Sign when it can be signed here.
 class _ConsentRow extends StatelessWidget {
   const _ConsentRow({required this.consent, this.onSign});
 
@@ -113,7 +104,6 @@ class _ConsentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.shine;
     final l10n = context.l10n;
     final signed = consent.isSigned;
     final title = consent.devices == null || consent.devices!.isEmpty
@@ -126,102 +116,16 @@ class _ConsentRow extends StatelessWidget {
         : onSign == null
         ? l10n.documentsSignThere
         : l10n.documentsWaiting;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Icon(
-            signed ? Icons.verified_rounded : Icons.edit_document,
-            color: signed ? palette.accentText : palette.muted,
-            size: 30,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(subtitle, style: TextStyle(color: palette.muted)),
-              ],
-            ),
-          ),
-          if (!signed && onSign != null)
-            FilledButton(
-              style: FilledButton.styleFrom(minimumSize: const Size(72, 40)),
+    return ShineRow(
+      title: title,
+      subtitle: subtitle,
+      trailing: !signed && onSign != null
+          ? FilledButton(
+              style: FilledButton.styleFrom(minimumSize: const Size(72, 38), padding: const EdgeInsets.symmetric(horizontal: 16)),
               onPressed: onSign,
               child: Text(l10n.documentsSign),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DocumentRow extends StatelessWidget {
-  const _DocumentRow({required this.document, required this.onOpen});
-
-  final PatientDocument document;
-  final VoidCallback onOpen;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.shine;
-    final l10n = context.l10n;
-    return InkWell(
-      onTap: onOpen,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Icon(
-              document.isConsent
-                  ? Icons.verified_rounded
-                  : Icons.shield_outlined,
-              color: palette.accentText,
-              size: 30,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    document.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  if (document.detail != null &&
-                      document.detail!.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      document.detail!,
-                      style: TextStyle(color: palette.muted),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              l10n.documentsOpen,
-              style: TextStyle(
-                color: palette.accentText,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: palette.accentText),
-          ],
-        ),
-      ),
+            )
+          : null,
     );
   }
 }

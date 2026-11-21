@@ -33,6 +33,7 @@ void main() {
     expect(find.byKey(const Key('welcome-photo')), findsOneWidget);
     expect(find.byKey(const Key('welcome-simulate')), findsNothing);
 
+    await tester.ensureVisible(find.byKey(const Key('welcome-code')));
     await tester.tap(find.byKey(const Key('welcome-code')));
     await tester.pumpAndSettle();
 
