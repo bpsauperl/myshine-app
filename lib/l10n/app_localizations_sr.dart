@@ -892,6 +892,20 @@ class AppLocalizationsSr extends AppLocalizations {
   String introScene(int scene, int total) {
     return 'Scena $scene od $total';
   }
+
+  @override
+  String get installTitle => 'Dodaj myShine na početni ekran';
+
+  @override
+  String get installIos =>
+      'Dodirni Podeli, pa Dodaj na početni ekran. myShine se onda otvara kao aplikacija.';
+
+  @override
+  String get installAndroid =>
+      'Dodirni meni ⋮, pa Instaliraj aplikaciju ili Dodaj na početni ekran. myShine se onda otvara kao aplikacija.';
+
+  @override
+  String get installDismiss => 'Ne sada';
 }
 
 /// The translations for Serbian, using the Latin script (`sr_Latn`).
@@ -1781,4 +1795,18 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
   String introScene(int scene, int total) {
     return 'Scena $scene od $total';
   }
+
+  @override
+  String get installTitle => 'Dodaj myShine na početni ekran';
+
+  @override
+  String get installIos =>
+      'Dodirni Podeli, pa Dodaj na početni ekran. myShine se onda otvara kao aplikacija.';
+
+  @override
+  String get installAndroid =>
+      'Dodirni meni ⋮, pa Instaliraj aplikaciju ili Dodaj na početni ekran. myShine se onda otvara kao aplikacija.';
+
+  @override
+  String get installDismiss => 'Ne sada';
 }

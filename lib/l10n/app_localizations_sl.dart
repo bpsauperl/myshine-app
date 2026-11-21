@@ -905,4 +905,18 @@ class AppLocalizationsSl extends AppLocalizations {
   String introScene(int scene, int total) {
     return 'Prizor $scene od $total';
   }
+
+  @override
+  String get installTitle => 'Dodaj myShine na začetni zaslon';
+
+  @override
+  String get installIos =>
+      'Tapni Deli, nato Dodaj na začetni zaslon. myShine se potem odpre kot aplikacija.';
+
+  @override
+  String get installAndroid =>
+      'Tapni meni ⋮, nato Namesti aplikacijo ali Dodaj na začetni zaslon. myShine se potem odpre kot aplikacija.';
+
+  @override
+  String get installDismiss => 'Ne zdaj';
 }

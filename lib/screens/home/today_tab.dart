@@ -7,6 +7,7 @@ import '../../state/me_controller.dart';
 import '../../util/dates.dart';
 import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
+import '../../widgets/home_screen_tip.dart';
 import '../../theme.dart';
 import 'check_in_page.dart';
 
@@ -107,6 +108,7 @@ class _TodayTabState extends State<TodayTab> {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    const HomeScreenTip(),
                     if (therapy == null)
                       CalmMessage(
                         key: const Key('not-started'),

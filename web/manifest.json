@@ -1,11 +1,11 @@
 {
     "name": "myShine",
     "short_name": "myShine",
-    "start_url": ".",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#83C9CB",
-    "description": "myShine, the patient app for Shine clear aligners.",
+    "theme_color": "#FFFFFF",
+    "description": "myShine: your Shine aligner treatment with your clinic. Today's aligner, your schedule, your plan and messages.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
@@ -31,5 +31,7 @@
             "type": "image/png",
             "purpose": "maskable"
         }
-    ]
+    ],
+    "id": "/",
+    "scope": "/"
 }

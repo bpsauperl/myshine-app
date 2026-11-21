@@ -881,4 +881,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String introScene(int scene, int total) {
     return 'Scene $scene of $total';
   }
+
+  @override
+  String get installTitle => 'Put myShine on your home screen';
+
+  @override
+  String get installIos =>
+      'Tap Share, then Add to Home Screen. myShine then opens like an app.';
+
+  @override
+  String get installAndroid =>
+      'Tap the menu ⋮, then Install app or Add to home screen. myShine then opens like an app.';
+
+  @override
+  String get installDismiss => 'Not now';
 }

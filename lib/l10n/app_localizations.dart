@@ -1428,6 +1428,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scene {scene} of {total}'**
   String introScene(int scene, int total);
+
+  /// No description provided for @installTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Put myShine on your home screen'**
+  String get installTitle;
+
+  /// No description provided for @installIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Share, then Add to Home Screen. myShine then opens like an app.'**
+  String get installIos;
+
+  /// No description provided for @installAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the menu ⋮, then Install app or Add to home screen. myShine then opens like an app.'**
+  String get installAndroid;
+
+  /// No description provided for @installDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get installDismiss;
 }
 
 class _AppLocalizationsDelegate
