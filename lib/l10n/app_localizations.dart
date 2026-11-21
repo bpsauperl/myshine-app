@@ -1380,6 +1380,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ends {date}'**
   String scheduleEndsOn(String date);
+
+  /// No description provided for @introConsult.
+  ///
+  /// In en, this message translates to:
+  /// **'It starts with your dentist.'**
+  String get introConsult;
+
+  /// No description provided for @introScan.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick 3D scan. No moulds.'**
+  String get introScan;
+
+  /// No description provided for @introPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan, aligner by aligner.'**
+  String get introPlan;
+
+  /// No description provided for @introWear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear aligners, made for you.'**
+  String get introWear;
+
+  /// No description provided for @introAligner.
+  ///
+  /// In en, this message translates to:
+  /// **'And myShine keeps you on track.'**
+  String get introAligner;
+
+  /// No description provided for @introPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause the video'**
+  String get introPause;
+
+  /// No description provided for @introPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the video'**
+  String get introPlay;
+
+  /// No description provided for @introScene.
+  ///
+  /// In en, this message translates to:
+  /// **'Scene {scene} of {total}'**
+  String introScene(int scene, int total);
 }
 
 class _AppLocalizationsDelegate

@@ -8,9 +8,12 @@ import '../theme.dart';
 
 /// The "myShine" wordmark in ink, until the official logo arrives.
 class Wordmark extends StatelessWidget {
-  const Wordmark({super.key, this.size = 28});
+  const Wordmark({super.key, this.size = 28, this.color});
 
   final double size;
+
+  /// White on the opening film; ink everywhere else.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class Wordmark extends StatelessWidget {
       fontSize: size,
       fontWeight: FontWeight.w600,
       letterSpacing: -size * 0.02,
-      color: palette.ink,
+      color: color ?? palette.ink,
       height: 1,
     );
     return Semantics(

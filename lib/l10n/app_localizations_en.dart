@@ -855,4 +855,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String scheduleEndsOn(String date) {
     return 'ends $date';
   }
+
+  @override
+  String get introConsult => 'It starts with your dentist.';
+
+  @override
+  String get introScan => 'A quick 3D scan. No moulds.';
+
+  @override
+  String get introPlan => 'Your plan, aligner by aligner.';
+
+  @override
+  String get introWear => 'Clear aligners, made for you.';
+
+  @override
+  String get introAligner => 'And myShine keeps you on track.';
+
+  @override
+  String get introPause => 'Pause the video';
+
+  @override
+  String get introPlay => 'Play the video';
+
+  @override
+  String introScene(int scene, int total) {
+    return 'Scene $scene of $total';
+  }
 }

@@ -466,5 +466,23 @@
         "type": "String"
       }
     }
+  },
+  "introConsult": "It starts with your dentist.",
+  "introScan": "A quick 3D scan. No moulds.",
+  "introPlan": "Your plan, aligner by aligner.",
+  "introWear": "Clear aligners, made for you.",
+  "introAligner": "And myShine keeps you on track.",
+  "introPause": "Pause the video",
+  "introPlay": "Play the video",
+  "introScene": "Scene {scene} of {total}",
+  "@introScene": {
+    "placeholders": {
+      "scene": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   }
 }

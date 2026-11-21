@@ -212,5 +212,13 @@
   "todayHoursUnit": "Std. am Tag",
   "todayLastCheckInOn": "Letzter Check-in · {date}",
   "todayOpenSchedule": "Zeitplan ansehen",
-  "scheduleEndsOn": "endet am {date}"
+  "scheduleEndsOn": "endet am {date}",
+  "introConsult": "Alles beginnt in deiner Zahnarztpraxis.",
+  "introScan": "Ein schneller 3D-Scan. Keine Abdrücke.",
+  "introPlan": "Dein Plan, Aligner für Aligner.",
+  "introWear": "Durchsichtige Aligner, für dich gemacht.",
+  "introAligner": "Und myShine begleitet dich dabei.",
+  "introPause": "Video anhalten",
+  "introPlay": "Video abspielen",
+  "introScene": "Szene {scene} von {total}"
 }

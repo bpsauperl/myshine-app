@@ -866,6 +866,32 @@ class AppLocalizationsSr extends AppLocalizations {
   String scheduleEndsOn(String date) {
     return 'kraj $date';
   }
+
+  @override
+  String get introConsult => 'Sve počinje kod tvog stomatologa.';
+
+  @override
+  String get introScan => 'Brz 3D sken. Bez otisaka.';
+
+  @override
+  String get introPlan => 'Tvoj plan, alajner po alajner.';
+
+  @override
+  String get introWear => 'Providni alajneri, napravljeni za tebe.';
+
+  @override
+  String get introAligner => 'A myShine te vodi kroz sve.';
+
+  @override
+  String get introPause => 'Zaustavi video';
+
+  @override
+  String get introPlay => 'Pusti video';
+
+  @override
+  String introScene(int scene, int total) {
+    return 'Scena $scene od $total';
+  }
 }
 
 /// The translations for Serbian, using the Latin script (`sr_Latn`).
@@ -1728,5 +1754,31 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
   @override
   String scheduleEndsOn(String date) {
     return 'kraj $date';
+  }
+
+  @override
+  String get introConsult => 'Sve počinje kod tvog stomatologa.';
+
+  @override
+  String get introScan => 'Brz 3D sken. Bez otisaka.';
+
+  @override
+  String get introPlan => 'Tvoj plan, alajner po alajner.';
+
+  @override
+  String get introWear => 'Providni alajneri, napravljeni za tebe.';
+
+  @override
+  String get introAligner => 'A myShine te vodi kroz sve.';
+
+  @override
+  String get introPause => 'Zaustavi video';
+
+  @override
+  String get introPlay => 'Pusti video';
+
+  @override
+  String introScene(int scene, int total) {
+    return 'Scena $scene od $total';
   }
 }

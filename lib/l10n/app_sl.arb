@@ -212,5 +212,13 @@
   "todayHoursUnit": "ur na dan",
   "todayLastCheckInOn": "Zadnja prijava · {date}",
   "todayOpenSchedule": "Poglej urnik",
-  "scheduleEndsOn": "konec {date}"
+  "scheduleEndsOn": "konec {date}",
+  "introConsult": "Vse se začne pri tvojem zobozdravniku.",
+  "introScan": "Hiter 3D sken. Brez odtisov.",
+  "introPlan": "Tvoj načrt, alajner za alajnerjem.",
+  "introWear": "Prozorni alajnerji, narejeni zate.",
+  "introAligner": "myShine pa te vodi skozi vse.",
+  "introPause": "Ustavi video",
+  "introPlay": "Predvajaj video",
+  "introScene": "Prizor {scene} od {total}"
 }

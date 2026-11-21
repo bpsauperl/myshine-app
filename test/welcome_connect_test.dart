@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:myshine/screens/intro_story.dart';
 import 'package:myshine/app.dart';
 import 'package:myshine/state/session.dart';
 
@@ -28,9 +29,28 @@ Future<void> _enterCode(WidgetTester tester, String code) async {
 }
 
 void main() {
+  testWidgets('the opening film moves on with a tap on the right and back on the left', (tester) async {
+    await _start(tester);
+    final story = find.byType(IntroStory);
+    final box = tester.getRect(story);
+
+    await tester.tapAt(Offset(box.right - 40, box.top + 200));
+    await tester.pumpAndSettle();
+    expect(find.text('A quick 3D scan. No moulds.'), findsOneWidget);
+
+    await tester.tapAt(Offset(box.left + 40, box.top + 200));
+    await tester.pumpAndSettle();
+    expect(find.text('It starts with your dentist.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('welcome-pause')));
+    await tester.pump();
+    expect(find.bySemanticsLabel('Play the video'), findsOneWidget);
+  });
+
   testWidgets('a clinic code connects and opens the app', (tester) async {
     final session = await _start(tester);
-    expect(find.byKey(const Key('welcome-photo')), findsOneWidget);
+    expect(find.byType(IntroStory), findsOneWidget);
+    expect(find.text('It starts with your dentist.'), findsOneWidget);
     expect(find.byKey(const Key('welcome-simulate')), findsNothing);
 
     await tester.ensureVisible(find.byKey(const Key('welcome-code')));

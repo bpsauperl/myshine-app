@@ -879,4 +879,30 @@ class AppLocalizationsSl extends AppLocalizations {
   String scheduleEndsOn(String date) {
     return 'konec $date';
   }
+
+  @override
+  String get introConsult => 'Vse se začne pri tvojem zobozdravniku.';
+
+  @override
+  String get introScan => 'Hiter 3D sken. Brez odtisov.';
+
+  @override
+  String get introPlan => 'Tvoj načrt, alajner za alajnerjem.';
+
+  @override
+  String get introWear => 'Prozorni alajnerji, narejeni zate.';
+
+  @override
+  String get introAligner => 'myShine pa te vodi skozi vse.';
+
+  @override
+  String get introPause => 'Ustavi video';
+
+  @override
+  String get introPlay => 'Predvajaj video';
+
+  @override
+  String introScene(int scene, int total) {
+    return 'Prizor $scene od $total';
+  }
 }

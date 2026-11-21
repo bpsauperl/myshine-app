@@ -33,6 +33,8 @@
 
   <title>myShine</title>
   <link rel="manifest" href="manifest.json">
+  <!-- The opening film is a picture only: taps go to the app (next scene, back, hold to pause). -->
+  <style>flt-platform-view, flt-platform-view video { pointer-events: none; }</style>
 </head>
 <body>
   <!-- Shown while the app loads; removed when Flutter has drawn its first frame. -->
