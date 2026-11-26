@@ -919,4 +919,28 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get installDismiss => 'Ne zdaj';
+
+  @override
+  String get statusBase => 'Osnova';
+
+  @override
+  String get statusPlanning => 'Načrtovanje';
+
+  @override
+  String get statusConfirmed => 'Potrjeno';
+
+  @override
+  String get statusProduction => 'Proizvodnja';
+
+  @override
+  String get statusShipped => 'Odposlano';
+
+  @override
+  String get statusTherapy => 'Terapija';
+
+  @override
+  String get statusCompleted => 'Zaključeno';
+
+  @override
+  String get statusCancelled => 'Preklicano';
 }

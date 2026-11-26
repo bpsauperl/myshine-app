@@ -1452,6 +1452,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get installDismiss;
+
+  /// No description provided for @statusBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Base'**
+  String get statusBase;
+
+  /// No description provided for @statusPlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Planning'**
+  String get statusPlanning;
+
+  /// No description provided for @statusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get statusConfirmed;
+
+  /// No description provided for @statusProduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Production'**
+  String get statusProduction;
+
+  /// No description provided for @statusShipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipped'**
+  String get statusShipped;
+
+  /// No description provided for @statusTherapy.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapy'**
+  String get statusTherapy;
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get statusCompleted;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get statusCancelled;
 }
 
 class _AppLocalizationsDelegate

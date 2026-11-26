@@ -895,4 +895,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get installDismiss => 'Not now';
+
+  @override
+  String get statusBase => 'Base';
+
+  @override
+  String get statusPlanning => 'Planning';
+
+  @override
+  String get statusConfirmed => 'Confirmed';
+
+  @override
+  String get statusProduction => 'Production';
+
+  @override
+  String get statusShipped => 'Shipped';
+
+  @override
+  String get statusTherapy => 'Therapy';
+
+  @override
+  String get statusCompleted => 'Completed';
+
+  @override
+  String get statusCancelled => 'Cancelled';
 }

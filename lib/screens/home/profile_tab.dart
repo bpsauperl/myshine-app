@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../api/models.dart';
 import '../../l10n/l10n.dart';
 import '../../reminders/reminders.dart';
 import '../../state/me_controller.dart';
@@ -82,7 +83,7 @@ class ProfileTab extends StatelessWidget {
                         style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.9, color: palette.ink),
                       ),
                     ),
-                    if (patient.statusLabel case final status? when status.isNotEmpty)
+                    if (patientStatusText(l10n, patient) case final status? when status.isNotEmpty)
                       Text(status, style: TextStyle(fontSize: 14, color: palette.muted)),
                   ],
                 ),
@@ -133,7 +134,6 @@ class ProfileTab extends StatelessWidget {
             ShineRow(
               key: const Key('profile-about'),
               title: l10n.profileAbout,
-              trailingText: l10n.profileAboutDetail,
               onTap: () => showAboutMyShine(context),
             ),
             ShineRow(
@@ -208,3 +208,17 @@ class _RemindersRowState extends State<_RemindersRow> {
     );
   }
 }
+
+/// The patient's status in the app's language (the server's label is English).
+String? patientStatusText(AppLocalizations l10n, Patient patient) =>
+    switch (patient.status) {
+      'base' => l10n.statusBase,
+      'planning' => l10n.statusPlanning,
+      'confirmed' => l10n.statusConfirmed,
+      'production' => l10n.statusProduction,
+      'shipped' => l10n.statusShipped,
+      'therapy' => l10n.statusTherapy,
+      'completed' => l10n.statusCompleted,
+      'cancelled' => l10n.statusCancelled,
+      _ => patient.statusLabel,
+    };

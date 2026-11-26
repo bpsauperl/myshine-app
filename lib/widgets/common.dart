@@ -5,32 +5,50 @@ import 'package:flutter/material.dart';
 import 'package:shine_kit/shine_kit.dart';
 
 import '../theme.dart';
+import 'myshine_logo_paths.dart';
 
-/// The "myShine" wordmark in ink, until the official logo arrives.
+/// The official myShine logo (SmileLabs' brand file, outlined): "my" in Shine
+/// teal, "shine" in ink, or in white on the opening film and in dark mode.
+/// [size] is the size of the text it stands next to.
 class Wordmark extends StatelessWidget {
   const Wordmark({super.key, this.size = 28, this.color});
 
   final double size;
 
-  /// White on the opening film; ink everywhere else.
+  /// The colour of "shine": white on the opening film; ink everywhere else.
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.shine;
-    final style = TextStyle(
-      fontSize: size,
-      fontWeight: FontWeight.w600,
-      letterSpacing: -size * 0.02,
-      color: color ?? palette.ink,
-      height: 1,
-    );
+    final height = size * 1.3;
     return Semantics(
       label: 'myShine',
-      excludeSemantics: true,
-      child: Text('myShine', style: style),
+      image: true,
+      child: CustomPaint(
+        size: Size(height * kMyShineLogoWidth / kMyShineLogoHeight, height),
+        painter: _MyShineLogoPainter(color ?? context.shine.ink),
+      ),
     );
   }
+}
+
+class _MyShineLogoPainter extends CustomPainter {
+  const _MyShineLogoPainter(this.shine);
+
+  final Color shine;
+
+  static final Path _my = myShineLogoMy();
+  static final Path _shine = myShineLogoShine();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.scale(size.height / kMyShineLogoHeight);
+    canvas.drawPath(_my, Paint()..color = kMyShineLogoTeal);
+    canvas.drawPath(_shine, Paint()..color = shine);
+  }
+
+  @override
+  bool shouldRepaint(_MyShineLogoPainter old) => old.shine != shine;
 }
 
 /// A light grey rounded tile (dark grey in dark mode).

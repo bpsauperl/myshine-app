@@ -224,5 +224,13 @@
   "installTitle": "Dodaj myShine na početni ekran",
   "installIos": "Dodirni Podeli, pa Dodaj na početni ekran. myShine se onda otvara kao aplikacija.",
   "installAndroid": "Dodirni meni ⋮, pa Instaliraj aplikaciju ili Dodaj na početni ekran. myShine se onda otvara kao aplikacija.",
-  "installDismiss": "Ne sada"
+  "installDismiss": "Ne sada",
+  "statusBase": "Osnova",
+  "statusPlanning": "Planiranje",
+  "statusConfirmed": "Potvrđeno",
+  "statusProduction": "Proizvodnja",
+  "statusShipped": "Poslato",
+  "statusTherapy": "Terapija",
+  "statusCompleted": "Završeno",
+  "statusCancelled": "Otkazano"
 }

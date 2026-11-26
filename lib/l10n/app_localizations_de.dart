@@ -901,4 +901,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get installDismiss => 'Nicht jetzt';
+
+  @override
+  String get statusBase => 'Basis';
+
+  @override
+  String get statusPlanning => 'Planung';
+
+  @override
+  String get statusConfirmed => 'Bestätigt';
+
+  @override
+  String get statusProduction => 'Produktion';
+
+  @override
+  String get statusShipped => 'Versandt';
+
+  @override
+  String get statusTherapy => 'Therapie';
+
+  @override
+  String get statusCompleted => 'Abgeschlossen';
+
+  @override
+  String get statusCancelled => 'Storniert';
 }

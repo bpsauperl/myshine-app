@@ -9,6 +9,7 @@ import '../../widgets/browser.dart';
 import '../../widgets/common.dart';
 import '../../widgets/home_screen_tip.dart';
 import '../../theme.dart';
+import 'check_in_card.dart';
 import 'check_in_page.dart';
 
 /// Today: the patient's own aligner as the hero tile (the number big, the next
@@ -442,7 +443,7 @@ class _LastCheckIn extends StatelessWidget {
       checkIn.lateDays > 0 ? l10n.commonDaysLate(checkIn.lateDays) : l10n.todayCheckInOnTime,
     ].join(' · ');
     final detail = [
-      if (checkIn.fitLabel != null && checkIn.fitLabel!.isNotEmpty) checkIn.fitLabel!,
+      if (fitOptions(l10n)[checkIn.fit] ?? checkIn.fitLabel case final fit? when fit.isNotEmpty) fit,
       if (checkIn.photos > 0) l10n.todayCheckInPhotos(checkIn.photos),
     ].join(' · ');
     return ShineCard(

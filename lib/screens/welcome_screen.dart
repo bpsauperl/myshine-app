@@ -144,12 +144,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   onPressed: () => showAboutMyShine(context),
                                   child: Text(l10n.welcomeWhatIs),
                                 ),
+                                Text(l10n.welcomeNoCode, style: small, textAlign: TextAlign.center),
                                 Wrap(
                                   alignment: WrapAlignment.center,
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
-                                    Text(l10n.welcomeNoCode, style: small),
-                                    Text('  ·  ', style: small),
                                     _SmallLink(
                                       key: const Key('welcome-privacy'),
                                       label: l10n.commonPrivacy,

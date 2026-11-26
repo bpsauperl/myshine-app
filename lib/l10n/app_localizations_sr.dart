@@ -906,6 +906,30 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get installDismiss => 'Ne sada';
+
+  @override
+  String get statusBase => 'Osnova';
+
+  @override
+  String get statusPlanning => 'Planiranje';
+
+  @override
+  String get statusConfirmed => 'Potvrđeno';
+
+  @override
+  String get statusProduction => 'Proizvodnja';
+
+  @override
+  String get statusShipped => 'Poslato';
+
+  @override
+  String get statusTherapy => 'Terapija';
+
+  @override
+  String get statusCompleted => 'Završeno';
+
+  @override
+  String get statusCancelled => 'Otkazano';
 }
 
 /// The translations for Serbian, using the Latin script (`sr_Latn`).
@@ -1809,4 +1833,28 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
 
   @override
   String get installDismiss => 'Ne sada';
+
+  @override
+  String get statusBase => 'Osnova';
+
+  @override
+  String get statusPlanning => 'Planiranje';
+
+  @override
+  String get statusConfirmed => 'Potvrđeno';
+
+  @override
+  String get statusProduction => 'Proizvodnja';
+
+  @override
+  String get statusShipped => 'Poslato';
+
+  @override
+  String get statusTherapy => 'Terapija';
+
+  @override
+  String get statusCompleted => 'Završeno';
+
+  @override
+  String get statusCancelled => 'Otkazano';
 }
