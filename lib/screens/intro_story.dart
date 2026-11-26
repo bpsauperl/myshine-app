@@ -246,15 +246,16 @@ class IntroStoryState extends State<IntroStory> {
                   );
                 },
               ),
-            // A soft shade at the top and bottom so the white bars and words read on any frame.
+            // A soft shade over the upper half and the bottom, so the white bars, the logo and
+            // the words read on any frame (the film has white walls and bright screens).
             const IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0x66000000), Color(0x00000000), Color(0x00000000), Color(0xB3000000)],
-                    stops: [0, 0.18, 0.45, 1],
+                    colors: [Color(0x73000000), Color(0x59000000), Color(0x59000000), Color(0x26000000), Color(0xB3000000)],
+                    stops: [0, 0.14, 0.34, 0.5, 1],
                   ),
                 ),
               ),

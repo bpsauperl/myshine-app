@@ -48,28 +48,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               topInset: top,
               onScene: (scene) => setState(() => _scene = scene),
             ),
-            // Wordmark and pause, under the bars.
+            // The logo, large, in the middle of the upper half.
+            Align(
+              alignment: const Alignment(0, -0.5),
+              child: GestureDetector(
+                key: const Key('welcome-logo'),
+                onLongPress: AppConfig.serverSettingEnabled
+                    ? () => showServerSettings(context, SessionScope.of(context))
+                    : null,
+                child: const Wordmark(size: 46, color: white),
+              ),
+            ),
+            // Pause, under the bars.
             Positioned(
-              left: 20,
               right: 12,
               top: top + 22,
-              child: Row(
-                children: [
-                  GestureDetector(
-                    key: const Key('welcome-logo'),
-                    onLongPress: AppConfig.serverSettingEnabled
-                        ? () => showServerSettings(context, SessionScope.of(context))
-                        : null,
-                    child: const Wordmark(size: 17, color: white),
-                  ),
-                  const Spacer(),
-                  _GlassRound(
-                    key: const Key('welcome-pause'),
-                    label: paused ? l10n.introPlay : l10n.introPause,
-                    icon: paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-                    onTap: () => setState(() => _story.currentState?.togglePause()),
-                  ),
-                ],
+              child: _GlassRound(
+                key: const Key('welcome-pause'),
+                label: paused ? l10n.introPlay : l10n.introPause,
+                icon: paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                onTap: () => setState(() => _story.currentState?.togglePause()),
               ),
             ),
             Align(
