@@ -24,7 +24,8 @@ typedef PhotoTaker = Future<PhotoUpload?> Function(
 /// The app's camera, as the check-in card and Messages use it. The web
 /// preview (`tool/preview_main.dart`) swaps in sample photos.
 abstract final class PhotoCapture {
-  /// False on web: the camera works only in the phone app.
+  /// The app's own camera screen works on phones; in the browser `main` puts
+  /// the phone's camera through the page in its place (`pickPhotoInBrowser`).
   static bool supported = !kIsWeb;
 
   static PhotoTaker take = PhotoCameraScreen.take;
