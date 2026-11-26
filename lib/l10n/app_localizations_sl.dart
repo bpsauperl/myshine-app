@@ -921,9 +921,6 @@ class AppLocalizationsSl extends AppLocalizations {
   String get installDismiss => 'Ne zdaj';
 
   @override
-  String get statusBase => 'Osnova';
-
-  @override
   String get statusPlanning => 'Načrtovanje';
 
   @override

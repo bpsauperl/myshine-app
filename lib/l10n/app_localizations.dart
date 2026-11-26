@@ -1453,12 +1453,6 @@ abstract class AppLocalizations {
   /// **'Not now'**
   String get installDismiss;
 
-  /// No description provided for @statusBase.
-  ///
-  /// In en, this message translates to:
-  /// **'Base'**
-  String get statusBase;
-
   /// No description provided for @statusPlanning.
   ///
   /// In en, this message translates to:

@@ -489,7 +489,6 @@
   "installIos": "Tap Share, then Add to Home Screen. myShine then opens like an app.",
   "installAndroid": "Tap the menu ⋮, then Install app or Add to home screen. myShine then opens like an app.",
   "installDismiss": "Not now",
-  "statusBase": "Base",
   "statusPlanning": "Planning",
   "statusConfirmed": "Confirmed",
   "statusProduction": "Production",

@@ -908,9 +908,6 @@ class AppLocalizationsSr extends AppLocalizations {
   String get installDismiss => 'Ne sada';
 
   @override
-  String get statusBase => 'Osnova';
-
-  @override
   String get statusPlanning => 'Planiranje';
 
   @override
@@ -1833,9 +1830,6 @@ class AppLocalizationsSrLatn extends AppLocalizationsSr {
 
   @override
   String get installDismiss => 'Ne sada';
-
-  @override
-  String get statusBase => 'Osnova';
 
   @override
   String get statusPlanning => 'Planiranje';

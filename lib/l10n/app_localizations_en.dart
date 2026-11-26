@@ -897,9 +897,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get installDismiss => 'Not now';
 
   @override
-  String get statusBase => 'Base';
-
-  @override
   String get statusPlanning => 'Planning';
 
   @override

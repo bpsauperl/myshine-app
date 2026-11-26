@@ -225,7 +225,6 @@
   "installIos": "Tapni Deli, nato Dodaj na začetni zaslon. myShine se potem odpre kot aplikacija.",
   "installAndroid": "Tapni meni ⋮, nato Namesti aplikacijo ali Dodaj na začetni zaslon. myShine se potem odpre kot aplikacija.",
   "installDismiss": "Ne zdaj",
-  "statusBase": "Osnova",
   "statusPlanning": "Načrtovanje",
   "statusConfirmed": "Potrjeno",
   "statusProduction": "Proizvodnja",

@@ -903,9 +903,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get installDismiss => 'Nicht jetzt';
 
   @override
-  String get statusBase => 'Basis';
-
-  @override
   String get statusPlanning => 'Planung';
 
   @override

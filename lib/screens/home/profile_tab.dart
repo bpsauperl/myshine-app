@@ -210,9 +210,10 @@ class _RemindersRowState extends State<_RemindersRow> {
 }
 
 /// The patient's status in the app's language (the server's label is English).
+/// "Base" is drShine's own word for a patient without an order: it is not shown.
 String? patientStatusText(AppLocalizations l10n, Patient patient) =>
     switch (patient.status) {
-      'base' => l10n.statusBase,
+      'base' => null,
       'planning' => l10n.statusPlanning,
       'confirmed' => l10n.statusConfirmed,
       'production' => l10n.statusProduction,
