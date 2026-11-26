@@ -77,7 +77,7 @@ Without a code, the welcome screen says what myShine is and "Ask your Shine clin
 - [ ] **You:** enrol SmileLabs d.o.o. in the Apple Developer Program as an organisation. A health app must come from a company, not a person (guideline 5.1.1(ix)).
 - [ ] **You:** create a Google Play Console account for SmileLabs d.o.o.
 - [ ] **You:** confirm we own the rights to the welcome photo (`assets/images/welcome.webp`, from SmileStore).
-- [ ] **You:** decide iPhone only or iPhone and iPad. Today the build allows both (`TARGETED_DEVICE_FAMILY = "1,2"`), and iPad would need its own screenshots. My recommendation: iPhone only for 1.0.
+- [x] iPhone only for 1.0 (`TARGETED_DEVICE_FAMILY = 1`, set 27.11.2026 so no iPad screenshots are needed; say if iPad should come back).
 - [ ] **You:** say OK to a demo clinic on production for the reviewers, with a made-up patient and a code that keeps working.
 - [ ] **A lawyer:** review the privacy text (`drshine/lang/*/myshine.php`, the page `myshine.smilelabs.app/privacy`).
 - [ ] **Native speakers:** review sl, de and sr in the app and on the pages.
@@ -85,5 +85,6 @@ Without a code, the welcome screen says what myShine is and "Ask your Shine clin
 - [x] Phone builds talk to `https://myshine.smilelabs.app` (drShine production).
 - [x] The privacy URL and the support URL exist (`/privacy`, `/help`).
 - [x] Store texts, privacy-label answers, review notes and the screenshot list are in `docs/store/`.
+- [x] The release build compiles without signing, and the English screenshots are in `docs/store/screenshots/en/` (27.11.2026). The steps from an active developer account to TestFlight: `docs/store/app-store-steps.md`.
 - [ ] Signing: the iOS team in Xcode, and the Android upload key in `android/key.properties` (never in git).
 - [ ] TestFlight and Play internal testing, then submission.

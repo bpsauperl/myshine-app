@@ -36,3 +36,19 @@ Useful addresses:
 - icon 512 × 512, from `tool/brand`.
 
 Captions sit above the screen in Inter Bold, ink on #f5f5f7, without device frames or gradients (smilelabs-design).
+
+## The English set (27.11.2026)
+
+`screenshots/en/` holds the seven screens at 1320 × 2868, taken in the iPhone 18 Pro Max simulator from the example-data preview (light mode, status bar at 9:41): `1-welcome`, `2-today`, `3-check-in`, `4-plan`, `5-schedule`, `6-messages`, `7-about`. They are plain screens, without captions; App Store Connect takes them as they are.
+
+To make them again:
+
+```sh
+flutter build ios --simulator --debug -t tool/preview_main.dart
+xcrun simctl install booted build/ios/iphonesimulator/Runner.app && xcrun simctl launch booted si.smilelabs.myshine
+xcrun simctl status_bar booted override --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3
+xcrun simctl io booted screenshot docs/store/screenshots/en/2-today.png
+```
+
+The welcome screen comes after Profile → Disconnect in the preview. The sl and de sets are still to make (set the simulator's language first).
+
