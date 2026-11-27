@@ -53,7 +53,9 @@ class MeController extends ChangeNotifier {
       therapy: current.therapy,
       checkIns: [checkIn, ...current.checkIns],
       consents: current.consents,
+      documents: current.documents,
       unreadMessages: current.unreadMessages,
+      features: current.features,
     );
     notifyListeners();
   }
@@ -70,7 +72,9 @@ class MeController extends ChangeNotifier {
       therapy: current.therapy,
       checkIns: current.checkIns,
       consents: current.consents,
+      documents: current.documents,
       unreadMessages: 0,
+      features: current.features,
     );
     notifyListeners();
   }

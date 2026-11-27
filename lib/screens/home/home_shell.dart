@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../api/api_client.dart';
+import '../../api/models.dart';
 import '../../l10n/l10n.dart';
 import '../../reminders/reminder_plan.dart';
 import '../../reminders/reminders.dart';
 import '../../state/me_controller.dart';
 import '../../state/session.dart';
 import '../../widgets/common.dart';
+import '../rules_screen.dart';
 import 'messages_tab.dart';
 import 'plan_tab.dart';
 import 'profile_tab.dart';
@@ -57,9 +59,18 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           now: DateTime.now(),
         ),
       );
+      _followRules(data.features);
     },
   );
   int _index = 0;
+
+  /// Whether this phone already read the rules the server still calls unread
+  /// ([_rulesVersion] of them). Null until looked up.
+  bool? _rulesSeenHere;
+  String? _rulesVersion;
+
+  /// One call at a time tells the server the rules were read.
+  bool _tellingRules = false;
 
   /// Links to documents and photos are short-lived: this keeps them fresh.
   Timer? _keepFresh;
@@ -89,6 +100,56 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     _me.dispose();
     super.dispose();
+  }
+
+  /// The server says the rules are unread: look up whether this phone read
+  /// them. If it did, the server wasn't told (or couldn't be): tell it again.
+  Future<void> _followRules(Features features) async {
+    if (features.rulesSeen) {
+      return;
+    }
+    final version = features.rulesVersion;
+    if (_rulesSeenHere == null || _rulesVersion != version) {
+      final seen = await RulesScreen.seenHere(version);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _rulesVersion = version;
+        _rulesSeenHere = seen;
+      });
+    }
+    if (_rulesSeenHere == true) {
+      _tellRulesSeen();
+    }
+  }
+
+  /// "I understand": the tabs open at once; this phone and then the server
+  /// remember it.
+  Future<void> _acceptRules() async {
+    final version = _me.data?.features.rulesVersion;
+    setState(() {
+      _rulesVersion = version;
+      _rulesSeenHere = true;
+    });
+    await RulesScreen.rememberSeen(version);
+    await _tellRulesSeen();
+  }
+
+  /// Best effort: a failure never holds the patient back. While the server
+  /// still says unread, the next load of `/me` tries again.
+  Future<void> _tellRulesSeen() async {
+    if (_tellingRules) {
+      return;
+    }
+    _tellingRules = true;
+    try {
+      await widget.api.acceptRules();
+    } catch (_) {
+      // Tried again after a later load.
+    } finally {
+      _tellingRules = false;
+    }
   }
 
   void _select(int index) {
@@ -125,13 +186,30 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
             ),
           );
         }
-        final unread = data.unreadMessages;
+        final features = data.features;
+        if (!features.rulesSeen) {
+          // Before the tabs, once: the clinic's short rules.
+          if (_rulesSeenHere == null || _rulesVersion != features.rulesVersion) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (_rulesSeenHere == false) {
+            return RulesScreen(onAccept: _acceptRules);
+          }
+        }
+        final unread = features.messages ? data.unreadMessages : 0;
         final pending = data.consents.where((c) => !c.isSigned).length;
         final tabs = <Widget>[
           TodayTab(me: _me, onOpenTab: _select),
           PlanTab(me: _me),
           ScheduleTab(me: _me),
-          MessagesTab(api: widget.api, active: _index == 3),
+          MessagesTab(
+            api: widget.api,
+            active: _index == 3,
+            features: features,
+            clinic: data.patient.clinic,
+          ),
           ProfileTab(me: _me, reminders: widget.reminders),
         ];
         return Scaffold(
@@ -163,7 +241,11 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
                             GlassTab(glyph: ShineGlyph.today, label: l10n.tabToday),
                             GlassTab(glyph: ShineGlyph.plan, label: l10n.tabPlan),
                             GlassTab(glyph: ShineGlyph.schedule, label: l10n.tabSchedule),
-                            GlassTab(glyph: ShineGlyph.messages, label: l10n.tabMessages, dot: unread > 0),
+                            GlassTab(
+                              glyph: ShineGlyph.messages,
+                              label: features.messages ? l10n.tabMessages : l10n.tabClinic,
+                              dot: unread > 0,
+                            ),
                             GlassTab(glyph: ShineGlyph.profile, label: l10n.tabProfile, dot: pending > 0),
                           ],
                         ),

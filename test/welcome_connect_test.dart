@@ -6,16 +6,20 @@ import 'package:myshine/state/session.dart';
 
 import 'fakes.dart';
 
-Future<Session> _start(WidgetTester tester) async {
+Future<Session> _start(
+  WidgetTester tester, {
+  String? linkCode,
+  String? token,
+}) async {
   tester.view.physicalSize = const Size(1170, 2532);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
   final session = Session(
-    storage: MemorySessionStorage(),
+    storage: MemorySessionStorage(token: token),
     clientFactory: (_, _) => FakeApiClient(),
   );
   await session.load();
-  await tester.pumpWidget(MyShineApp(session: session));
+  await tester.pumpWidget(MyShineApp(session: session, linkCode: linkCode));
   await tester.pump();
   return session;
 }
@@ -96,5 +100,42 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.byKey(const Key('server-url')), findsOneWidget);
+  });
+
+  testWidgets('the link in the clinic\'s email types the code, the patient connects', (
+    tester,
+  ) async {
+    final session = await _start(tester, linkCode: 'ABCD-2345');
+    await tester.pumpAndSettle();
+
+    final field = tester.widget<TextField>(
+      find.byKey(const Key('connect-code')),
+    );
+    expect(field.controller!.text, 'ABCD-2345');
+    expect(session.isConnected, isFalse, reason: 'the patient taps the button');
+
+    await tester.tap(find.byKey(const Key('connect-button')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump();
+
+    expect(session.isConnected, isTrue);
+    expect(find.text('Hello, Ana'), findsOneWidget);
+  });
+
+  testWidgets('someone already connected stays in the app whatever the link says', (
+    tester,
+  ) async {
+    final session = await _start(
+      tester,
+      linkCode: 'ABCD-2345',
+      token: 'test-token',
+    );
+    await tester.pumpAndSettle();
+
+    expect(session.isConnected, isTrue);
+    expect(find.byKey(const Key('connect-code')), findsNothing);
+    expect(find.text('Hello, Ana'), findsOneWidget);
   });
 }

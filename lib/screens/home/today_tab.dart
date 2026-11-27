@@ -32,8 +32,9 @@ class TodayTab extends StatefulWidget {
 
 class _TodayTabState extends State<TodayTab> {
   Future<void> _openCheckIn() async {
-    final therapy = widget.me.data?.therapy;
-    if (therapy == null) {
+    final data = widget.me.data;
+    final therapy = data?.therapy;
+    if (data == null || therapy == null) {
       return;
     }
     await Navigator.of(context).push(
@@ -43,6 +44,7 @@ class _TodayTabState extends State<TodayTab> {
           api: widget.me.api,
           checkIn: therapy.checkIn,
           now: widget.now,
+          photosOffered: data.features.photosWithCheckIns,
           onSent: (checkIn) {
             widget.me.addCheckIn(checkIn);
             // The schedule follows the change.

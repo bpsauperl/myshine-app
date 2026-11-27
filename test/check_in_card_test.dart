@@ -226,4 +226,37 @@ void main() {
     expect(find.byKey(const Key('photos-unavailable')), findsOneWidget);
     expect(find.byKey(const Key('photo-take-front')), findsNothing);
   });
+
+  testWidgets('no photos where the clinic takes none with check-ins', (
+    tester,
+  ) async {
+    final api = FakeApiClient();
+    await tester.pumpWidget(
+      _wrap(
+        CheckInCard(
+          api: api,
+          checkIn: _state(),
+          now: _dueDay,
+          cameraSupported: true,
+          takePhoto: FakeCamera().take,
+          photosOffered: false,
+        ),
+      ),
+    );
+
+    expect(find.byKey(const Key('check-in-photos')), findsNothing);
+    expect(find.text('Photos'), findsNothing);
+    expect(find.byKey(const Key('photos-hint')), findsNothing);
+    expect(find.byKey(const Key('photo-take-front')), findsNothing);
+    expect(find.byKey(const Key('photos-unavailable')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('check-in-switched')));
+    await tester.tap(find.byKey(const Key('fit-loose')));
+    await tester.pump();
+    expect(find.byKey(const Key('check-in-photos')), findsNothing);
+    await _send(tester);
+
+    expect(api.sentCheckIns.single.fit, 'loose');
+    expect(api.sentCheckIns.single.photos, isEmpty);
+  });
 }

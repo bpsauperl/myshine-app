@@ -53,7 +53,11 @@ class AboutMyShine extends StatelessWidget {
       ),
       (Icons.view_in_ar_outlined, l10n.tabPlan, l10n.aboutPlan),
       (Icons.calendar_month_outlined, l10n.tabSchedule, l10n.aboutSchedule),
-      (Icons.chat_bubble_outline_rounded, l10n.tabMessages, l10n.aboutMessages),
+      (
+        Icons.chat_bubble_outline_rounded,
+        l10n.tabMessages,
+        l10n.aboutMessagesIfUsed,
+      ),
       (
         Icons.description_outlined,
         l10n.aboutDocumentsTitle,

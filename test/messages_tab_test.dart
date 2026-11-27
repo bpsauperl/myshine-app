@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:myshine/api/models.dart';
 import 'package:myshine/screens/home/messages_tab.dart';
 
 import 'fakes.dart';
 
 Widget _wrap(Widget child) => localized(Scaffold(body: child));
+
+/// Example data only.
+const _clinic = Clinic(
+  name: 'Example Dental Studio',
+  phone: '+386 1 000 0000',
+  email: 'hello@example.test',
+);
+
+Features _features({
+  bool messages = true,
+  int replyDays = 2,
+  bool photosWithMessages = true,
+}) => Features.fromJson(
+  featuresJson(
+    messages: messages,
+    replyDays: replyDays,
+    photosWithMessages: photosWithMessages,
+  ),
+);
 
 void main() {
   testWidgets('attaches photos, removes one and sends the rest without text', (
@@ -76,5 +96,158 @@ void main() {
     await tester.pump();
 
     expect(find.byKey(const Key('message-attach')), findsNothing);
+  });
+
+  testWidgets('says within how many working days the clinic answers', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        MessagesTab(
+          api: FakeApiClient(),
+          active: true,
+          features: _features(replyDays: 2),
+          clinic: _clinic,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(
+      find.text('Your clinic answers within 2 working days.'),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        MessagesTab(
+          api: FakeApiClient(),
+          active: true,
+          features: _features(replyDays: 1),
+          clinic: _clinic,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(
+      find.text('Your clinic answers within 1 working day.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('an older server keeps the answer time as it was', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(MessagesTab(api: FakeApiClient(), active: true)),
+    );
+    await tester.pump();
+
+    expect(
+      find.text(
+        'Write to your clinic. They usually answer within a working day.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('message-input')), findsOneWidget);
+    expect(find.byKey(const Key('messages-off')), findsNothing);
+  });
+
+  testWidgets('no camera button where the clinic takes no photos in messages', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        MessagesTab(
+          api: FakeApiClient(),
+          active: true,
+          cameraSupported: true,
+          takePhoto: FakeCamera().take,
+          features: _features(photosWithMessages: false),
+          clinic: _clinic,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('message-attach')), findsNothing);
+    expect(find.byKey(const Key('message-input')), findsOneWidget);
+    expect(find.byKey(const Key('message-send')), findsOneWidget);
+  });
+
+  testWidgets('messages off: the clinic\'s phone and email, nothing to write', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        MessagesTab(
+          api: FakeApiClient(),
+          active: true,
+          cameraSupported: true,
+          features: _features(messages: false),
+          clinic: _clinic,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('messages-off')), findsOneWidget);
+    expect(find.text('Call or write to your clinic'), findsOneWidget);
+    expect(
+      find.text(
+        'Your clinic does not use messages in myShine. Reach them by phone or email.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Example Dental Studio'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('clinic-phone')),
+        matching: find.text('+386 1 000 0000'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('clinic-email')),
+        matching: find.text('hello@example.test'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('message-input')), findsNothing);
+    expect(find.byKey(const Key('message-send')), findsNothing);
+    expect(find.byKey(const Key('message-attach')), findsNothing);
+    expect(find.text('Earlier messages'), findsNothing);
+    expect(find.text('No messages yet'), findsNothing);
+  });
+
+  testWidgets('messages off: earlier messages stay to read', (tester) async {
+    final api = FakeApiClient(
+      inbox: const [
+        Message(
+          id: 1,
+          author: MessageAuthor.clinic,
+          name: 'Example Dental Studio',
+          body: 'How are the new aligners?',
+        ),
+        Message(id: 2, author: MessageAuthor.patient, body: 'Fine, thank you.'),
+      ],
+    );
+    await tester.pumpWidget(
+      _wrap(
+        MessagesTab(
+          api: api,
+          active: true,
+          features: _features(messages: false),
+          clinic: _clinic,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('messages-off')), findsOneWidget);
+    expect(find.text('Earlier messages'), findsOneWidget);
+    expect(find.text('How are the new aligners?'), findsOneWidget);
+    expect(find.text('Fine, thank you.'), findsOneWidget);
+    expect(find.byKey(const Key('message-input')), findsNothing);
   });
 }

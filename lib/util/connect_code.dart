@@ -46,6 +46,24 @@ class ConnectCode {
   }
 
   static bool isValid(String input) => validate(input) == null;
+
+  /// The code in the address the clinic's email opens (`…/#ABCD-2345`), as
+  /// `ABCD-2345`. The fragment may come with or without its `#` and the dash,
+  /// in capitals or not. Null when it isn't exactly one code.
+  static String? fromLink(String? fragment) {
+    if (fragment == null) {
+      return null;
+    }
+    final text = fragment.startsWith('#') ? fragment.substring(1) : fragment;
+    final match = RegExp(
+      '^([$alphabet]{4})-?([$alphabet]{4})\$',
+      caseSensitive: false,
+    ).firstMatch(text);
+    if (match == null) {
+      return null;
+    }
+    return '${match.group(1)}-${match.group(2)}'.toUpperCase();
+  }
 }
 
 /// Keeps the code field uppercase with the dash in place while typing.

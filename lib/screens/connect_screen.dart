@@ -7,16 +7,22 @@ import '../state/session.dart';
 import '../util/connect_code.dart';
 import '../widgets/common.dart';
 
-/// The patient types the 8-character code from their clinic.
+/// The patient types the 8-character code from their clinic. From the link in
+/// the clinic's email the code is already typed ([initialCode]); the patient
+/// still taps the button.
 class ConnectScreen extends StatefulWidget {
-  const ConnectScreen({super.key});
+  const ConnectScreen({super.key, this.initialCode});
+
+  final String? initialCode;
 
   @override
   State<ConnectScreen> createState() => _ConnectScreenState();
 }
 
 class _ConnectScreenState extends State<ConnectScreen> {
-  final _controller = TextEditingController();
+  late final _controller = TextEditingController(
+    text: ConnectCode.format(widget.initialCode ?? ''),
+  );
   String? _error;
   bool _busy = false;
 
@@ -127,7 +133,8 @@ class _ConnectScreenState extends State<ConnectScreen> {
                               TextField(
                                 key: const Key('connect-code'),
                                 controller: _controller,
-                                autofocus: true,
+                                // With the code typed, no keyboard over the button.
+                                autofocus: widget.initialCode == null,
                                 enabled: !_busy,
                                 autocorrect: false,
                                 enableSuggestions: false,

@@ -203,6 +203,28 @@ void main() {
   test('a check-in without photos in the response counts 0', () {
     expect(CheckIn.fromJson({'id': 1, 'fit': 'seated'}).photos, 0);
   });
+
+  test('accepting the rules posts to /rules with the token', () async {
+    final requests = <http.Request>[];
+    final client = HttpApiClient(
+      baseUrl: 'https://example.test',
+      token: 'abc',
+      httpClient: MockClient((request) async {
+        requests.add(request);
+        return http.Response('', 204);
+      }),
+    );
+
+    await client.acceptRules();
+
+    expect(requests.single.method, 'POST');
+    expect(
+      requests.single.url.toString(),
+      'https://example.test/api/myshine/v1/rules',
+    );
+    expect(requests.single.headers['Authorization'], 'Bearer abc');
+    expect(requests.single.body, isEmpty);
+  });
 }
 
 /// Keeps every request (MockClient only sees plain [http.Request]s) and

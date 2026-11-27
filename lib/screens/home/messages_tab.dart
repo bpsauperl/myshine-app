@@ -9,18 +9,22 @@ import '../../config.dart';
 import '../../l10n/l10n.dart';
 import '../../theme.dart';
 import '../../util/dates.dart';
+import '../../widgets/clinic_contact.dart';
 import '../../widgets/common.dart';
 import '../../widgets/photo_thumb.dart';
 import 'photo_camera_screen.dart';
 
 /// A chat with the clinic, with photos as attachments (up to
 /// [maxMessagePhotos] per message). Looks for new messages every 30 s while
-/// open.
+/// open. Where the clinic does not use messages ([Features.messages]), the
+/// clinic's phone and email instead, over any earlier messages.
 class MessagesTab extends StatefulWidget {
   const MessagesTab({
     super.key,
     required this.api,
     required this.active,
+    this.features = Features.legacy,
+    this.clinic = const Clinic(name: ''),
     this.cameraSupported,
     this.takePhoto,
   });
@@ -29,6 +33,13 @@ class MessagesTab extends StatefulWidget {
 
   /// True while this tab is the one on screen.
   final bool active;
+
+  /// What the clinic gives its patients: messages or not, the answer time it
+  /// promises, photos with messages or not.
+  final Features features;
+
+  /// Whom to call or write to where the clinic does not use messages.
+  final Clinic clinic;
 
   /// False on web: photos can only be attached in the phone app. Defaults to
   /// [PhotoCapture.supported].
@@ -183,8 +194,12 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final messages = _messages;
     final l10n = context.l10n;
-    final canAttach =
-        widget._cameraSupported && _attachments.length < maxMessagePhotos;
+    final features = widget.features;
+    if (!features.messages) {
+      return _messagesOff(context);
+    }
+    final photos = widget._cameraSupported && features.photosWithMessages;
+    final canAttach = photos && _attachments.length < maxMessagePhotos;
     return SafeArea(
       bottom: false,
       child: Center(
@@ -198,7 +213,9 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                   alignment: Alignment.centerLeft,
                   child: PageTitle(
                     l10n.messagesTitle,
-                    subtitle: l10n.messagesSubtitle,
+                    subtitle: features.replyDays == null
+                        ? l10n.messagesSubtitle
+                        : l10n.messagesSubtitleDays(features.replyDays!),
                   ),
                 ),
               ),
@@ -278,7 +295,7 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    if (widget._cameraSupported) ...[
+                    if (photos) ...[
                       ComposerButton(
                         key: const Key('message-attach'),
                         tooltip: l10n.messagesAddPhoto,
@@ -325,6 +342,51 @@ class _MessagesTabState extends State<MessagesTab> with WidgetsBindingObserver {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// The clinic does not use messages: how to reach it, and what was written
+  /// before, to read.
+  Widget _messagesOff(BuildContext context) {
+    final l10n = context.l10n;
+    final earlier = _messages ?? const <Message>[];
+    return SafeArea(
+      bottom: false,
+      child: RefreshIndicator(
+        onRefresh: _load,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          // Ends above the floating tab bar.
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 640),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    PageTitle(l10n.tabClinic),
+                    CalmMessage(
+                      key: const Key('messages-off'),
+                      icon: Icons.local_hospital_outlined,
+                      title: l10n.messagesOffTitle,
+                      body: l10n.messagesOffBody,
+                    ),
+                    const SizedBox(height: 10),
+                    ClinicContact(clinic: widget.clinic),
+                    if (earlier.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      SectionLabel(l10n.messagesOffEarlier),
+                      for (final message in earlier)
+                        MessageBubble(message: message),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -29,7 +29,7 @@ Map<String, String> comfortOptions(AppLocalizations l10n) => {
 
 /// The aligner change: when check-in is on, the patient confirms they put in
 /// the next aligner and says how it fits (discomfort, a note, up to five
-/// optional intraoral photos). Until the change is due, a quiet line says when
+/// optional intraoral photos where the clinic takes them). Until the change is due, a quiet line says when
 /// it is, with a way to check in early. The schedule follows each change.
 class CheckInCard extends StatefulWidget {
   const CheckInCard({
@@ -41,6 +41,7 @@ class CheckInCard extends StatefulWidget {
     this.cameraSupported,
     this.takePhoto,
     this.framed = true,
+    this.photosOffered = true,
   });
 
   /// False on the check-in page: no tile around the questions.
@@ -61,6 +62,10 @@ class CheckInCard extends StatefulWidget {
 
   /// Opens the in-app camera; tests pass a fake. Defaults to [PhotoCapture].
   final PhotoTaker? takePhoto;
+
+  /// False when the clinic takes no photos with check-ins
+  /// ([Features.photosWithCheckIns]): the photos section is left out.
+  final bool photosOffered;
 
   bool get _cameraSupported => cameraSupported ?? PhotoCapture.supported;
 
@@ -120,7 +125,7 @@ class _CheckInCardState extends State<CheckInCard> {
           fit: fit,
           comfort: _comfort,
           notes: _notes.text,
-          photos: Map.of(_photos),
+          photos: widget.photosOffered ? Map.of(_photos) : const {},
         ),
       );
       setState(() {
@@ -366,15 +371,17 @@ class _CheckInCardState extends State<CheckInCard> {
               ],
             ],
           ),
-          const SizedBox(height: 20),
-          _PhotosSection(
-            photos: _photos,
-            asking: kFitsAskingForPhotos.contains(_fit),
-            cameraSupported: widget._cameraSupported,
-            enabled: !_sending,
-            onTake: _takePhoto,
-            onRemove: (view) => setState(() => _photos.remove(view)),
-          ),
+          if (widget.photosOffered) ...[
+            const SizedBox(height: 20),
+            _PhotosSection(
+              photos: _photos,
+              asking: kFitsAskingForPhotos.contains(_fit),
+              cameraSupported: widget._cameraSupported,
+              enabled: !_sending,
+              onTake: _takePhoto,
+              onRemove: (view) => setState(() => _photos.remove(view)),
+            ),
+          ],
           const SizedBox(height: 20),
           _Label(l10n.checkInNoteLabel),
           TextField(

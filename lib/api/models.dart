@@ -19,6 +19,17 @@ int? _int(Object? value) {
   return null;
 }
 
+/// A yes or no; anything that isn't one is [fallback].
+bool _flag(Object? value, {required bool fallback}) {
+  if (value is bool) {
+    return value;
+  }
+  if (value is num) {
+    return value != 0;
+  }
+  return fallback;
+}
+
 Map<String, dynamic> _map(Object? value) =>
     value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
 
@@ -341,6 +352,57 @@ class PatientDocument {
   bool get isConsent => type == 'consent';
 }
 
+/// What the clinic gives its patients in myShine (`features` in `/me`). The
+/// server enforces all of it; the app only shows what is there.
+class Features {
+  const Features({
+    this.messages = true,
+    this.replyDays,
+    this.photosWithCheckIns = true,
+    this.photosWithMessages = true,
+    this.rulesVersion,
+    this.rulesSeen = true,
+  });
+
+  factory Features.fromJson(Map<String, dynamic> json) {
+    final photos = _map(json['photos']);
+    final rules = _map(json['rules']);
+    final replyDays = _int(json['reply_days']);
+    final version = _string(rules['version']);
+    return Features(
+      messages: _flag(json['messages'], fallback: true),
+      replyDays: replyDays != null && replyDays > 0 ? replyDays : null,
+      photosWithCheckIns: _flag(photos['check_ins'], fallback: true),
+      photosWithMessages: _flag(photos['messages'], fallback: true),
+      rulesVersion: version != null && version.isNotEmpty ? version : null,
+      rulesSeen: _flag(rules['seen'], fallback: true),
+    );
+  }
+
+  /// A server from before clinics set their own rules sends no `features`:
+  /// messages and photos everywhere, and no rules to read.
+  static const Features legacy = Features();
+
+  /// False: the patient cannot write to the clinic in myShine.
+  final bool messages;
+
+  /// The answer time the clinic promises, in working days. Null when the
+  /// server doesn't say.
+  final int? replyDays;
+
+  /// Whether a check-in can carry photos.
+  final bool photosWithCheckIns;
+
+  /// Whether a message can carry photos.
+  final bool photosWithMessages;
+
+  /// Which rules the patient reads before starting ("2026-11").
+  final String? rulesVersion;
+
+  /// False until the patient has read the rules ([rulesVersion]).
+  final bool rulesSeen;
+}
+
 /// Everything `GET /me` returns.
 class MeData {
   const MeData({
@@ -351,6 +413,7 @@ class MeData {
     required this.consents,
     this.documents = const [],
     required this.unreadMessages,
+    this.features = Features.legacy,
   });
 
   factory MeData.fromJson(Map<String, dynamic> json) => MeData(
@@ -366,6 +429,9 @@ class MeData {
         .where((d) => d.url.isNotEmpty)
         .toList(),
     unreadMessages: _int(json['unread_messages']) ?? 0,
+    features: json['features'] is Map
+        ? Features.fromJson(_map(json['features']))
+        : Features.legacy,
   );
 
   final Patient patient;
@@ -375,6 +441,9 @@ class MeData {
   final List<Consent> consents;
   final List<PatientDocument> documents;
   final int unreadMessages;
+
+  /// What the clinic gives its patients ([Features.legacy] from an older server).
+  final Features features;
 }
 
 enum MessageAuthor { clinic, patient }

@@ -244,6 +244,9 @@ class _SignedInClient implements ApiClient {
     String body, {
     List<PhotoUpload> photos = const [],
   }) => _guard(() => _inner.sendMessage(body, photos: photos));
+
+  @override
+  Future<void> acceptRules() => _guard(_inner.acceptRules);
 }
 
 /// Makes the [Session] available below it.

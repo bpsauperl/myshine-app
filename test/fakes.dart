@@ -19,12 +19,14 @@ Widget localized(Widget home, {Locale? locale}) => MaterialApp(
   home: home,
 );
 
-/// Example data only: a made-up patient and clinic.
+/// Example data only: a made-up patient and clinic. Without [features] it is
+/// what a server from before clinics set their own rules sends.
 Map<String, dynamic> meJson({
   bool withTherapy = true,
   bool planShared = false,
   bool checkIn = true,
   int lateDays = 0,
+  Map<String, dynamic>? features,
 }) => {
   'patient': {
     'first_name': 'Ana',
@@ -139,15 +141,42 @@ Map<String, dynamic> meJson({
     },
   ],
   'unread_messages': 2,
+  'features': ?features,
+};
+
+/// The `features` block of `/me` as the server sends it.
+Map<String, dynamic> featuresJson({
+  bool messages = true,
+  int replyDays = 2,
+  bool photosWithCheckIns = true,
+  bool photosWithMessages = true,
+  bool rulesSeen = true,
+}) => {
+  'messages': messages,
+  'reply_days': replyDays,
+  'photos': {'check_ins': photosWithCheckIns, 'messages': photosWithMessages},
+  'rules': {'version': '2026-11', 'seen': rulesSeen},
 };
 
 class FakeApiClient implements ApiClient {
-  FakeApiClient({Map<String, dynamic>? me, this.meError, this.checkInError})
-    : _me = me ?? meJson();
+  FakeApiClient({
+    Map<String, dynamic>? me,
+    this.meError,
+    this.checkInError,
+    this.rulesError,
+    this.inbox = const [],
+  }) : _me = me ?? meJson();
 
   final Map<String, dynamic> _me;
   final ApiException? meError;
   final ApiException? checkInError;
+  final ApiException? rulesError;
+
+  /// What `GET /messages` returns.
+  final List<Message> inbox;
+
+  /// How often the app said the rules were read.
+  int rulesAccepted = 0;
 
   final List<CheckInDraft> sentCheckIns = [];
   final List<String> sentMessages = [];
@@ -204,7 +233,7 @@ class FakeApiClient implements ApiClient {
   }
 
   @override
-  Future<List<Message>> messages() async => const [];
+  Future<List<Message>> messages() async => inbox;
 
   @override
   Future<Message> sendMessage(
@@ -222,6 +251,14 @@ class FakeApiClient implements ApiClient {
           MessagePhoto(id: i + 1, url: 'https://example.test/photos/${i + 1}'),
       ],
     );
+  }
+
+  @override
+  Future<void> acceptRules() async {
+    rulesAccepted++;
+    if (rulesError != null) {
+      throw rulesError!;
+    }
   }
 }
 

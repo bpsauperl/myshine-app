@@ -73,4 +73,66 @@ void main() {
     expect(on.dueOn, DateTime(2026, 10, 29));
     expect(on.lateDays, 0);
   });
+
+  group('features', () {
+    test('an older server sends none: everything as before', () {
+      final features = MeData.fromJson(meJson()).features;
+
+      expect(features, same(Features.legacy));
+      expect(features.messages, isTrue);
+      expect(features.replyDays, isNull);
+      expect(features.photosWithCheckIns, isTrue);
+      expect(features.photosWithMessages, isTrue);
+      expect(features.rulesVersion, isNull);
+      expect(features.rulesSeen, isTrue);
+    });
+
+    test('the clinic\'s rules as the server sends them', () {
+      final features = MeData.fromJson(
+        meJson(
+          features: {
+            'messages': false,
+            'reply_days': 3,
+            'photos': {'check_ins': true, 'messages': false},
+            'rules': {'version': '2026-11', 'seen': false},
+          },
+        ),
+      ).features;
+
+      expect(features.messages, isFalse);
+      expect(features.replyDays, 3);
+      expect(features.photosWithCheckIns, isTrue);
+      expect(features.photosWithMessages, isFalse);
+      expect(features.rulesVersion, '2026-11');
+      expect(features.rulesSeen, isFalse);
+    });
+
+    test('missing parts and odd types fall back to the defaults', () {
+      final empty = Features.fromJson({});
+      expect(empty.messages, isTrue);
+      expect(empty.replyDays, isNull);
+      expect(empty.photosWithCheckIns, isTrue);
+      expect(empty.photosWithMessages, isTrue);
+      expect(empty.rulesSeen, isTrue, reason: 'no rules, nothing to read');
+
+      final odd = Features.fromJson({
+        'messages': 'no',
+        'reply_days': '2',
+        'photos': 'all',
+        'rules': {'version': 202611, 'seen': null},
+      });
+      expect(odd.messages, isTrue);
+      expect(odd.replyDays, 2);
+      expect(odd.photosWithCheckIns, isTrue);
+      expect(odd.rulesVersion, '202611');
+      expect(odd.rulesSeen, isTrue);
+
+      expect(Features.fromJson({'reply_days': 0}).replyDays, isNull);
+      expect(Features.fromJson({'messages': 0}).messages, isFalse);
+      expect(
+        MeData.fromJson(meJson()..['features'] = 'on').features,
+        same(Features.legacy),
+      );
+    });
+  });
 }

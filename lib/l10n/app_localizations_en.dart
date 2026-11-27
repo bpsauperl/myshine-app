@@ -192,6 +192,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tabClinic => 'Clinic';
+
+  @override
   String get tabProfile => 'Profile';
 
   @override
@@ -633,6 +636,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Write to your clinic. They usually answer within a working day.';
 
   @override
+  String messagesSubtitleDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Your clinic answers within $count working days.',
+      one: 'Your clinic answers within 1 working day.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get messagesLoadError => 'Messages didn\'t load';
 
   @override
@@ -667,6 +681,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get messagesPhotoFailed =>
       'This photo didn\'t load. Please try again later.';
+
+  @override
+  String get messagesOffTitle => 'Call or write to your clinic';
+
+  @override
+  String get messagesOffBody =>
+      'Your clinic does not use messages in myShine. Reach them by phone or email.';
+
+  @override
+  String get messagesOffEarlier => 'Earlier messages';
 
   @override
   String get cameraSwitch => 'Switch camera';
@@ -748,6 +772,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutMessages => 'Ask your clinic something, or send a photo.';
+
+  @override
+  String get aboutMessagesIfUsed =>
+      'Write to your clinic, if your clinic uses messages.';
 
   @override
   String get aboutDocumentsTitle => 'Documents';
@@ -916,4 +944,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusCancelled => 'Cancelled';
+
+  @override
+  String get rulesTitle => 'Before you start';
+
+  @override
+  String get rulesClinicTitle => 'Your clinic decides';
+
+  @override
+  String get rulesClinicBody =>
+      'Your clinic gave you myShine and chooses what you see here.';
+
+  @override
+  String get rulesVoluntaryTitle => 'It is your choice';
+
+  @override
+  String get rulesVoluntaryBody =>
+      'Using myShine is voluntary. Your treatment does not depend on it.';
+
+  @override
+  String get rulesEmergencyTitle => 'Not for emergencies';
+
+  @override
+  String get rulesEmergencyBody =>
+      'Pain or a broken aligner? Call your clinic.';
+
+  @override
+  String get rulesDiagnosisTitle => 'No diagnosis';
+
+  @override
+  String get rulesDiagnosisBody =>
+      'Nobody watches your check-ins or photos live. myShine never changes your treatment; your doctor decides.';
+
+  @override
+  String get rulesStopTitle => 'Stop any time';
+
+  @override
+  String get rulesStopBody =>
+      'Ask your clinic to disconnect you. Your record stays with your clinic.';
+
+  @override
+  String get rulesAccept => 'I understand';
 }

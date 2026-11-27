@@ -24,6 +24,10 @@ abstract class ApiClient {
     String body, {
     List<PhotoUpload> photos = const [],
   });
+
+  /// Records that the patient read the clinic's short rules
+  /// ([Features.rulesSeen]).
+  Future<void> acceptRules();
 }
 
 /// Why a call failed, when the app (not the server) words it: the screens

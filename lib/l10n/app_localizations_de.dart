@@ -195,6 +195,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get tabClinic => 'Praxis';
+
+  @override
   String get tabProfile => 'Profil';
 
   @override
@@ -638,6 +641,17 @@ class AppLocalizationsDe extends AppLocalizations {
       'Schreib deiner Praxis. Sie antwortet meist innerhalb eines Werktags.';
 
   @override
+  String messagesSubtitleDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Deine Praxis antwortet innerhalb von $count Werktagen.',
+      one: 'Deine Praxis antwortet innerhalb von 1 Werktag.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get messagesLoadError => 'Nachrichten konnten nicht geladen werden';
 
   @override
@@ -672,6 +686,16 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get messagesPhotoFailed =>
       'Dieses Foto konnte nicht geladen werden. Bitte versuch es später noch einmal.';
+
+  @override
+  String get messagesOffTitle => 'Ruf deine Praxis an oder schreib ihr';
+
+  @override
+  String get messagesOffBody =>
+      'Deine Praxis nutzt keine Nachrichten in myShine. Du erreichst sie per Telefon oder E-Mail.';
+
+  @override
+  String get messagesOffEarlier => 'Frühere Nachrichten';
 
   @override
   String get cameraSwitch => 'Kamera wechseln';
@@ -754,6 +778,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get aboutMessages => 'Frag deine Praxis oder schick ein Foto.';
+
+  @override
+  String get aboutMessagesIfUsed =>
+      'Schreib deiner Praxis, wenn sie Nachrichten nutzt.';
 
   @override
   String get aboutDocumentsTitle => 'Dokumente';
@@ -922,4 +950,45 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get statusCancelled => 'Storniert';
+
+  @override
+  String get rulesTitle => 'Bevor du startest';
+
+  @override
+  String get rulesClinicTitle => 'Deine Praxis entscheidet';
+
+  @override
+  String get rulesClinicBody =>
+      'Du hast myShine von deiner Praxis bekommen. Sie legt fest, was du hier siehst.';
+
+  @override
+  String get rulesVoluntaryTitle => 'Deine Entscheidung';
+
+  @override
+  String get rulesVoluntaryBody =>
+      'myShine ist freiwillig. Deine Behandlung hängt nicht davon ab.';
+
+  @override
+  String get rulesEmergencyTitle => 'Nicht für Notfälle';
+
+  @override
+  String get rulesEmergencyBody =>
+      'Schmerzen oder ein gebrochener Aligner? Ruf deine Praxis an.';
+
+  @override
+  String get rulesDiagnosisTitle => 'Keine Diagnose';
+
+  @override
+  String get rulesDiagnosisBody =>
+      'Niemand verfolgt deine Check-ins oder Fotos live. myShine ändert nie deine Behandlung; dein Arzt entscheidet.';
+
+  @override
+  String get rulesStopTitle => 'Jederzeit aufhören';
+
+  @override
+  String get rulesStopBody =>
+      'Bitte deine Praxis, dich zu trennen. Deine Akte bleibt bei deiner Praxis.';
+
+  @override
+  String get rulesAccept => 'Verstanden';
 }

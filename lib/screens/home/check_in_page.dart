@@ -16,12 +16,16 @@ class CheckInPage extends StatelessWidget {
     required this.checkIn,
     this.onSent,
     this.now,
+    this.photosOffered = true,
   });
 
   final ApiClient api;
   final CheckInState checkIn;
   final ValueChanged<CheckIn>? onSent;
   final DateTime? now;
+
+  /// See [CheckInCard.photosOffered].
+  final bool photosOffered;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +70,7 @@ class CheckInPage extends StatelessWidget {
                   checkIn: checkIn,
                   now: now,
                   framed: false,
+                  photosOffered: photosOffered,
                   onSent: onSent,
                 ),
               ],

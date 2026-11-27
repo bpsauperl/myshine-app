@@ -6,6 +6,7 @@ import 'app.dart';
 import 'reminders/reminders.dart';
 import 'screens/home/photo_camera_screen.dart';
 import 'state/session.dart';
+import 'util/link_code.dart';
 import 'util/photo_pick.dart';
 
 Future<void> main() async {
@@ -20,6 +21,8 @@ Future<void> main() async {
     storage: DeviceSessionStorage(),
     reminders: kIsWeb ? const NoReminders() : LocalReminders(),
   );
-  runApp(MyShineApp(session: session));
+  // Read once, before the app starts, and taken out of the address bar.
+  final linkCode = takeCodeFromAddress();
+  runApp(MyShineApp(session: session, linkCode: linkCode));
   await session.load();
 }

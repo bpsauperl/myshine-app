@@ -88,6 +88,10 @@
   "@tabMessagesUnread": {
     "description": "Tab label with the number of unread messages."
   },
+  "tabClinic": "Clinic",
+  "@tabClinic": {
+    "description": "The fourth tab's label when the clinic does not use messages in myShine."
+  },
   "tabProfile": "Profile",
   "todayHello": "Hello, {name}",
   "todayNotStartedTitle": "Your clinic starts your treatment",
@@ -313,6 +317,10 @@
   "documentsOpen": "Open",
   "messagesTitle": "Messages",
   "messagesSubtitle": "Write to your clinic. They usually answer within a working day.",
+  "messagesSubtitleDays": "{count, plural, =1{Your clinic answers within 1 working day.} other{Your clinic answers within {count} working days.}}",
+  "@messagesSubtitleDays": {
+    "description": "Under the Messages title: the answer time the clinic promises, in working days (1, 2 or 3)."
+  },
   "messagesLoadError": "Messages didn't load",
   "messagesEmptyTitle": "No messages yet",
   "messagesEmptyBody": "Questions about your aligners? Write to your clinic here.",
@@ -324,6 +332,12 @@
   "messagesOpenPhoto": "Open photo",
   "messagesPhoto": "Photo",
   "messagesPhotoFailed": "This photo didn't load. Please try again later.",
+  "messagesOffTitle": "Call or write to your clinic",
+  "messagesOffBody": "Your clinic does not use messages in myShine. Reach them by phone or email.",
+  "messagesOffEarlier": "Earlier messages",
+  "@messagesOffEarlier": {
+    "description": "Heading over messages from before the clinic turned messages off."
+  },
   "cameraSwitch": "Switch camera",
   "cameraDenied": "Allow camera access for myShine in Settings to add a photo.",
   "cameraUnavailable": "Camera unavailable here",
@@ -353,6 +367,7 @@
   "aboutPlan": "Your plan in 3D, when your doctor shares it.",
   "aboutSchedule": "Every change date.",
   "aboutMessages": "Ask your clinic something, or send a photo.",
+  "aboutMessagesIfUsed": "Write to your clinic, if your clinic uses messages.",
   "aboutDocumentsTitle": "Documents",
   "aboutDocuments": "Sign and keep your papers.",
   "aboutClinic": "Your doctor, phone and email.",
@@ -495,5 +510,20 @@
   "statusShipped": "Shipped",
   "statusTherapy": "Therapy",
   "statusCompleted": "Completed",
-  "statusCancelled": "Cancelled"
+  "statusCancelled": "Cancelled",
+  "rulesTitle": "Before you start",
+  "@rulesTitle": {
+    "description": "Title of the short rules a patient reads once before using myShine."
+  },
+  "rulesClinicTitle": "Your clinic decides",
+  "rulesClinicBody": "Your clinic gave you myShine and chooses what you see here.",
+  "rulesVoluntaryTitle": "It is your choice",
+  "rulesVoluntaryBody": "Using myShine is voluntary. Your treatment does not depend on it.",
+  "rulesEmergencyTitle": "Not for emergencies",
+  "rulesEmergencyBody": "Pain or a broken aligner? Call your clinic.",
+  "rulesDiagnosisTitle": "No diagnosis",
+  "rulesDiagnosisBody": "Nobody watches your check-ins or photos live. myShine never changes your treatment; your doctor decides.",
+  "rulesStopTitle": "Stop any time",
+  "rulesStopBody": "Ask your clinic to disconnect you. Your record stays with your clinic.",
+  "rulesAccept": "I understand"
 }

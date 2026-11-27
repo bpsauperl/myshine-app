@@ -63,4 +63,32 @@ void main() {
     );
     expect(result.text, 'ABCD-2345');
   });
+
+  group('ConnectCode.fromLink', () {
+    test('reads the code after the #, with or without the dash', () {
+      expect(ConnectCode.fromLink('#ABCD-2345'), 'ABCD-2345');
+      expect(ConnectCode.fromLink('#ABCD2345'), 'ABCD-2345');
+      expect(ConnectCode.fromLink('ABCD-2345'), 'ABCD-2345');
+    });
+
+    test('takes lowercase too', () {
+      expect(ConnectCode.fromLink('#abcd-2345'), 'ABCD-2345');
+      expect(ConnectCode.fromLink('#abcD2345'), 'ABCD-2345');
+    });
+
+    test('anything that is not exactly one code is no code', () {
+      expect(ConnectCode.fromLink(null), isNull);
+      expect(ConnectCode.fromLink(''), isNull);
+      expect(ConnectCode.fromLink('#'), isNull);
+      expect(ConnectCode.fromLink('#/'), isNull);
+      expect(ConnectCode.fromLink('#ABCD-234'), isNull, reason: 'too short');
+      expect(ConnectCode.fromLink('#ABCD-23456'), isNull, reason: 'too long');
+      expect(ConnectCode.fromLink('#ABC-D2345'), isNull, reason: 'dash moved');
+      expect(ConnectCode.fromLink('#ABCD 2345'), isNull);
+      expect(ConnectCode.fromLink('#ABCO-2345'), isNull, reason: 'no O');
+      expect(ConnectCode.fromLink('#ABCD-2340'), isNull, reason: 'no 0');
+      expect(ConnectCode.fromLink('#ABCL-2I45'), isNull, reason: 'no L or I');
+      expect(ConnectCode.fromLink('#/ABCD-2345'), isNull);
+    });
+  });
 }

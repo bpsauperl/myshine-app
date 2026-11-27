@@ -233,4 +233,9 @@ class HttpApiClient implements ApiClient {
           : {},
     );
   }
+
+  @override
+  Future<void> acceptRules() async {
+    await _send('POST', '/rules');
+  }
 }

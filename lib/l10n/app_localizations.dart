@@ -361,6 +361,12 @@ abstract class AppLocalizations {
   /// **'Messages ({count})'**
   String tabMessagesUnread(Object count);
 
+  /// The fourth tab's label when the clinic does not use messages in myShine.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic'**
+  String get tabClinic;
+
   /// No description provided for @tabProfile.
   ///
   /// In en, this message translates to:
@@ -1021,6 +1027,12 @@ abstract class AppLocalizations {
   /// **'Write to your clinic. They usually answer within a working day.'**
   String get messagesSubtitle;
 
+  /// Under the Messages title: the answer time the clinic promises, in working days (1, 2 or 3).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Your clinic answers within 1 working day.} other{Your clinic answers within {count} working days.}}'**
+  String messagesSubtitleDays(num count);
+
   /// No description provided for @messagesLoadError.
   ///
   /// In en, this message translates to:
@@ -1086,6 +1098,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This photo didn\'t load. Please try again later.'**
   String get messagesPhotoFailed;
+
+  /// No description provided for @messagesOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Call or write to your clinic'**
+  String get messagesOffTitle;
+
+  /// No description provided for @messagesOffBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your clinic does not use messages in myShine. Reach them by phone or email.'**
+  String get messagesOffBody;
+
+  /// Heading over messages from before the clinic turned messages off.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier messages'**
+  String get messagesOffEarlier;
 
   /// No description provided for @cameraSwitch.
   ///
@@ -1224,6 +1254,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ask your clinic something, or send a photo.'**
   String get aboutMessages;
+
+  /// No description provided for @aboutMessagesIfUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to your clinic, if your clinic uses messages.'**
+  String get aboutMessagesIfUsed;
 
   /// No description provided for @aboutDocumentsTitle.
   ///
@@ -1494,6 +1530,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get statusCancelled;
+
+  /// Title of the short rules a patient reads once before using myShine.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you start'**
+  String get rulesTitle;
+
+  /// No description provided for @rulesClinicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your clinic decides'**
+  String get rulesClinicTitle;
+
+  /// No description provided for @rulesClinicBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your clinic gave you myShine and chooses what you see here.'**
+  String get rulesClinicBody;
+
+  /// No description provided for @rulesVoluntaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'It is your choice'**
+  String get rulesVoluntaryTitle;
+
+  /// No description provided for @rulesVoluntaryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Using myShine is voluntary. Your treatment does not depend on it.'**
+  String get rulesVoluntaryBody;
+
+  /// No description provided for @rulesEmergencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not for emergencies'**
+  String get rulesEmergencyTitle;
+
+  /// No description provided for @rulesEmergencyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pain or a broken aligner? Call your clinic.'**
+  String get rulesEmergencyBody;
+
+  /// No description provided for @rulesDiagnosisTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No diagnosis'**
+  String get rulesDiagnosisTitle;
+
+  /// No description provided for @rulesDiagnosisBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody watches your check-ins or photos live. myShine never changes your treatment; your doctor decides.'**
+  String get rulesDiagnosisBody;
+
+  /// No description provided for @rulesStopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop any time'**
+  String get rulesStopTitle;
+
+  /// No description provided for @rulesStopBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your clinic to disconnect you. Your record stays with your clinic.'**
+  String get rulesStopBody;
+
+  /// No description provided for @rulesAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand'**
+  String get rulesAccept;
 }
 
 class _AppLocalizationsDelegate

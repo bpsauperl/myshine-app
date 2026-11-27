@@ -7,7 +7,7 @@ import '../../reminders/reminders.dart';
 import '../../state/me_controller.dart';
 import '../../state/session.dart';
 import '../../theme.dart';
-import '../../widgets/browser.dart';
+import '../../widgets/clinic_contact.dart';
 import '../../widgets/common.dart';
 import '../about_sheet.dart';
 import 'documents_section.dart';
@@ -51,11 +51,8 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final patient = me.data!.patient;
-    final clinic = patient.clinic;
     final palette = context.shine;
     final l10n = context.l10n;
-    final phone = clinic.phone;
-    final email = clinic.email;
     final initial = patient.firstName.isEmpty ? '·' : patient.firstName.characters.first.toUpperCase();
     return TabPage(
       onRefresh: me.refresh,
@@ -92,32 +89,7 @@ class ProfileTab extends StatelessWidget {
           ),
         ),
         SectionLabel(l10n.profileYourClinic),
-        ShineGroup(
-          children: [
-            ShineRow(
-              title: clinic.name.isEmpty ? l10n.profileYourClinic : clinic.name,
-              trailingText: clinic.city,
-              bold: true,
-            ),
-            if (patient.doctorName != null)
-              ShineRow(title: patient.doctorName!, trailingText: l10n.profileYourDentist),
-            if (phone != null && phone.isNotEmpty)
-              ShineRow(
-                title: phone,
-                trailingText: l10n.profileCall,
-                onTap: () => openContact(
-                  context,
-                  Uri(scheme: 'tel', path: phone.replaceAll(RegExp(r'[^0-9+]'), '')),
-                ),
-              ),
-            if (email != null && email.isNotEmpty)
-              ShineRow(
-                title: email,
-                trailingText: l10n.profileEmail,
-                onTap: () => openContact(context, Uri(scheme: 'mailto', path: email)),
-              ),
-          ],
-        ),
+        ClinicContact(clinic: patient.clinic, doctorName: patient.doctorName),
         // Reminders are the phone app's own notifications: not on the web.
         if (!kIsWeb) ...[
           const SizedBox(height: 8),

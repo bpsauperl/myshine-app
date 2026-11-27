@@ -197,6 +197,9 @@ class AppLocalizationsSl extends AppLocalizations {
   }
 
   @override
+  String get tabClinic => 'Ordinacija';
+
+  @override
   String get tabProfile => 'Profil';
 
   @override
@@ -656,6 +659,19 @@ class AppLocalizationsSl extends AppLocalizations {
       'Piši svoji ordinaciji. Običajno odgovorijo v enem delovnem dnevu.';
 
   @override
+  String messagesSubtitleDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Tvoja ordinacija odgovori v $count delovnih dneh.',
+      few: 'Tvoja ordinacija odgovori v $count delovnih dneh.',
+      two: 'Tvoja ordinacija odgovori v $count delovnih dneh.',
+      one: 'Tvoja ordinacija odgovori v $count delovnem dnevu.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get messagesLoadError => 'Sporočila se niso naložila';
 
   @override
@@ -690,6 +706,16 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get messagesPhotoFailed =>
       'Fotografija se ni naložila. Poskusi znova pozneje.';
+
+  @override
+  String get messagesOffTitle => 'Pokliči ali piši svoji ordinaciji';
+
+  @override
+  String get messagesOffBody =>
+      'Tvoja ordinacija ne uporablja sporočil v myShine. Dosežeš jo po telefonu ali e-pošti.';
+
+  @override
+  String get messagesOffEarlier => 'Prejšnja sporočila';
 
   @override
   String get cameraSwitch => 'Zamenjaj kamero';
@@ -770,6 +796,10 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get aboutMessages => 'Vprašaj ordinacijo ali pošlji fotografijo.';
+
+  @override
+  String get aboutMessagesIfUsed =>
+      'Piši svoji ordinaciji, če uporablja sporočila.';
 
   @override
   String get aboutDocumentsTitle => 'Dokumenti';
@@ -940,4 +970,45 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get statusCancelled => 'Preklicano';
+
+  @override
+  String get rulesTitle => 'Preden začneš';
+
+  @override
+  String get rulesClinicTitle => 'Odloča tvoja ordinacija';
+
+  @override
+  String get rulesClinicBody =>
+      'myShine ti je dala tvoja ordinacija. Ona izbere, kaj tukaj vidiš.';
+
+  @override
+  String get rulesVoluntaryTitle => 'Tvoja izbira';
+
+  @override
+  String get rulesVoluntaryBody =>
+      'Uporaba myShine je prostovoljna. Tvoje zdravljenje ni odvisno od nje.';
+
+  @override
+  String get rulesEmergencyTitle => 'Ni za nujne primere';
+
+  @override
+  String get rulesEmergencyBody =>
+      'Bolečina ali zlomljen alajner? Pokliči svojo ordinacijo.';
+
+  @override
+  String get rulesDiagnosisTitle => 'Brez diagnoze';
+
+  @override
+  String get rulesDiagnosisBody =>
+      'Tvojih prijav in fotografij nihče ne spremlja v živo. myShine nikoli ne spremeni tvojega zdravljenja; odloča tvoj zdravnik.';
+
+  @override
+  String get rulesStopTitle => 'Prenehaš lahko kadar koli';
+
+  @override
+  String get rulesStopBody =>
+      'Prosi ordinacijo, naj te odklopi. Tvoja dokumentacija ostane pri ordinaciji.';
+
+  @override
+  String get rulesAccept => 'Razumem';
 }

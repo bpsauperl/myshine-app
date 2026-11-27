@@ -157,6 +157,9 @@ class _PreviewApi implements ApiClient {
     _messages.add(message);
     return message;
   }
+
+  @override
+  Future<void> acceptRules() async {}
 }
 
 /// The preview has no camera: a "photo" is a drawn sample tile, so the photo
